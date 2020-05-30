@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
-  <display-name>prefeiturainterativaweb</display-name>
-<!-- Nome da Aplicação -->
-	<display-name>HappyHour</display-name>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	version="2.5">
+	<display-name>prefeiturainterativaweb</display-name>
+	<display-name>Prefeitura Interativa</display-name>
 
 	<!-- Estágio do Projeto -->
 	<context-param>
 		<param-name>javax.faces.PROJECT_STAGE</param-name>
 		<param-value>Development</param-value>
 	</context-param>
+	
 	<!-- Escolha do tema -->
 	<context-param>
 		<param-name>primefaces.THEME</param-name>
 		<param-value>omega</param-value>
 	</context-param>
+	
 	<!-- Configuração do JSF -->
 	<servlet>
 		<servlet-name>Faces Servlet</servlet-name>
@@ -26,4 +30,5 @@
 	</servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>view/index.xhtml</welcome-file>
-	</welcome-file-list></web-app>
+	</welcome-file-list>
+</web-app>

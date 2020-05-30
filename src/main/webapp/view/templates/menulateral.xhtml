@@ -12,29 +12,20 @@
 <h:body>
 	<p:growl id="mensagem" />
 	<div id="geral">
-		<div id="cabecalho">
+		<div id="cabecalho"></div>
+		<div id="menu">
 			<h:form>
-				<p:menubar>
-					<p:submenu label="Arquivo" icon="ui-icon-folder-open">
-						<p:menuitem value="Sair" />
+				<p:megaMenu orientation="vertical">
+					<p:submenu label="Solicitações" icon="pi pi-check">
+						<p:column>
+							<p:submenu label="Listar">
+								<p:menuitem value="Listar" url="#" />
+							</p:submenu>
+						</p:column>
 					</p:submenu>
-
-					<p:submenu label="Cadastros" icon="ui-icon-pencil">
-						<p:menuitem value="Estado" />
-						<p:menuitem value="Fabricante" />
-					</p:submenu>
-
-					<p:submenu label="Movimentações" icon="ui-icon-check">
-						<p:menuitem value="Venda" />
-					</p:submenu>
-
-					<p:submenu label="Ajuda" icon="ui-icon-help">
-						<p:menuitem value="Sobre" />
-					</p:submenu>
-				</p:menubar>
+				</p:megaMenu>
 			</h:form>
 		</div>
-
 		<div id="conteudo">
 			<ui:insert name="conteudo" />
 		</div>
