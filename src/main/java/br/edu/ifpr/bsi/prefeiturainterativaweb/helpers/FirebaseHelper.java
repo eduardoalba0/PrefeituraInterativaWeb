@@ -18,7 +18,11 @@ import com.google.firebase.auth.UserRecord.CreateRequest;
 import com.google.firebase.auth.UserRecord.UpdateRequest;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.firebase.cloud.StorageClient;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
 
+import br.edu.ifpr.bsi.prefeiturainterativaweb.model.Aviso;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.model.Usuario;
 
 public class FirebaseHelper {
@@ -27,10 +31,11 @@ public class FirebaseHelper {
 	private static FirebaseApp firebaseApp;
 	private static FirebaseAuth auth;
 	private static Firestore database;
+	private static FirebaseMessaging messaging;
 	private static StorageClient storage;
 
 	private static void init() throws Exception {
-		if (FirebaseApp.getApps().isEmpty()) {
+		if (firebaseApp == null) {
 			ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 			FirebaseOptions options = new FirebaseOptions.Builder()
 					.setCredentials(
@@ -40,6 +45,7 @@ public class FirebaseHelper {
 			firebaseApp = FirebaseApp.initializeApp(options);
 			auth = FirebaseAuth.getInstance(firebaseApp);
 			database = FirestoreClient.getFirestore(firebaseApp);
+			messaging = FirebaseMessaging.getInstance(firebaseApp);
 			storage = StorageClient.getInstance(firebaseApp);
 		}
 	}
@@ -78,7 +84,22 @@ public class FirebaseHelper {
 		storage.bucket("Solicitacoes").create(usuario.get_ID(), Files.readAllBytes(Paths.get(uri)));
 	}
 
-	public static Firestore getDatabase() throws Exception{
+	public static void enviarNotificacao(Aviso aviso) throws Exception{
+		init();
+		Notification notification = Notification.builder()
+				.setTitle(aviso.getTitulo())
+				.setBody(aviso.getCorpo())
+				.build();
+		
+		messaging.sendAsync(Message.builder()
+				.putData("Categoria" , aviso.getCategoria())
+				.putData("Solicitacao", aviso.getSolicitacao_ID())
+				.setToken(aviso.getToken())
+				.setNotification(notification)
+				.build());
+	}
+
+	public static Firestore getDatabase() throws Exception {
 		init();
 		return database;
 	}

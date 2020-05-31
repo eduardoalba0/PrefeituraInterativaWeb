@@ -15,7 +15,7 @@ public class DatabaseHelper {
 		return FirebaseHelper.getDatabase();
 	}
 
-	public static <T> ApiFuture<WriteResult> inserirAtualizar(DocumentReference reference, T objeto) {
+	public static <T> ApiFuture<WriteResult> merge(DocumentReference reference, T objeto) {
 		return reference.set(objeto);
 	}
 

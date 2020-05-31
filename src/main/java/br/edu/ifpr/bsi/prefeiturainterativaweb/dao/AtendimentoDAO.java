@@ -6,15 +6,15 @@ import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
 
 import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.DatabaseHelper;
-import br.edu.ifpr.bsi.prefeiturainterativaweb.model.Solicitacao;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.model.Atendimento;
 
-public class SolicitacaoDAO {
+public class AtendimentoDAO {
 
 	private static CollectionReference reference;
 
 	private static void init() throws Exception {
 		if (reference == null)
-			reference = DatabaseHelper.getDatabase().collection("Solicitacoes");
+			reference = DatabaseHelper.getDatabase().collection("Atendimentos");
 	}
 
 	public static ApiFuture<QuerySnapshot> getAll() throws Exception {
@@ -22,9 +22,8 @@ public class SolicitacaoDAO {
 		return DatabaseHelper.getAll(reference);
 	}
 
-	public static ApiFuture<WriteResult> merge(Solicitacao solicitacao) throws Exception {
+	public static ApiFuture<WriteResult> merge(Atendimento atendimento) throws Exception {
 		init();
-		return DatabaseHelper.merge(reference.document(solicitacao.get_ID()), solicitacao);
+		return DatabaseHelper.merge(reference.document(atendimento.get_ID()), atendimento);
 	}
-
 }

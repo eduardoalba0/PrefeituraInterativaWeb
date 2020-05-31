@@ -6,11 +6,16 @@ import java.util.Objects;
 
 @SuppressWarnings("serial")
 public class Aviso implements Serializable {
+	
+    public static final String CATEGORIA_PADRAO = "Avisos Gerais",
+            CATEGORIA_AVALIACAO = "Avaliação de Solicitações",
+            CATEGORIA_TRAMITACAO = "Tramitação de Solicitações";
 
     private String titulo;
     private String corpo;
     private String solicitacao_ID;
     private String categoria;
+    private String token;
     private Date data;
 
 //---------------------- Encapsulamento ----------------------
@@ -56,7 +61,15 @@ public class Aviso implements Serializable {
         this.categoria = categoria;
     }
 
-    @Override
+    public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	@Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

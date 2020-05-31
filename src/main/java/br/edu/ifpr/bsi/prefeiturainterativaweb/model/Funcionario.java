@@ -12,9 +12,6 @@ public class Funcionario extends Usuario {
     @Exclude
     private Departamento departamento;
 
-    @Exclude
-    private Usuario usuario;
-
 //---------------------- Encapsulamento ----------------------
 
     public String getMatricula() {
@@ -48,15 +45,6 @@ public class Funcionario extends Usuario {
 
     public void setDepartamento(Departamento departamento) {
         this.departamento = departamento;
-    }
-
-    @Exclude
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
     }
    
 }
