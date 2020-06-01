@@ -15,7 +15,7 @@
 	<!-- Escolha do tema -->
 	<context-param>
 		<param-name>primefaces.THEME</param-name>
-		<param-value>omega</param-value>
+		<param-value>luna-amber</param-value>
 	</context-param>
 	
 	<!-- Configuração do JSF -->

@@ -8,7 +8,7 @@ import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.faces.bean.SessionScoped;
 import javax.faces.event.ActionEvent;
 
 import com.google.cloud.firestore.QueryDocumentSnapshot;
@@ -26,8 +26,8 @@ import br.edu.ifpr.bsi.prefeiturainterativaweb.model.Departamento;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.model.Solicitacao;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.model.Usuario;
 
-@ManagedBean
-@ViewScoped
+@ManagedBean(name = "solicitacaoController")
+@SessionScoped
 @SuppressWarnings("serial")
 public class SolicitacaoController implements Serializable {
 
@@ -37,6 +37,8 @@ public class SolicitacaoController implements Serializable {
 
 	@PostConstruct
 	public void listar() {
+		if (solicitacoes != null)
+			return;
 		solicitacoes = new ArrayList<>();
 		try {
 			for (QueryDocumentSnapshot objSnapshot : SolicitacaoDAO.getAll().get().getDocuments()) {
@@ -52,7 +54,7 @@ public class SolicitacaoController implements Serializable {
 	}
 
 	public void visualizar(ActionEvent evento) {
-		solicitacao = (Solicitacao) evento.getComponent().getAttributes().get("usuarioSelecionado");
+		solicitacao = (Solicitacao) evento.getComponent().getAttributes().get("solicitacaoSelecionada");
 		atendimento = new Atendimento();
 		atendimento.set_ID(UUID.randomUUID().toString());
 		atendimento.setSolicitacao_ID(solicitacao.get_ID());

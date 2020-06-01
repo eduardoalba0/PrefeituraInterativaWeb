@@ -16,24 +16,38 @@
 						value="#{solicitacao.anonima ? 'Anônimo' : solicitacao.usuario.nome}" />
 				</p:column>
 
-				<p:column headerText="Departamento">
-					<h:outputText value="#{solicitacao.departamento}" />
+				<p:column headerText="Categorias" width="30%;"
+					styleClass="centeredColumn" resizable="true">
+					<p:chips id="categorias" value="#{solicitacao.localCategorias}"
+						style="width:100%"/>
 				</p:column>
 
-				<p:column headerText="Categorias">
-					<p:chips id="chips" value="#{solicitacao.localCategorias}" />
-				</p:column>
-
-				<p:column headerText="Descricao">
+				<p:column headerText="Descricao" width="30%;" styleClass="centeredColumn"
+					resizable="true">
 					<h:outputText value="#{solicitacao.descricao}" />
 				</p:column>
 
-				<p:column headerText="Opções">
-					<p:commandButton icon="pi pi-external-link"
+				<p:column headerText="Opções" style="width:13%;" styleClass="centeredColumn" resizable="true">
+					<p:commandButton icon="pi pi-external-link" title="Visualizar"
 						actionListener="#{solicitacaoController.visualizar}"
+						update=":mensagem">
+						<f:attribute name="solicitacaoSelecionada" value="#{solicitacao}" />
+					</p:commandButton>
+					<p:commandButton icon="pi pi-check" title="Responder"
+						actionListener="#{solicitacaoController.responder}"
 						update=":mensagem :dialogResposta"
 						oncomplete="PF('dialogo').show()">
-						<f:attribute name="usuarioSelecionado" value="#{solicitacao}" />
+						<f:attribute name="solicitacaoSelecionada" value="#{solicitacao}" />
+					</p:commandButton>
+					<p:commandButton icon="pi pi-arrow-right" title="Encaminhar"
+						actionListener="#{solicitacaoController.encaminhar}"
+						update=":mensagem">
+						<f:attribute name="solicitacaoSelecionada" value="#{solicitacao}" />
+					</p:commandButton>
+					<p:commandButton icon="pi pi-ban"
+						actionListener="#{solicitacaoController.denunciar}"
+						update=":mensagem">
+						<f:attribute name="solicitacaoSelecionada" value="#{solicitacao}" />
 					</p:commandButton>
 				</p:column>
 			</p:dataTable>
@@ -50,10 +64,10 @@
 					<p:inputText id="resposta" maxlength="500" size="500"
 						value="#{solicitacaoController.atendimento.resposta}"
 						required="true" requiredMessage="Campo obrigatório." />
-					<p:outputLabel value="Resposta" for="resposta" />
-					<p:inputText id="resposta" maxlength="500" size="500"
-						value="#{solicitacaoController.atendimento.acao}"
-						required="true" requiredMessage="Campo obrigatório." />
+					<p:outputLabel value="Ação" for="acao" />
+					<p:inputText id="acao" maxlength="500" size="500"
+						value="#{solicitacaoController.atendimento.acao}" required="true"
+						requiredMessage="Campo obrigatório." />
 					<p:commandButton value="Salvar"
 						action="#{solicitacaoController.salvar}"
 						oncomplete="PF('dialogo').hide()" />
