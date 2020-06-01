@@ -7,8 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.event.ActionEvent;
 
 import com.google.cloud.firestore.QueryDocumentSnapshot;
@@ -26,11 +25,10 @@ import br.edu.ifpr.bsi.prefeiturainterativaweb.model.Departamento;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.model.Solicitacao;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.model.Usuario;
 
-@ManagedBean(name = "solicitacaoController")
 @SessionScoped
 @SuppressWarnings("serial")
 public class SolicitacaoController implements Serializable {
-
+	//TODO trocar SessionScoped após os testes, pois a lista não se altera durante toda a sessão.
 	private List<Solicitacao> solicitacoes;
 	private Solicitacao solicitacao;
 	private Atendimento atendimento;
@@ -53,7 +51,7 @@ public class SolicitacaoController implements Serializable {
 		}
 	}
 
-	public void visualizar(ActionEvent evento) {
+	public void responder(ActionEvent evento) {
 		solicitacao = (Solicitacao) evento.getComponent().getAttributes().get("solicitacaoSelecionada");
 		atendimento = new Atendimento();
 		atendimento.set_ID(UUID.randomUUID().toString());
