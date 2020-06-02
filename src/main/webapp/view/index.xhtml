@@ -19,21 +19,22 @@
 				<p:column headerText="Categorias" width="30%;"
 					styleClass="centeredColumn" resizable="true">
 					<p:chips id="categorias" value="#{solicitacao.localCategorias}"
-						style="width:100%"/>
+						style="width:100%" />
 				</p:column>
 
-				<p:column headerText="Descricao" width="30%;" styleClass="centeredColumn"
-					resizable="true">
+				<p:column headerText="Descricao" width="30%;"
+					styleClass="centeredColumn" resizable="true">
 					<h:outputText value="#{solicitacao.descricao}" />
 				</p:column>
-
-				<p:column headerText="Opções" style="width:13%;" styleClass="centeredColumn" resizable="true">
+				<p:column headerText="Opções" style="width:13%;"
+					styleClass="centeredColumn" resizable="true">
 					<p:commandButton icon="pi pi-external-link" title="Visualizar"
 						actionListener="#{solicitacaoController.visualizar}"
 						update=":mensagem">
 						<f:attribute name="solicitacaoSelecionada" value="#{solicitacao}" />
 					</p:commandButton>
 					<p:commandButton icon="pi pi-check" title="Responder"
+						styleClass="ui-success-color"
 						actionListener="#{solicitacaoController.responder}"
 						update=":mensagem :dialogResposta"
 						oncomplete="PF('dialogo').show()">
@@ -44,7 +45,8 @@
 						update=":mensagem">
 						<f:attribute name="solicitacaoSelecionada" value="#{solicitacao}" />
 					</p:commandButton>
-					<p:commandButton icon="pi pi-ban"
+					<p:commandButton icon="pi pi-ban" styleClass="ui-danger-color"
+						title="Bloquear usuário"
 						actionListener="#{solicitacaoController.denunciar}"
 						update=":mensagem">
 						<f:attribute name="solicitacaoSelecionada" value="#{solicitacao}" />
@@ -57,15 +59,15 @@
 			<h:form id="formResposta">
 				<h:panelGrid columns="2">
 					<p:outputLabel value="Descricao" for="descricao" />
-					<p:inputText id="descricao" maxlength="500" size="500"
+					<p:inputTextarea id="descricao" maxlength="500" size="500"
 						value="#{solicitacaoController.solicitacao.descricao}"
 						required="true" requiredMessage="Campo obrigatório." />
 					<p:outputLabel value="Resposta" for="resposta" />
-					<p:inputText id="resposta" maxlength="500" size="500"
+					<p:inputTextarea id="resposta" maxlength="500" size="500"
 						value="#{solicitacaoController.atendimento.resposta}"
 						required="true" requiredMessage="Campo obrigatório." />
 					<p:outputLabel value="Ação" for="acao" />
-					<p:inputText id="acao" maxlength="500" size="500"
+					<p:inputTextarea id="acao" maxlength="500" size="500"
 						value="#{solicitacaoController.atendimento.acao}" required="true"
 						requiredMessage="Campo obrigatório." />
 					<p:commandButton value="Salvar"
@@ -75,9 +77,5 @@
 				</h:panelGrid>
 			</h:form>
 		</p:dialog>
-		<!-- script type="text/javascript"
-			src="https://maps.google.com/maps/api/js?sensor=true"></script>
-		<p:gmap center="41.381542, 2.122893" zoom="15" type="HYBRID"
-			style="width:100%;height:100%" /-->
 	</ui:define>
 </ui:composition>
