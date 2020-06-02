@@ -1,4 +1,4 @@
-package br.edu.ifpr.bsi.prefeiturainterativaweb.model;
+package br.edu.ifpr.bsi.prefeiturainterativaweb.domain;
 
 import com.google.cloud.firestore.annotation.Exclude;
 

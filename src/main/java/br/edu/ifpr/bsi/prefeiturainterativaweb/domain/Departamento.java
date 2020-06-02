@@ -1,4 +1,4 @@
-package br.edu.ifpr.bsi.prefeiturainterativaweb.model;
+package br.edu.ifpr.bsi.prefeiturainterativaweb.domain;
 
 import java.io.Serializable;
 import java.util.List;

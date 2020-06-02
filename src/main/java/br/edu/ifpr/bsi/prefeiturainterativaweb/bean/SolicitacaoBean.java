@@ -1,4 +1,4 @@
-package br.edu.ifpr.bsi.prefeiturainterativaweb.controller;
+package br.edu.ifpr.bsi.prefeiturainterativaweb.bean;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -6,9 +6,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.event.ActionEvent;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 
@@ -17,26 +18,25 @@ import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.CategoriaDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.DepartamentoDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.SolicitacaoDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.UsuarioDAO;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Atendimento;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Aviso;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Categoria;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Departamento;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Solicitacao;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Usuario;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.FirebaseHelper;
-import br.edu.ifpr.bsi.prefeiturainterativaweb.model.Atendimento;
-import br.edu.ifpr.bsi.prefeiturainterativaweb.model.Aviso;
-import br.edu.ifpr.bsi.prefeiturainterativaweb.model.Categoria;
-import br.edu.ifpr.bsi.prefeiturainterativaweb.model.Departamento;
-import br.edu.ifpr.bsi.prefeiturainterativaweb.model.Solicitacao;
-import br.edu.ifpr.bsi.prefeiturainterativaweb.model.Usuario;
 
-@SessionScoped
+@Named("solicitacaoBean")
+@SessionScoped()
 @SuppressWarnings("serial")
-public class SolicitacaoController implements Serializable {
+public class SolicitacaoBean implements Serializable {
 	//TODO trocar SessionScoped após os testes, pois a lista não se altera durante toda a sessão.
 	private List<Solicitacao> solicitacoes;
 	private Solicitacao solicitacao;
 	private Atendimento atendimento;
 
-	@PostConstruct
+	@Inject()
 	public void listar() {
-		if (solicitacoes != null)
-			return;
 		solicitacoes = new ArrayList<>();
 		try {
 			for (QueryDocumentSnapshot objSnapshot : SolicitacaoDAO.getAll().get().getDocuments()) {

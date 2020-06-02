@@ -6,8 +6,8 @@ import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
 
+import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Atendimento;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.DatabaseHelper;
-import br.edu.ifpr.bsi.prefeiturainterativaweb.model.Atendimento;
 
 public class DepartamentoDAO {
 

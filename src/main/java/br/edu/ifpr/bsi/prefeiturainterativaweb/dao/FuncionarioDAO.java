@@ -5,8 +5,8 @@ import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
 
+import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Funcionario;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.DatabaseHelper;
-import br.edu.ifpr.bsi.prefeiturainterativaweb.model.Funcionario;
 
 public class FuncionarioDAO {
 

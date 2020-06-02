@@ -22,8 +22,8 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 
-import br.edu.ifpr.bsi.prefeiturainterativaweb.model.Aviso;
-import br.edu.ifpr.bsi.prefeiturainterativaweb.model.Usuario;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Aviso;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Usuario;
 
 public class FirebaseHelper {
 	// TODO IMPLEMENTAR AUTENTICAÇÃO COM JS
