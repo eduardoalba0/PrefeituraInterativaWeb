@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.edu.ifpr.bsi</groupId>
 	<artifactId>prefeiturainterativaweb</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0</version>
 	<packaging>war</packaging>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -24,7 +24,7 @@
 					<execution>
 						<phase>package</phase>
 						<goals>
-							<goal>copy</goal>
+							<goal>compile</goal>
 						</goals>
 						<configuration>
 							<artifactItems>
