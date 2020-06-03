@@ -1,0 +1,30 @@
+= Deploying a Java EE 8 Application on Heroku
+
+This is a simple playground-project to experiment with Java EE 8 on link:[Heroku].
+The application can be either deploy on TomEE or OpenLiberty.
+You can read the details link:http://dplatz.de/blog/2018/heroku.html[on my blog].
+
+== Usage
+
+=== Build & Deploy locally
+
+----
+$ ./run_docker.sh
+----
+
+Open http://localhost.
+If port 80 is not free on your system, you will have to change the port-mapping in `run_docker.sh`.
+
+By default, `run_docker.sh deploy to TomEE. Switch the commented out line to deploy on OpenLiberty.
+
+=== Deploy to Heroku
+
+----
+$ heroku create
+$ heroku stack:set container
+$ git push heroku master
+$ heroku open
+----
+
+By default, the `heroku.yml` deploy to TomEE. Reference `Docker.liberty` to change the application-server to OpenLiberty.
+
