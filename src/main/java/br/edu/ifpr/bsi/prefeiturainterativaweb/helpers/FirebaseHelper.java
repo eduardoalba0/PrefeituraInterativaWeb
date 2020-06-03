@@ -1,6 +1,12 @@
 package br.edu.ifpr.bsi.prefeiturainterativaweb.helpers;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -21,12 +27,13 @@ import com.google.firebase.cloud.StorageClient;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Aviso;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Usuario;
 
 public class FirebaseHelper {
-	// TODO IMPLEMENTAR AUTENTICAÇÃO COM JS
 
 	private static FirebaseApp firebaseApp;
 	private static FirebaseAuth auth;
@@ -48,6 +55,29 @@ public class FirebaseHelper {
 			messaging = FirebaseMessaging.getInstance(firebaseApp);
 			storage = StorageClient.getInstance(firebaseApp);
 		}
+	}
+
+	public static String logar(Usuario usuario) throws Exception {
+		HttpURLConnection urlRequest = null;
+		InputStreamReader inputStream = null;
+		urlRequest = (HttpURLConnection) new URL("https://www.googleapis.com/identitytoolkit/v3/relyingparty/"
+				+ "verifyPassword" + "?key=" + "AIzaSyCG8HM6i3TOTOdHAbmKU0TtZjou7hZVxms").openConnection();
+
+		urlRequest.setDoOutput(true);
+		urlRequest.setRequestMethod("POST");
+		urlRequest.setRequestProperty("Content-Type", "application/json");
+		OutputStream os = urlRequest.getOutputStream();
+		OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");
+		osw.write("{\"email\":\"" + usuario.getEmail() + "\",\"password\":\"" + usuario.getSenha()
+				+ "\",\"returnSecureToken\":true}");
+		osw.flush();
+		osw.close();
+		urlRequest.connect();
+		inputStream = new InputStreamReader((InputStream) urlRequest.getContent());
+		JsonObject rootobj = new JsonParser().parse(inputStream).getAsJsonObject();
+		inputStream.close();
+		urlRequest.disconnect();
+		return rootobj.get("localId").getAsString();
 	}
 
 	public static ApiFuture<UserRecord> cadastrarUsuario(Usuario usuario) throws Exception {
@@ -84,19 +114,14 @@ public class FirebaseHelper {
 		storage.bucket("Solicitacoes").create(usuario.get_ID(), Files.readAllBytes(Paths.get(uri)));
 	}
 
-	public static void enviarNotificacao(Aviso aviso) throws Exception{
+	public static void enviarNotificacao(Aviso aviso) throws Exception {
 		init();
-		Notification notification = Notification.builder()
-				.setTitle(aviso.getTitulo())
-				.setBody(aviso.getCorpo())
+		Notification notification = Notification.builder().setTitle(aviso.getTitulo()).setBody(aviso.getCorpo())
 				.build();
-		
-		messaging.sendAsync(Message.builder()
-				.putData("Categoria" , aviso.getCategoria())
-				.putData("Solicitacao", aviso.getSolicitacao_ID())
-				.setToken(aviso.getToken())
-				.setNotification(notification)
-				.build());
+
+		messaging.sendAsync(Message.builder().putData("Categoria", aviso.getCategoria())
+				.putData("Solicitacao", aviso.getSolicitacao_ID()).setToken(aviso.getToken())
+				.setNotification(notification).build());
 	}
 
 	public static Firestore getDatabase() throws Exception {

@@ -17,7 +17,11 @@
 
 html,
 body {
-    margin: 0 !important;
+	height: 100%;
+	width: 100%;
+    margin: 0px !important;
+    background: linear-gradient(to left, var(--color-orange) 0%, var(--color-pink) 100%) !important;
+
 }
 
 .icon-app {
@@ -35,11 +39,36 @@ body {
 
 .centeredColumn {
     text-align: center !important;
+    margin: 0 auto !important;
+}
+
+.centerDiv {
+  	position: absolute;
+  	left: 50%;
+  	top: 40%;
+  	transform: translate(-50%, -50%);
+  	width: 50%;
+  	height: 50%;
+}
+
+.ui-inputgroup .ui-inputgroup-addon{
+	margin-left: auto !important;
+}
+
+.ui-widget:not(.pi){
+	margin-right: auto !important;
 }
 
 .ui-chips-token .ui-chips-token-icon,
 .ui-chips .ui-chips-container .ui-chips-input-token {
     display: none !important;
+}
+
+.ui-panel .ui-panel-content{
+    border: transparent !important;
+    border-radius: 50px !important;
+    box-shadow: 3px 5px 3px black;
+    
 }
 
 .ui-chips .ui-chips-container {
@@ -54,6 +83,12 @@ body {
     background-color: var(--color-orange) !important;
     border: var(--color-orange) !important;
     margin: 3px !important;
+    color: white !important;
+}
+
+.ui-inputgroup .ui-button:last-child {
+    margin-right: auto !important;
+    margin-left: auto !important;
 }
 
 .ui-danger-color {
@@ -66,7 +101,9 @@ body {
     border-color: var(--color-green) !important;
 
 }
-
+h1, h2, h3,
+.ui-widget:not(.pi),
+.ui-inputgroup .ui-button,
 .ui-panelgrid .ui-panelgrid-cell,
 .ui-button.ui-button-icon-only .ui-icon,
 .ui-button-text-only .ui-button-text,
@@ -75,7 +112,7 @@ body {
 .ui-chips .ui-chips-container .ui-chips-token,
 .ui-datatable .ui-datatable-data>tr>td,
 .ui-datatable thead th .ui-column-title {
-    font-weight: bold !important;
+	font-family: fredoka !important;
     color: white !important;
 }
 
@@ -95,5 +132,19 @@ body {
 
 .ui-inputfield.ui-state-focus:not(.ui-state-error),
 .ui-inputfield.ui-state-hover:not(.ui-state-error) {
-    border-color: var(--color-orange) !important;
+    border-color: white !important;
 }
+
+.ui-inputgroup .ui-inputgroup-addon>.pi{
+	color: white !important;
+}
+
+::-webkit-scrollbar {
+	display: none;
+}
+
+@font-face{
+	font-family: fredoka;
+	src: url("../fonts/fredoka.ttf");
+	font-style: bold;
+} 
