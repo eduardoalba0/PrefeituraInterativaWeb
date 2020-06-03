@@ -29,8 +29,7 @@
 	</servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>view/index.xhtml</welcome-file>
-	</welcome-file-list>
-
+	</welcome-file-list>	
 	<!-- Mimes -->
 	<mime-mapping>
 		<extension>woff</extension>
