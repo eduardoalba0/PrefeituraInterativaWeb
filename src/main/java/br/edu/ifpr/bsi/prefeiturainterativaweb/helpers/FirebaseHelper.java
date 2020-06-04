@@ -60,15 +60,15 @@ public class FirebaseHelper {
 	public static String logar(Usuario usuario) throws Exception {
 		HttpURLConnection urlRequest = null;
 		InputStreamReader inputStream = null;
-		urlRequest = (HttpURLConnection) new URL("https://www.googleapis.com/identitytoolkit/v3/relyingparty/"
-				+ "verifyPassword" + "?key=" + "AIzaSyCG8HM6i3TOTOdHAbmKU0TtZjou7hZVxms").openConnection();
+		urlRequest = (HttpURLConnection) new URL("https://identitytoolkit.googleapis.com/v1/"
+				+ "accounts:signInWithPassword" + "?key=" + "AIzaSyCG8HM6i3TOTOdHAbmKU0TtZjou7hZVxms").openConnection();
 
 		urlRequest.setDoOutput(true);
 		urlRequest.setRequestMethod("POST");
 		urlRequest.setRequestProperty("Content-Type", "application/json");
 		OutputStream os = urlRequest.getOutputStream();
 		OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");
-		osw.write("{\"email\":\"" + usuario.getEmail() + "\",\"password\":\"" + usuario.getSenha()
+		osw.write("{\"email\":\"" + usuario.getEmail().trim() + "\",\"password\":\"" + usuario.getSenha().trim()
 				+ "\",\"returnSecureToken\":true}");
 		osw.flush();
 		osw.close();
@@ -78,6 +78,29 @@ public class FirebaseHelper {
 		inputStream.close();
 		urlRequest.disconnect();
 		return rootobj.get("localId").getAsString();
+	}
+
+	public static boolean redefinirSenha(Usuario usuario) throws Exception {
+		HttpURLConnection urlRequest = null;
+		InputStreamReader inputStream = null;
+		urlRequest = (HttpURLConnection) new URL("https://www.googleapis.com/identitytoolkit/v1/"
+				+ "accounts:sendOobCode" + "?key=" + "AIzaSyCG8HM6i3TOTOdHAbmKU0TtZjou7hZVxms").openConnection();
+		urlRequest.setDoOutput(true);
+		urlRequest.setRequestMethod("POST");
+		urlRequest.setRequestProperty("Content-Type", "application/json");
+		OutputStream os = urlRequest.getOutputStream();
+		OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");
+		String s = "{\"requestType\":\"PASSWORD_RESET\",\"email\":\"[" + usuario.getEmail().trim() + "]}";
+		osw.write(s);
+		osw.flush();
+		osw.close();
+		urlRequest.connect();
+		inputStream = new InputStreamReader((InputStream) urlRequest.getContent());
+		JsonObject rootobj = new JsonParser().parse(inputStream).getAsJsonObject();
+		inputStream.close();
+		urlRequest.disconnect();
+		String result = rootobj.get("email").getAsString();
+		return result == null ? false : result.isEmpty() ? false : true;
 	}
 
 	public static ApiFuture<UserRecord> cadastrarUsuario(Usuario usuario) throws Exception {
@@ -92,16 +115,6 @@ public class FirebaseHelper {
 		return auth.updateUserAsync(new UpdateRequest(usuario.get_ID()).setEmail(usuario.getEmail())
 				.setPassword(usuario.getSenha()).setDisplayName(usuario.getNome()).setPhotoUrl(usuario.getUriFoto())
 				.setEmailVerified(false).setDisabled(!usuario.isHabilitado()));
-	}
-
-	public static ApiFuture<String> verificarEmail(String email) throws Exception {
-		init();
-		return auth.generateEmailVerificationLinkAsync(email);
-	}
-
-	public static ApiFuture<String> redefinirSenha(String email) throws Exception {
-		init();
-		return auth.generatePasswordResetLinkAsync(email);
 	}
 
 	public static void carregarImagemUsuario(Usuario usuario) throws Exception {

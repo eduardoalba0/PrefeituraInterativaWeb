@@ -8,18 +8,20 @@
 <h:head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<title>Prefeitura Interativa</title>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 	<link type="text/css" rel="stylesheet"
 		href="#{request.contextPath}/css/style.css" />
 </h:head>
 <h:body>
-	<p:growl id="mensagem" widgetVar="growl"/>
+	<p:growl id="mensagem" widgetVar="growl" showDetail="true"/>
 	<h:outputStylesheet name="primeicons/primeicons.css"
 		library="primefaces" />
 	<div id="geral">
 		<div id="cabecalho"></div>
 		<div id="menu" class="menu-floating">
 			<h:form>
-				<p:megaMenu orientation="vertical">
+				<p:megaMenu orientation="vertical"
+					rendered="#{loginBean.funcionarioLogado != null}">
 					<p:submenu label="Solicitações" icon="pi pi-check">
 						<p:column>
 							<p:submenu label="Listar">

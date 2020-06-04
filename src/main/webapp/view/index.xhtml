@@ -1,56 +1,83 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
-	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-<h:head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>Prefeitura Interativa</title>
-	<link type="text/css" rel="stylesheet"
-		href="#{request.contextPath}/css/style.css" />
-</h:head>
-<h:body>
-	<p:growl id="mensagem" widgetVar="growl" />
-	<h:outputStylesheet name="primeicons/primeicons.css"
-		library="primefaces" />
-	<h:form id="formLogin" class="centerDiv">
-		<p:panel id="painelLogin" class="centeredColumn">
-			<p:commandButton icon="icon-app" iconPos="center"
-				style="background: transparent !important; width: 120px !important; height: 120px !important;"
-				update=":mensagem" />
-			<h1>Prefeitura Interativa</h1>
-			<div class="ui-g">
-				<div class="ui-g-12">
-					<div class="ui-inputgroup">
-						<span class="ui-inputgroup-addon"><i class="pi pi-envelope"></i></span>
-						<p:inputText id="email" value="#{loginBean.usuario.email}"
-							title="Informe seu e-mail." maxlength="40" required="true"
-							autocomplete="true" requiredMessage="E-mail é obrigatório."
-							validatorMessage="Seu e-mail está inválido.">
-							<f:validateRegex
-								pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
-						</p:inputText>
-						<p:tooltip for="email" position="top" />
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="templates/menulateral.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="formLogin" class="centerDiv">
+			<p:panel id="painelLogin" class="centeredColumn">
+				<p:commandButton icon="icon-app" iconPos="center"
+					style="background: transparent !important; width: 120px !important; height: 120px !important;"
+					update=":mensagem" />
+				<h1>Prefeitura Interativa</h1>
+				<div class="ui-g">
+					<div class="ui-g-12">
+						<div class="ui-inputgroup">
+							<span class="ui-inputgroup-addon"><i
+								class="pi pi-envelope"></i></span>
+							<p:inputText id="email" value="#{loginBean.usuario.email}"
+								title="Informe seu e-mail." maxlength="40" required="true"
+								autocomplete="true" requiredMessage="E-mail é obrigatório."
+								validatorMessage="Seu e-mail está inválido.">
+								<f:validateRegex
+									pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+							</p:inputText>
+							<p:tooltip for="email" />
+						</div>
+					</div>
+					<div class="ui-g-12">
+						<div class="ui-inputgroup">
+							<span class="ui-inputgroup-addon"><i class="pi pi-key"></i></span>
+							<p:password id="senha" value="#{loginBean.usuario.senha}"
+								title="Informe sua Senha." maxlength="10" required="true"
+								autocomplete="true" requiredMessage="Senha é obrigatória." />
+							<p:tooltip for="senha" />
+						</div>
+					</div>
+					<div class="ui-g-12">
+						<p:commandLink id="btRedefinir"
+							onclick="PF('dialogRedefinir').show();">
+							<h:outputText value="Esqueci minha senha" />
+						</p:commandLink>
+					</div>
+					<div class="ui-g-12">
+						<p:commandButton id="btLogar" type="submit" value="Entrar"
+							icon="pi pi-check" action="#{loginBean.logar()}"
+							update=":mensagem :formLogin:painelLogin :dialogRedefinir" />
 					</div>
 				</div>
-				<div class="ui-g-12">
-					<div class="ui-inputgroup">
-						<span class="ui-inputgroup-addon"><i class="pi pi-key"></i></span>
-						<p:password id="senha" value="#{loginBean.usuario.senha}"
-							title="Informe sua Senha." maxlength="10" required="true"
-							autocomplete="true" requiredMessage="Senha é obrigatória." />
-						<p:tooltip for="senha" position="top" />
+			</p:panel>
+		</h:form>
+		<p:sidebar id="dialogRedefinir" widgetVar="dialogRedefinir"
+			position="bottom">
+			<h:form class="centeredColumn">
+				<div class="ui-g">
+					<div class="ui-g-12">
+						<h2>Esqueci minha senha</h2>
+					</div>
+					<div class="ui-g-12">
+						<div class="ui-inputgroup">
+							<span class="ui-inputgroup-addon"><i
+								class="pi pi-envelope"></i></span>
+							<p:inputText id="email" value="#{loginBean.usuario.email}"
+								title="Informe seu e-mail." maxlength="40" required="true"
+								autocomplete="true" requiredMessage="E-mail é obrigatório."
+								validatorMessage="Seu e-mail está inválido.">
+								<f:validateRegex
+									pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+							</p:inputText>
+							<p:tooltip for="email" />
+						</div>
+					</div>
+					<div class="ui-g-12">
+						<p:commandButton id="btRedefinir" type="submit" icon="pi pi-check"
+							value="Redefinir Senha" action="#{loginBean.redefinirSenha()}"
+							update=":mensagem :dialogRedefinir :formLogin:painelLogin" />
 					</div>
 				</div>
-				<div class="ui-g-12">
-					<p:commandButton type="submit" value="Entrar" icon="pi pi-check"
-						action="#{loginBean.logar()}" styleClass="centeredColumn"
-						update=":mensagem :formLogin:painelLogin" />
-				</div>
-			</div>
-		</p:panel>
-	</h:form>
-</h:body>
-</html>
+			</h:form>
+		</p:sidebar>
+	</ui:define>
+</ui:composition>
