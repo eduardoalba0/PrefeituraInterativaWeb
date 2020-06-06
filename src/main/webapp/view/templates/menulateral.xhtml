@@ -8,6 +8,8 @@
 <h:head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<title>Prefeitura Interativa</title>
+	<link rel="shortcut icon"
+		href="#{request.contextPath}/images/icone_prefeitura_interativa.svg" />
 	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-app.js" />
 	<script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-auth.js" />
@@ -17,31 +19,46 @@
 		href="#{request.contextPath}/css/style.css" />
 </h:head>
 <h:body>
-	<p:growl id="mensagem" widgetVar="growl" showDetail="true"/>
+	<p:growl id="mensagem" widgetVar="growl" showDetail="true" />
 	<h:outputStylesheet name="primeicons/primeicons.css"
 		library="primefaces" />
-	<div id="geral">
-		<div id="cabecalho"></div>
-		<div id="menu" class="menu-floating">
+	<p:layout fullPage="true">
+		<p:layoutUnit id="top" position="north" size="40"
+			rendered="#{loginBean.funcionarioLogado != null}">
+			<!-- Cabeçalho -->
+		</p:layoutUnit>
+		<p:layoutUnit id="left" position="west" closable="false"
+			collapsible="true" rendered="#{loginBean.funcionarioLogado != null}">
+			<!-- Menu à Esquerda -->
 			<h:form>
-				<p:megaMenu orientation="vertical"
-					rendered="#{loginBean.funcionarioLogado != null}">
-					<p:submenu label="Solicitações" icon="pi pi-check">
-						<p:column>
-							<p:submenu label="Listar">
-								<p:menuitem value="Listar" url="#" />
-							</p:submenu>
-						</p:column>
+				<p:menu>
+					<p:submenu label="Solicitações">
+						<p:menuitem value="Listar" url="#" />
 					</p:submenu>
-				</p:megaMenu>
+					<p:menuitem value="Deslogar" oncomplete="logout()" />
+				</p:menu>
 			</h:form>
-		</div>
-		<div id="conteudo">
+		</p:layoutUnit>
+		<p:layoutUnit id="center" position="center">
+			<!-- Conteúdo -->
 			<ui:insert name="conteudo" />
-		</div>
-	</div>
+		</p:layoutUnit>
+		<p:layoutUnit position="south" size="100">
+			<div class="ui-g centeredColumn ui-texto">
+				<div class="ui-g-12">
+					<h:outputText value="Elaborado por Eduardo Luiz Alba (2020) " />
+				</div>
+				<div class="ui-g-12">
+					<h:outputText value="Todos os Direitos Reservados." />
+				</div>
+			</div>
+		</p:layoutUnit>
+	</p:layout>
+	<ui:insert name="modals" />
 	<h:form>
-		<p:remoteCommand name="autenticarLogin" action="#{loginBean.autenticarLogin()}" />
+		<p:remoteCommand name="autenticarLogin"
+			action="#{loginBean.autenticarLogin()}" />
+		<p:remoteCommand name="deslogar" action="#{loginBean.deslogar()}" />
 	</h:form>
 </h:body>
 </html>

@@ -9,8 +9,7 @@
 		<h:form id="formLogin" class="centerDiv">
 			<p:panel id="painelLogin" class="centeredColumn">
 				<p:commandButton icon="icon-app" iconPos="center"
-					style="background: transparent !important; width: 120px !important; height: 120px !important;"
-					update=":mensagem" />
+					style="background: transparent !important; width: 120px !important; height: 120px !important;" />
 				<h1>Prefeitura Interativa</h1>
 				<div class="ui-g">
 					<div class="ui-g-12">
@@ -44,12 +43,13 @@
 					</div>
 					<div class="ui-g-12">
 						<p:commandButton id="btLogar" type="submit" value="Entrar"
-							icon="pi pi-check" oncomplete="login()"
-							update=":mensagem :dialogRedefinir" />
+							icon="pi pi-check" oncomplete="login()" update=":mensagem" />
 					</div>
 				</div>
 			</p:panel>
 		</h:form>
+	</ui:define>
+	<ui:define name="modals">
 		<p:sidebar id="dialogRedefinir" widgetVar="dialogRedefinir"
 			position="bottom">
 			<h:form id="formRedefinicao" class="centeredColumn">

@@ -28,7 +28,6 @@ function login() {
 	initFirebase();
 	var  valemail = document.getElementById("formLogin:email").value;
 	var  valsenha = document.getElementById("formLogin:senha").value;
-	auth.signOut();
 	auth.signInWithEmailAndPassword(valemail, valsenha)
 		.catch(function(error) {
 			switch(error.code){
@@ -40,8 +39,21 @@ function login() {
 				PF('growl').removeAll();
 				PF('growl').renderMessage({summary:"Erro!", detail: "O e-mail informado não pertence a nenhuma conta.", severity: "error"});
 				break;
+			default:
+				PF('growl').removeAll();
+				PF('growl').renderMessage({summary:"Erro!", detail: "Ocorreu um erro ao logar. Consulte o suporte do sistema.", severity: "error"});
 			}
 		});
+}
+
+function logout(){
+	initFirebase();
+	auth.signOut()
+	.then(deslogar())
+	.catch(function(error) {
+		PF('growl').removeAll();
+		PF('growl').renderMessage({summary:"Erro!", detail: "Ocorreu um erro ao deslogar. Consulte o suporte do sistema.", severity: "error"});
+	});
 }
 
 function redefinirSenha() {

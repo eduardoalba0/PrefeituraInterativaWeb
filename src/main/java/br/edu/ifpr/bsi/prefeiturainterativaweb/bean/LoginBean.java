@@ -2,10 +2,11 @@ package br.edu.ifpr.bsi.prefeiturainterativaweb.bean;
 
 import java.io.Serializable;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
+import javax.enterprise.inject.Produces;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.google.api.core.ApiFuture;
@@ -23,13 +24,18 @@ import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.FirebaseHelper;
 @SuppressWarnings("serial")
 public class LoginBean implements Serializable {
 
-	private Usuario usuario;
+	@Produces
+	@Named("#{funcionarioLogado}")
 	private Funcionario funcionarioLogado;
 
-	@Inject
+	private Usuario usuario;
+
+	@PostConstruct
 	public void init() {
 		if (usuario == null)
 			usuario = new Usuario();
+		if (funcionarioLogado != null)
+			redirect("/web/view/solicitacoes.xhtml", null);
 
 	}
 
@@ -41,30 +47,37 @@ public class LoginBean implements Serializable {
 			try {
 				funcionarioLogado = task.get().toObject(Funcionario.class);
 				if (funcionarioLogado == null) {
-					FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-							"Erro!", "Seu usuário não está cadastrado. Consulte o suporte da ferramenta."));
+					redirect("/web/view/index.xhtml", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!",
+							"Seu usuário não está cadastrado. Consulte o suporte da ferramenta."));
 				} else if (funcionarioLogado.getTipoUsuario_ID().equals("6b395be8-a7c1-4971-8dc0-afa04be63a00")) {
 					funcionarioLogado = null;
-					FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-							"Erro!",
+					redirect("/web/view/index.xhtml", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!",
 							"Seu usuário não possuí privilégios para acessar a plataforma. Consulte o suporte da ferramenta."));
 				} else {
-					redirect("/web/view/solicitacoes.xhtml");
-					FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-							"Bem vindo, ", funcionarioLogado.getNome() + "! "));
+					redirect("/web/view/solicitacoes.xhtml", new FacesMessage(FacesMessage.SEVERITY_INFO, "Bem vindo, ",
+							funcionarioLogado.getNome() + "! "));
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
 				funcionarioLogado = null;
-				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-						"Erro!", "Falha ao autenticar dados. Consulte o suporte da ferramenta."));
+				redirect("/web/view/solicitacoes.xhtml", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!",
+						"Falha ao autenticar dados. Consulte o suporte da ferramenta."));
 			}
 		}
 	}
 
-	private void redirect(String pagina) {
+	public void deslogar() {
+		funcionarioLogado = null;
+		redirect("/web/view/index.xhtml", new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso!",
+				"Obrigado por utilizar nossos serviços."));
+	}
+
+	private void redirect(String pagina, FacesMessage mensagem) {
 		try {
-			FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
+			if (mensagem != null) {
+				FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
+				FacesContext.getCurrentInstance().addMessage(null, mensagem);
+			}
 			FacesContext.getCurrentInstance().getExternalContext().redirect(pagina);
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -83,6 +96,10 @@ public class LoginBean implements Serializable {
 		return usuario;
 	}
 
+	public void setFuncionarioLogado(Funcionario funcionarioLogado) {
+		this.funcionarioLogado = funcionarioLogado;
+	}
+	
 	public Funcionario getFuncionarioLogado() {
 		return funcionarioLogado;
 	}
