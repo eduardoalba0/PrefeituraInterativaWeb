@@ -23,6 +23,12 @@ body {
     background: linear-gradient(to left, var(--color-orange) 0%, var(--color-pink) 100%) !important;
 }
 
+.ui-layout-unit,
+.ui-layout-resizer{
+	background: transparent !important;
+	border: transparent !important;
+}
+
 .ui-chips .ui-chips-container .ui-chips-token,
 .ui-button {
     background-color: var(--color-orange) !important;
@@ -31,7 +37,6 @@ body {
     color: white !important;
 }
 
-.ui-menu .ui-menu-list .ui-widget-header:first-child,
 .ui-datatable table {
     background: linear-gradient(to right, var(--color-orange) 0%, var(--color-pink) 100%) !important;
 }
@@ -57,7 +62,7 @@ body {
 /* Sombras e Bordas*/
 .ui-button .ui-button-text,
 .ui-inputgroup .ui-inputgroup-addon:first-child,
-.ui-inputfield{
+.ui-inputgroup>.ui-inputtext, .ui-inputgroup>.ui-password{
 	box-shadow: 0px 2px 2px black !important;
 }
 
@@ -82,13 +87,15 @@ body {
     border-radius: 0px;
     mask-image: url("../images/icone_prefeitura_interativa.svg") !important;
     mask-repeat: no-repeat !important;
+    mask-size: contain !important;
     width: 99% !important;
     height: 95% !important;
     top: 10% !important;
     left: 11% !important;
-    background-color: white;
+    background-color: white !important;
     -webkit-mask-image: url("../images/icone_prefeitura_interativa.svg") !important;
     -webkit-mask-repeat: no-repeat !important;
+    -webkit-mask-size: contain !important;
 }
 
 /* Posicionamento */
@@ -136,6 +143,7 @@ body {
 
 /* Fontes */
 h1, h2, h3,
+.ui-texto,
 .ui-inputtext,
 .ui-password,
 .ui-inputgroup,
@@ -145,7 +153,8 @@ h1, h2, h3,
 .ui-menu,
 .ui-chips,
 .ui-tooltip,
-.ui-datatable{
+.ui-datatable thead th,
+.ui-datatable .ui-datatable-data tr{
 	font-family: fredoka !important;
     color: white !important;
     text-shadow: 2px 2px 2px black !important;

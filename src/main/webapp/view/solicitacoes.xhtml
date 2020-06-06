@@ -10,7 +10,7 @@
 	<ui:define name="conteudo">
 		<h:form id="form">
 			<p:dataTable var="solicitacao"
-				value="#{solicitacaoController.solicitacoes}">
+				value="#{solicitacaoBean.solicitacoes}">
 				<p:column headerText="Cidadão">
 					<h:outputText
 						value="#{solicitacao.anonima ? 'Anônimo' : solicitacao.usuario.nome}" />
@@ -29,25 +29,25 @@
 				<p:column headerText="Opções" style="width:13%;"
 					styleClass="centeredColumn" resizable="true">
 					<p:commandButton icon="pi pi-external-link" title="Visualizar"
-						actionListener="#{solicitacaoController.visualizar}"
+						actionListener="#{solicitacaoBean.visualizar}"
 						update=":mensagem">
 						<f:attribute name="solicitacaoSelecionada" value="#{solicitacao}" />
 					</p:commandButton>
 					<p:commandButton icon="pi pi-check" title="Responder"
 						styleClass="ui-success-color"
-						actionListener="#{solicitacaoController.responder}"
+						actionListener="#{solicitacaoBean.responder}"
 						update=":mensagem :dialogResposta"
 						oncomplete="PF('dialogo').show()">
 						<f:attribute name="solicitacaoSelecionada" value="#{solicitacao}" />
 					</p:commandButton>
 					<p:commandButton icon="pi pi-arrow-right" title="Encaminhar"
-						actionListener="#{solicitacaoController.encaminhar}"
+						actionListener="#{solicitacaoBean.encaminhar}"
 						update=":mensagem">
 						<f:attribute name="solicitacaoSelecionada" value="#{solicitacao}" />
 					</p:commandButton>
 					<p:commandButton icon="pi pi-ban" styleClass="ui-danger-color"
 						title="Bloquear usuário"
-						actionListener="#{solicitacaoController.denunciar}"
+						actionListener="#{solicitacaoBean.denunciar}"
 						update=":mensagem">
 						<f:attribute name="solicitacaoSelecionada" value="#{solicitacao}" />
 					</p:commandButton>
