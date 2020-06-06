@@ -11,7 +11,7 @@ import com.google.cloud.firestore.WriteResult;
 
 public class DatabaseHelper {
 
-	public static Firestore getDatabase() throws Exception {
+	public static Firestore getDatabase() {
 		return FirebaseHelper.getDatabase();
 	}
 

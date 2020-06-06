@@ -13,22 +13,22 @@ public class UsuarioDAO {
 
 	private static CollectionReference reference;
 
-	private static void init() throws Exception {
+	private static void init() {
 		if (reference == null)
 			reference = DatabaseHelper.getDatabase().collection("Usuarios");
 	}
 
-	public static ApiFuture<QuerySnapshot> getAll() throws Exception {
+	public static ApiFuture<QuerySnapshot> getAll() {
 		init();
 		return DatabaseHelper.getAll(reference);
 	}
 
-	public static ApiFuture<WriteResult> merge(Usuario usuario) throws Exception {
+	public static ApiFuture<WriteResult> merge(Usuario usuario) {
 		init();
 		return DatabaseHelper.merge(reference.document(usuario.get_ID()), usuario);
 	}
 
-	public static ApiFuture<DocumentSnapshot> get(String _ID) throws Exception {
+	public static ApiFuture<DocumentSnapshot> get(String _ID) {
 		init();
 		return DatabaseHelper.get(reference.document(_ID));
 	}

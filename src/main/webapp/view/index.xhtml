@@ -44,15 +44,15 @@
 					</div>
 					<div class="ui-g-12">
 						<p:commandButton id="btLogar" type="submit" value="Entrar"
-							icon="pi pi-check" action="#{loginBean.logar()}"
-							update=":mensagem :formLogin:painelLogin :dialogRedefinir" />
+							icon="pi pi-check" oncomplete="login()"
+							update=":mensagem :dialogRedefinir" />
 					</div>
 				</div>
 			</p:panel>
 		</h:form>
 		<p:sidebar id="dialogRedefinir" widgetVar="dialogRedefinir"
 			position="bottom">
-			<h:form class="centeredColumn">
+			<h:form id="formRedefinicao" class="centeredColumn">
 				<div class="ui-g">
 					<div class="ui-g-12">
 						<h2>Esqueci minha senha</h2>
@@ -73,7 +73,8 @@
 					</div>
 					<div class="ui-g-12">
 						<p:commandButton id="btRedefinir" type="submit" icon="pi pi-check"
-							value="Redefinir Senha" action="#{loginBean.redefinirSenha()}"
+							value="Redefinir Senha"
+							oncomplete="if(!args.validationFailed){redefinirSenha();}"
 							update=":mensagem :dialogRedefinir :formLogin:painelLogin" />
 					</div>
 				</div>

@@ -8,6 +8,11 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.DocumentSnapshot;
+import com.google.firebase.auth.UserRecord;
+import com.google.gson.Gson;
+
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.UsuarioDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Funcionario;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Usuario;
@@ -23,45 +28,49 @@ public class LoginBean implements Serializable {
 
 	@Inject
 	public void init() {
-		usuario = new Usuario();
+		if (usuario == null)
+			usuario = new Usuario();
 
 	}
 
-	public void logar() {
-		FacesContext context = FacesContext.getCurrentInstance();
-		context.addMessage(null,
-				new FacesMessage(FacesMessage.SEVERITY_INFO, "Autenticando dados...", "Por favor, aguarde."));
-		try {
-			String usuarioId = FirebaseHelper.logar(usuario);
-			if (usuarioId != null && !usuarioId.isEmpty()) {
-				funcionarioLogado = UsuarioDAO.get(usuarioId).get().toObject(Funcionario.class);
-				context.addMessage(null,
-						new FacesMessage(FacesMessage.SEVERITY_INFO, "Bem vindo! ", funcionarioLogado.getNome()));
-				context.getExternalContext().getFlash().setKeepMessages(true);
-				context.getExternalContext().redirect("/PrefeituraInterativa/view/solicitacoes.xhtml");
-			} else
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Dados inválidos!",
-						"verifique seu e-mail e/ou senha"));
-		} catch (Exception ex) {
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Dados inválidos!",
-					"verifique seu e-mail e/ou senha"));
-		} finally {
-			usuario = new Usuario();
+	public void autenticarLogin() {
+		String uid = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("uid");
+		UserRecord objJson = new Gson().fromJson(uid, UserRecord.class);
+		if (FirebaseHelper.userEquals(objJson, FirebaseHelper.buscarUsuario(objJson))) {
+			ApiFuture<DocumentSnapshot> task = UsuarioDAO.get(objJson.getUid());
+			try {
+				funcionarioLogado = task.get().toObject(Funcionario.class);
+				if (funcionarioLogado == null) {
+					FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"Erro!", "Seu usuário não está cadastrado. Consulte o suporte da ferramenta."));
+				} else if (funcionarioLogado.getTipoUsuario_ID().equals("6b395be8-a7c1-4971-8dc0-afa04be63a00")) {
+					funcionarioLogado = null;
+					FacesContext.getCurrentInstance().addMessage("growl", new FacesMessage(FacesMessage.SEVERITY_ERROR,
+							"Erro!",
+							"Seu usuário não possuí privilégios para acessar a plataforma. Consulte o suporte da ferramenta."));
+				} else {
+					redirect("/web/view/solicitacoes.xhtml");
+					FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+							"Bem vindo, ", funcionarioLogado.getNome() + "! "));
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				funcionarioLogado = null;
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+						"Erro!", "Falha ao autenticar dados. Consulte o suporte da ferramenta."));
+			}
 		}
 	}
 
-	public void redefinirSenha() {
-		FacesContext context = FacesContext.getCurrentInstance();
+	private void redirect(String pagina) {
 		try {
-			if (FirebaseHelper.redefinirSenha(usuario)) {
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso! ",
-						"Clique no link enviado para seu e-mail para redefinir sua senha."));
-				context.getExternalContext().getFlash().setKeepMessages(true);
-			}
+			FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
+			FacesContext.getCurrentInstance().getExternalContext().redirect(pagina);
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "E-mail não encontrado!",
-					"verifique se digitou corretamente seu e-mail."));
+			funcionarioLogado = null;
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!",
+					"Ocorreu uma falha ao autenticar seus dados. Consulte o suporte da ferramenta."));
 		}
 
 	}
@@ -72,10 +81,6 @@ public class LoginBean implements Serializable {
 
 	public Usuario getUsuario() {
 		return usuario;
-	}
-
-	public void setFuncionarioLogado(Funcionario funcionarioLogado) {
-		this.funcionarioLogado = funcionarioLogado;
 	}
 
 	public Funcionario getFuncionarioLogado() {
