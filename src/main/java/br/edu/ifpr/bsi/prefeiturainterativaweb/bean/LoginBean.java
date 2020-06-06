@@ -45,7 +45,7 @@ public class LoginBean implements Serializable {
 							"Erro!", "Seu usuário não está cadastrado. Consulte o suporte da ferramenta."));
 				} else if (funcionarioLogado.getTipoUsuario_ID().equals("6b395be8-a7c1-4971-8dc0-afa04be63a00")) {
 					funcionarioLogado = null;
-					FacesContext.getCurrentInstance().addMessage("growl", new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 							"Erro!",
 							"Seu usuário não possuí privilégios para acessar a plataforma. Consulte o suporte da ferramenta."));
 				} else {
