@@ -1,6 +1,5 @@
 package br.edu.ifpr.bsi.prefeiturainterativaweb.helpers;
 
-import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
@@ -15,19 +14,44 @@ public class DatabaseHelper {
 		return FirebaseHelper.getDatabase();
 	}
 
-	public static <T> ApiFuture<WriteResult> merge(DocumentReference reference, T objeto) {
-		return reference.set(objeto);
+	public static <T> WriteResult merge(DocumentReference reference, T objeto) {
+		try {
+			return reference.set(objeto).get();
+		} catch (Exception ex) {
+			return null;
+		}
 	}
 
-	public static ApiFuture<DocumentSnapshot> get(DocumentReference reference){
-		return reference.get();
+	public static WriteResult remove(DocumentReference reference) {
+		try {
+			return reference.delete().get();
+		} catch (Exception ex) {
+			return null;
+		}
 	}
 
-	public static ApiFuture<QuerySnapshot> getAll(CollectionReference reference) {
-		return reference.get();
+	public static DocumentSnapshot get(DocumentReference reference) {
+		try {
+			return reference.get().get();
+		} catch (Exception ex) {
+			return null;
+		}
 	}
 
-	public static ApiFuture<QuerySnapshot> getQuery(Query query) {
-		return query.get();
+	public static QuerySnapshot getAll(CollectionReference reference) {
+		try {
+			return reference.get().get();
+		} catch (Exception ex) {
+			return null;
+		}
 	}
+
+	public static QuerySnapshot getAll(Query query) {
+		try {
+			return query.get().get();
+		} catch (Exception ex) {
+			return null;
+		}
+	}
+
 }
