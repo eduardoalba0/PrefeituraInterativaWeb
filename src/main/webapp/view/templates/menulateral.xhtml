@@ -22,38 +22,32 @@
 	<p:growl id="mensagem" widgetVar="growl" showDetail="true" />
 	<h:outputStylesheet name="primeicons/primeicons.css"
 		library="primefaces" />
-	<p:layout fullPage="true">
-		<p:layoutUnit id="top" position="north" size="40"
-			rendered="#{loginBean.funcionarioLogado != null}">
-			<!-- Cabeçalho -->
-		</p:layoutUnit>
-		<p:layoutUnit id="left" position="west" closable="false"
-			collapsible="true" rendered="#{loginBean.funcionarioLogado != null}">
-			<!-- Menu à Esquerda -->
-			<h:form>
-				<p:menu>
-					<p:submenu label="Solicitações">
-						<p:menuitem value="Listar" url="#" />
-					</p:submenu>
-					<p:menuitem value="Deslogar" oncomplete="logout()" />
-				</p:menu>
-			</h:form>
-		</p:layoutUnit>
-		<p:layoutUnit id="center" position="center">
-			<!-- Conteúdo -->
-			<ui:insert name="conteudo" />
-		</p:layoutUnit>
-		<p:layoutUnit position="south" size="100">
-			<div class="ui-g centeredColumn ui-texto">
-				<div class="ui-g-12">
-					<h:outputText value="Elaborado por Eduardo Luiz Alba (2020) " />
-				</div>
-				<div class="ui-g-12">
-					<h:outputText value="Todos os Direitos Reservados." />
+	<div class="ui-g">
+		<h:form class="ui-g-12 ui-md-2 ui-g-nopad">
+			<p:menu style="width:100%;">
+				<p:submenu label="Solicitações">
+					<p:menuitem value="Listar" url="#" />
+				</p:submenu>
+				<p:menuitem value="Deslogar" oncomplete="logout()" />
+			</p:menu>
+		</h:form>
+		<div class="ui-g-12 ui-md-10 ui-g-nopad">
+			<div class="ui-g-12 ui-g-nopad">
+				<div class="ui-g">
+					<ui:insert name="conteudo" />
 				</div>
 			</div>
-		</p:layoutUnit>
-	</p:layout>
+		</div>
+		<div class="ui-g-12 centeredColumn ui-texto">
+			<!-- Footer -->
+			<div class="ui-g-12">
+				<h:outputText value="Elaborado por Eduardo Luiz Alba (2020) " />
+			</div>
+			<div class="ui-g-12">
+				<h:outputText value="Todos os Direitos Reservados." />
+			</div>
+		</div>
+	</div>
 	<ui:insert name="modals" />
 	<h:form>
 		<p:remoteCommand name="autenticarLogin"
