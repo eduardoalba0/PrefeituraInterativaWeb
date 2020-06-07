@@ -5,54 +5,53 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Produces;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.omnifaces.cdi.ViewScoped;
-
-import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.SolicitacaoDAO;
-import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Atendimento;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.UsuarioDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Funcionario;
-import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Solicitacao;
 
-@Named("solicitacaoBean")
-@ViewScoped
+@Named("funcionarioBean")
+@ApplicationScoped
 @SuppressWarnings("serial")
-public class SolicitacaoBean implements Serializable {
+public class FuncionarioBean implements Serializable {
 
 	@Inject
 	@Named("funcionarioLogado")
 	private Funcionario funcionarioLogado;
 
-	private List<Solicitacao> solicitacoes;
+	@Produces
+	@Named("funcionarios")
+	private List<Funcionario> funcionarios;
 
-	private Solicitacao solicitacao;
-	private Atendimento atendimento;
+	private Funcionario funcionario;
 
 	@PostConstruct
-	public void listar() {
+	public void init() {
+		if (funcionario == null) {
+			funcionario = new Funcionario();
+		}
 
-		if (solicitacao == null)
-			solicitacao = new Solicitacao();
-
-		solicitacoes = SolicitacaoDAO.getAll();
-		if (solicitacoes == null) {
-			solicitacoes = new ArrayList<>();
+		funcionarios = UsuarioDAO.getAllFuncionarios();
+		if (funcionarios == null) {
+			funcionarios = new ArrayList<Funcionario>();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!",
 					"Ocorreu uma falha ao listar os dados. Consulte o suporte da ferramenta."));
 		}
 	}
 
 	public void selecionar(ActionEvent evento) {
-		solicitacao = (Solicitacao) evento.getComponent().getAttributes().get("solicitacaoSelecionada");
+		funcionario = (Funcionario) evento.getComponent().getAttributes().get("funcionarioSelecionado");
 	}
 
 	public void salvar() {
-		if (SolicitacaoDAO.merge(solicitacao)) {
-			solicitacao = new Solicitacao();
+		if (UsuarioDAO.merge(funcionario)) {
+			funcionario = new Funcionario();
 			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso!", "Dados gravados na nuvem."));
 		} else {
@@ -69,28 +68,19 @@ public class SolicitacaoBean implements Serializable {
 		this.funcionarioLogado = funcionarioLogado;
 	}
 
-	public Solicitacao getSolicitacao() {
-		return solicitacao;
+	public Funcionario getFuncionario() {
+		return funcionario;
 	}
 
-	public void setSolicitacao(Solicitacao solicitacao) {
-		this.solicitacao = solicitacao;
+	public void setFuncionario(Funcionario funcionario) {
+		this.funcionario = funcionario;
 	}
 
-	public List<Solicitacao> getSolicitacoes() {
-		return solicitacoes;
+	public List<Funcionario> getFuncionarios() {
+		return funcionarios;
 	}
 
-	public void setSolicitacoes(List<Solicitacao> solicitacoes) {
-		this.solicitacoes = solicitacoes;
+	public void setFuncionarios(List<Funcionario> funcionarios) {
+		this.funcionarios = funcionarios;
 	}
-
-	public Atendimento getAtendimento() {
-		return atendimento;
-	}
-
-	public void setAtendimento(Atendimento atendimento) {
-		this.atendimento = atendimento;
-	}
-
 }
