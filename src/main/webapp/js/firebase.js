@@ -15,21 +15,19 @@ function initFirebase() {
 		};
 		firebaseApp = firebase.initializeApp(firebaseConfig);
 		auth = firebaseApp.auth();
-		auth.onAuthStateChanged(function(user) {
-			  if (user)
-				  autenticarLogin([{name: "uid" , value:JSON.stringify(user)}]);
-			});
 	}
 }
 
 function login() {
-	PF('growl').removeAll();
-	PF('growl').renderMessage({summary:"Aguarde...", detail: "Autenticando seus dados...", severity: "info"});
 	initFirebase();
 	var  valemail = document.getElementById("formLogin:email").value;
 	var  valsenha = document.getElementById("formLogin:senha").value;
 	auth.signInWithEmailAndPassword(valemail, valsenha)
-		.catch(function(error) {
+		.then(function(user){
+			var usuario = {email:valemail, senha:valsenha};
+			autenticar([{name: "uid" , value:JSON.stringify(usuario)}]);
+		}).catch(function(error) {
+			PF('statusDialog').hide();
 			switch(error.code){
 			case 'auth/wrong-password':	
 				PF('growl').removeAll();
@@ -51,21 +49,23 @@ function logout(){
 	auth.signOut()
 	.then(deslogar())
 	.catch(function(error) {
+		console.log(error);
+		PF('statusDialog').hide();
 		PF('growl').removeAll();
 		PF('growl').renderMessage({summary:"Erro!", detail: "Ocorreu um erro ao deslogar. Consulte o suporte do sistema.", severity: "error"});
 	});
 }
 
 function redefinirSenha() {
-	PF('growl').removeAll();
-	PF('growl').renderMessage({summary:"Aguarde.", detail: "Autenticando seus dados...", severity: "info"});
 	var valemail = document.getElementById("formRedefinicao:email").value;
 	if(auth == null)
 		initFirebase();
 	auth.sendPasswordResetEmail(valemail).then(function(){
+		PF('statusDialog').hide();
 		PF('growl').removeAll();
 		PF('growl').renderMessage({summary:"Sucesso!", detail: "Clique no link enviado para seu e-mail para redefinir a senha.", severity: "info"});
 	}).catch(function(error){
+		PF('statusDialog').hide();
 		switch(error.code){
 		case 'auth/user-not-found':
 			PF('growl').removeAll();

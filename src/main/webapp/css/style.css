@@ -37,14 +37,6 @@ body {
     color: white !important;
 }
 
-.ui-datatable table {
-    background: linear-gradient(to right, var(--color-orange) 0%, var(--color-pink) 100%) !important;
-}
-
-.ui-datatable thead th {
-    background-color: transparent !important;
-}
-
 .ui-inputgroup .ui-inputgroup-addon {
     background-color: var(--color-orange) !important;
     border-color: var(--color-orange) !important;
@@ -110,6 +102,10 @@ body {
   	top: 40%;
   	transform: translate(-50%, -50%);
 }
+.ui-widget-content .ui-datatable-empty-message,
+.ui-widget-header{
+	text-align: center !important;
+}
 
 .ui-inputgroup .ui-inputgroup-addon{
 	margin-left: auto !important;
@@ -153,6 +149,7 @@ h1, h2, h3,
 .ui-menu,
 .ui-chips,
 .ui-tooltip,
+.ui-dialog-title,
 .ui-datatable thead th,
 .ui-datatable .ui-datatable-data tr{
 	font-family: fredoka !important;
@@ -160,8 +157,10 @@ h1, h2, h3,
     text-shadow: 2px 2px 2px black !important;
 }
 
+.ui-growl-message,
 .ui-button, .ui-menu, .ui-chips{
 	font-size: 13pt !important;
+	font-family: fredoka !important;
 }
 
 @font-face{

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="templates/menulateral.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form-departamentos">
+			<p:dataTable id="tabela-departamentos" var="departamento"
+				value="#{departamentos}"
+				emptyMessage="Nenhum departamento inserido no banco de dados."
+				clientCache="true" paginator="true" paginatorPosition="bottom"
+				rows="20">
+				<p:column headerText="Descrição">
+					<h:outputText value="#{departamento.descricao}" />
+				</p:column>
+
+				<p:column headerText="Categorias" width="30%;"
+					styleClass="centeredColumn" resizable="true">
+					<p:chips id="categorias" value="#{departamento.localCategorias}"
+						style="width:100%" />
+				</p:column>
+
+				<p:column headerText="Opções" style="width:13%;"
+					styleClass="centeredColumn" resizable="true">
+					<p:commandButton icon="pi pi-pencil" title="Editar"
+						actionListener="#{departamentoBean.editar}" update=":mensagem">
+						<f:attribute name="departamentoSelecionado"
+							value="#{departamento}" />
+					</p:commandButton>
+					<p:commandButton icon="pi pi-ban" styleClass="ui-danger-color"
+						title="Desabilitar" actionListener="#{departamentoBean.desabilitar}"
+						update=":mensagem">
+						<f:attribute name="departamentoSelecionado"
+							value="#{departamento}" />
+					</p:commandButton>
+					<p:commandButton icon="pi pi-trash" styleClass="ui-danger-color"
+						title="Remover" actionListener="#{departamentoBean.remover}"
+						update=":mensagem">
+						<f:attribute name="departamentoSelecionado"
+							value="#{departamento}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</h:form>
+		<p:dialog id="dialogResposta" widgetVar="dialogo" resizable="false"
+			draggable="false" modal="false">
+			<h:form id="formResposta">
+				<h:panelGrid columns="2">
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

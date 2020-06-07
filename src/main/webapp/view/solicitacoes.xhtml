@@ -10,7 +10,10 @@
 	<ui:define name="conteudo">
 		<h:form id="form">
 			<p:dataTable var="solicitacao"
-				value="#{solicitacaoBean.solicitacoes}">
+				value="#{solicitacaoBean.solicitacoes}"
+				emptyMessage="Nenhuma solicitação inserida no banco de dados."
+				clientCache="true" paginator="true" paginatorPosition="bottom"
+				rows="20">
 				<p:column headerText="Cidadão">
 					<h:outputText
 						value="#{solicitacao.anonima ? 'Anônimo' : solicitacao.usuario.nome}" />
@@ -22,15 +25,14 @@
 						style="width:100%" />
 				</p:column>
 
-				<p:column headerText="Descricao" width="30%;"
+				<p:column headerText="Descrição" width="30%;"
 					styleClass="centeredColumn" resizable="true">
 					<h:outputText value="#{solicitacao.descricao}" />
 				</p:column>
 				<p:column headerText="Opções" style="width:13%;"
 					styleClass="centeredColumn" resizable="true">
 					<p:commandButton icon="pi pi-external-link" title="Visualizar"
-						actionListener="#{solicitacaoBean.visualizar}"
-						update=":mensagem">
+						actionListener="#{solicitacaoBean.visualizar}" update=":mensagem">
 						<f:attribute name="solicitacaoSelecionada" value="#{solicitacao}" />
 					</p:commandButton>
 					<p:commandButton icon="pi pi-check" title="Responder"
@@ -41,14 +43,12 @@
 						<f:attribute name="solicitacaoSelecionada" value="#{solicitacao}" />
 					</p:commandButton>
 					<p:commandButton icon="pi pi-arrow-right" title="Encaminhar"
-						actionListener="#{solicitacaoBean.encaminhar}"
-						update=":mensagem">
+						actionListener="#{solicitacaoBean.encaminhar}" update=":mensagem">
 						<f:attribute name="solicitacaoSelecionada" value="#{solicitacao}" />
 					</p:commandButton>
 					<p:commandButton icon="pi pi-ban" styleClass="ui-danger-color"
 						title="Bloquear usuário"
-						actionListener="#{solicitacaoBean.denunciar}"
-						update=":mensagem">
+						actionListener="#{solicitacaoBean.denunciar}" update=":mensagem">
 						<f:attribute name="solicitacaoSelecionada" value="#{solicitacao}" />
 					</p:commandButton>
 				</p:column>
@@ -60,18 +60,17 @@
 				<h:panelGrid columns="2">
 					<p:outputLabel value="Descricao" for="descricao" />
 					<p:inputTextarea id="descricao" maxlength="500" size="500"
-						value="#{solicitacaoController.solicitacao.descricao}"
-						required="true" requiredMessage="Campo obrigatório." />
+						value="#{solicitacaoBean.solicitacao.descricao}" required="true"
+						requiredMessage="Campo obrigatório." />
 					<p:outputLabel value="Resposta" for="resposta" />
 					<p:inputTextarea id="resposta" maxlength="500" size="500"
-						value="#{solicitacaoController.atendimento.resposta}"
-						required="true" requiredMessage="Campo obrigatório." />
+						value="#{solicitacaoBean.atendimento.resposta}" required="true"
+						requiredMessage="Campo obrigatório." />
 					<p:outputLabel value="Ação" for="acao" />
 					<p:inputTextarea id="acao" maxlength="500" size="500"
-						value="#{solicitacaoController.atendimento.acao}" required="true"
+						value="#{solicitacaoBean.atendimento.acao}" required="true"
 						requiredMessage="Campo obrigatório." />
-					<p:commandButton value="Salvar"
-						action="#{solicitacaoController.salvar}"
+					<p:commandButton value="Salvar" action="#{solicitacaoBean.salvar}"
 						oncomplete="PF('dialogo').hide()" />
 					<p:commandButton value="Fechar" oncomplete="PF('dialogo').hide()" />
 				</h:panelGrid>

@@ -23,36 +23,59 @@
 	<h:outputStylesheet name="primeicons/primeicons.css"
 		library="primefaces" />
 	<div class="ui-g">
-		<h:form class="ui-g-12 ui-md-2 ui-g-nopad">
+		<h:form class="ui-g-12 ui-md-2 ui-g-nopad"
+			rendered="#{funcionarioLogado != null}">
 			<p:menu style="width:100%;">
-				<p:submenu label="Solicitações">
-					<p:menuitem value="Listar" url="#" />
+				<p:submenu label="Gerenciamento">
+					<p:menuitem value="Atendimentos" url="/web/view/atendimentos.xhtml" />
+					<p:menuitem value="Solicitacoes" url="/web/view/solicitacoes.xhtml" />
+					<p:menuitem value="Mapeamento" url="/web/view/usuarios.xhtml" />
 				</p:submenu>
-				<p:menuitem value="Deslogar" oncomplete="logout()" />
+				<p:submenu label="Administrativo">
+					<p:menuitem value="Categorias" url="/web/view/categorias.xhtml" />
+					<p:menuitem value="Departamentos"
+						url="/web/view/departamentos.xhtml" />
+					<p:menuitem value="Permissões" url="/web/view/permissoes.xhtml" />
+					<p:menuitem value="Usuários" url="/web/view/usuarios.xhtml" />
+				</p:submenu>
+				<p:submenu label="Opções">
+					<p:menuitem value="Meus dados" url="/web/view/meusdados.xhtml" />
+					<p:menuitem value="Deslogar" onstart="PF('statusDialog').show();"
+							onerror="PF('statusDialog').hide();" oncomplete="logout()" />
+				</p:submenu>
 			</p:menu>
 		</h:form>
 		<div class="ui-g-12 ui-md-10 ui-g-nopad">
 			<div class="ui-g-12 ui-g-nopad">
-				<div class="ui-g">
-					<ui:insert name="conteudo" />
-				</div>
+				<ui:insert name="conteudo" />
 			</div>
 		</div>
 		<div class="ui-g-12 centeredColumn ui-texto">
 			<!-- Footer -->
 			<div class="ui-g-12">
-				<h:outputText value="Elaborado por Eduardo Luiz Alba (2020) " />
+				<h:outputText value="Elaborado por Eduardo Luiz Alba (2020) "
+					rendered="#{funcionarioLogado != null}" />
 			</div>
 			<div class="ui-g-12">
-				<h:outputText value="Todos os Direitos Reservados." />
+				<h:outputText value="Todos os Direitos Reservados."
+					rendered="#{funcionarioLogado != null}" />
 			</div>
 		</div>
 	</div>
-	<ui:insert name="modals" />
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+		closable="false" resizable="false" showHeader="true"
+		header="Aguarde um momento...">
+		<br />
+		<div class="ui-g">
+			<p:graphicImage value="/images/icone_carregamento.gif" />
+		</div>
+		<br />
+
+	</p:dialog>
 	<h:form>
-		<p:remoteCommand name="autenticarLogin"
-			action="#{loginBean.autenticarLogin()}" />
-		<p:remoteCommand name="deslogar" action="#{loginBean.deslogar()}" />
+		<p:remoteCommand name="autenticar"
+			action="#{usuarioBean.autenticar()}" />
+		<p:remoteCommand name="deslogar" action="#{usuarioBean.deslogar()}" />
 	</h:form>
 </h:body>
 </html>

@@ -6,6 +6,7 @@
 	template="templates/menulateral.xhtml">
 
 	<ui:define name="conteudo">
+		<f:event type="preRenderView" listener="#{usuarioBean.init()}" />
 		<h:form id="formLogin" class="centerDiv">
 			<p:panel id="painelLogin" class="centeredColumn">
 				<p:commandButton icon="icon-app" iconPos="center"
@@ -16,7 +17,7 @@
 						<div class="ui-inputgroup">
 							<span class="ui-inputgroup-addon"><i
 								class="pi pi-envelope"></i></span>
-							<p:inputText id="email" value="#{loginBean.usuario.email}"
+							<p:inputText id="email" value="#{usuarioBean.usuario.email}"
 								title="Informe seu e-mail." maxlength="40" required="true"
 								autocomplete="true" requiredMessage="E-mail é obrigatório."
 								validatorMessage="Seu e-mail está inválido.">
@@ -29,7 +30,7 @@
 					<div class="ui-g-12">
 						<div class="ui-inputgroup">
 							<span class="ui-inputgroup-addon"><i class="pi pi-key"></i></span>
-							<p:password id="senha" value="#{loginBean.usuario.senha}"
+							<p:password id="senha" value="#{usuarioBean.usuario.senha}"
 								title="Informe sua Senha." maxlength="10" required="true"
 								autocomplete="true" requiredMessage="Senha é obrigatória." />
 							<p:tooltip for="senha" />
@@ -43,13 +44,14 @@
 					</div>
 					<div class="ui-g-12">
 						<p:commandButton id="btLogar" type="submit" value="Entrar"
-							icon="pi pi-check" oncomplete="login()" update=":mensagem" />
+							icon="pi pi-check" onstart="PF('statusDialog').show();"
+							onerror="PF('statusDialog').hide();"
+							oncomplete="if(!args.validationFailed){login();}else{PF('statusDialog').hide();}"
+							update=":mensagem" />
 					</div>
 				</div>
 			</p:panel>
 		</h:form>
-	</ui:define>
-	<ui:define name="modals">
 		<p:sidebar id="dialogRedefinir" widgetVar="dialogRedefinir"
 			position="bottom">
 			<h:form id="formRedefinicao" class="centeredColumn">
@@ -61,7 +63,7 @@
 						<div class="ui-inputgroup">
 							<span class="ui-inputgroup-addon"><i
 								class="pi pi-envelope"></i></span>
-							<p:inputText id="email" value="#{loginBean.usuario.email}"
+							<p:inputText id="email" value="#{usuarioBean.usuario.email}"
 								title="Informe seu e-mail." maxlength="40" required="true"
 								autocomplete="true" requiredMessage="E-mail é obrigatório."
 								validatorMessage="Seu e-mail está inválido.">
@@ -72,9 +74,10 @@
 						</div>
 					</div>
 					<div class="ui-g-12">
-						<p:commandButton id="btRedefinir" type="submit" icon="pi pi-check"
-							value="Redefinir Senha"
-							oncomplete="if(!args.validationFailed){redefinirSenha();}"
+						<p:commandButton id="btRedefinir" type="submit" icon="pi pi-key"
+							value="Redefinir Senha" onstart="PF('statusDialog').show();"
+							onerror="PF('statusDialog').hide();"
+							oncomplete="if(!args.validationFailed){redefinirSenha();}else{PF('statusDialog').hide();}"
 							update=":mensagem :dialogRedefinir :formLogin:painelLogin" />
 					</div>
 				</div>
