@@ -26,7 +26,7 @@ public abstract class AbstractBean implements Serializable {
 
 	public final void redirect(String pagina) {
 		try {
-			FacesContext.getCurrentInstance().getExternalContext().redirect(pagina);
+			FacesContext.getCurrentInstance().getExternalContext().redirect("view/"+pagina);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!",
@@ -38,7 +38,7 @@ public abstract class AbstractBean implements Serializable {
 		try {
 			FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
 			FacesContext.getCurrentInstance().addMessage(null, mensagem);
-			FacesContext.getCurrentInstance().getExternalContext().redirect(pagina);
+			FacesContext.getCurrentInstance().getExternalContext().redirect("view/"+pagina);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!",
