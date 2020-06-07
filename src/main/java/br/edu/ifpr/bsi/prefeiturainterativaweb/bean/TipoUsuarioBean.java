@@ -1,6 +1,5 @@
 package br.edu.ifpr.bsi.prefeiturainterativaweb.bean;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +17,7 @@ import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.TipoUsuario;
 @Named("tipousuarioBean")
 @ApplicationScoped
 @SuppressWarnings("serial")
-public class TipoUsuarioBean implements Serializable {
+public class TipoUsuarioBean extends AbstractBean {
 
 	private TipoUsuario tipousuario;
 
@@ -26,8 +25,10 @@ public class TipoUsuarioBean implements Serializable {
 	@Named("tiposusuario")
 	private List<TipoUsuario> tiposUsuario;
 
+	@Override
 	@PostConstruct
 	public void init() {
+		showStatusDialog();
 		if (tipousuario == null) {
 			tipousuario = new TipoUsuario();
 		}
@@ -38,25 +39,32 @@ public class TipoUsuarioBean implements Serializable {
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!",
 					"Ocorreu uma falha ao listar os dados. Consulte o suporte da ferramenta."));
 		}
+		hideStatusDialog();
 	}
 
+	@Override
 	public void selecionar(ActionEvent evento) {
 		tipousuario = (TipoUsuario) evento.getComponent().getAttributes().get("tipoUsuarioSelecionado");
 	}
 
+	@Override
 	public void salvar() {
+		showStatusDialog();
 		if (TipoUsuarioDAO.merge(tipousuario)) {
+			hideStatusDialog();
 			tipousuario = new TipoUsuario();
 			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso!", "Dados gravados na nuvem."));
 		} else {
+			hideStatusDialog();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!",
 					"Ocorreu uma falha ao gravar os dados. Consulte o suporte da ferramenta."));
 		}
 	}
 
+	@Override
 	public void remover() {
-		
+
 	}
 
 	public TipoUsuario getTipoUsuario() {

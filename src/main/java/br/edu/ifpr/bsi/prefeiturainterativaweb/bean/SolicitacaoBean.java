@@ -1,6 +1,5 @@
 package br.edu.ifpr.bsi.prefeiturainterativaweb.bean;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +20,7 @@ import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Solicitacao;
 @Named("solicitacaoBean")
 @ViewScoped
 @SuppressWarnings("serial")
-public class SolicitacaoBean implements Serializable {
+public class SolicitacaoBean extends AbstractBean {
 
 	@Inject
 	@Named("funcionarioLogado")
@@ -32,33 +31,46 @@ public class SolicitacaoBean implements Serializable {
 	private Solicitacao solicitacao;
 	private Atendimento atendimento;
 
+	@Override
 	@PostConstruct
-	public void listar() {
-
+	public void init() {
+		showStatusDialog();
 		if (solicitacao == null)
 			solicitacao = new Solicitacao();
 
 		solicitacoes = SolicitacaoDAO.getAll();
 		if (solicitacoes == null) {
+			hideStatusDialog();
 			solicitacoes = new ArrayList<>();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!",
 					"Ocorreu uma falha ao listar os dados. Consulte o suporte da ferramenta."));
 		}
+		hideStatusDialog();
 	}
 
+	@Override
 	public void selecionar(ActionEvent evento) {
 		solicitacao = (Solicitacao) evento.getComponent().getAttributes().get("solicitacaoSelecionada");
 	}
 
+	@Override
 	public void salvar() {
+		showStatusDialog();
 		if (SolicitacaoDAO.merge(solicitacao)) {
+			hideStatusDialog();
 			solicitacao = new Solicitacao();
 			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso!", "Dados gravados na nuvem."));
 		} else {
+			hideStatusDialog();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!",
 					"Ocorreu uma falha ao gravar os dados. Consulte o suporte da ferramenta."));
 		}
+	}
+
+	@Override
+	public void remover() {
+
 	}
 
 	public Funcionario getFuncionarioLogado() {

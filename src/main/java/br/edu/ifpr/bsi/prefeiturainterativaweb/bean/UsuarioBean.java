@@ -19,7 +19,8 @@ import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.FirebaseHelper;
 @SessionScoped
 @SuppressWarnings("serial")
 public class UsuarioBean extends AbstractBean {
-
+	//Todo fazer listagem de usuários que se atualiza conforme o ViewScoped
+	
 	@Produces
 	@Named("funcionarioLogado")
 	private Funcionario funcionarioLogado;

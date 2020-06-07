@@ -1,11 +1,10 @@
 package br.edu.ifpr.bsi.prefeiturainterativaweb.bean;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Produces;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -15,49 +14,73 @@ import javax.inject.Named;
 
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.UsuarioDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Funcionario;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.TipoUsuario;
 
 @Named("funcionarioBean")
-@ApplicationScoped
+@SessionScoped
 @SuppressWarnings("serial")
-public class FuncionarioBean implements Serializable {
+public class FuncionarioBean extends AbstractBean {
 
-	@Inject
-	@Named("funcionarioLogado")
-	private Funcionario funcionarioLogado;
+	private Funcionario funcionario;
 
 	@Produces
 	@Named("funcionarios")
 	private List<Funcionario> funcionarios;
 
-	private Funcionario funcionario;
+	@Inject
+	@Named("funcionarioLogado")
+	private Funcionario funcionarioLogado;
 
+	@Inject
+	@Named("tiposusuario")
+	private List<TipoUsuario> tiposUsuario;
+
+	@Override
 	@PostConstruct
 	public void init() {
+		showStatusDialog();
 		if (funcionario == null) {
 			funcionario = new Funcionario();
 		}
 
 		funcionarios = UsuarioDAO.getAllFuncionarios();
 		if (funcionarios == null) {
+			hideStatusDialog();
 			funcionarios = new ArrayList<Funcionario>();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!",
 					"Ocorreu uma falha ao listar os dados. Consulte o suporte da ferramenta."));
+		} else {
+			funcionarios.forEach((aux) -> {
+				funcionario.setTipoUsuario(
+						tiposUsuario.get(tiposUsuario.indexOf(new TipoUsuario(aux.getTipoUsuario_ID()))));
+			});
+			hideStatusDialog();
 		}
 	}
 
+	@Override
 	public void selecionar(ActionEvent evento) {
 		funcionario = (Funcionario) evento.getComponent().getAttributes().get("funcionarioSelecionado");
 	}
 
+	@Override
 	public void salvar() {
+		showStatusDialog();
 		if (UsuarioDAO.merge(funcionario)) {
+			hideStatusDialog();
 			funcionario = new Funcionario();
 			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso!", "Dados gravados na nuvem."));
 		} else {
+			hideStatusDialog();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!",
 					"Ocorreu uma falha ao gravar os dados. Consulte o suporte da ferramenta."));
 		}
+	}
+
+	@Override
+	public void remover() {
+
 	}
 
 	public Funcionario getFuncionarioLogado() {

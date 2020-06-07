@@ -25,34 +25,41 @@ import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.FirebaseHelper;
 @SuppressWarnings("serial")
 public class AtendimentoBean extends AbstractBean {
 
-	@Inject
-	@Named("funcionarioLogado")
-	private Funcionario funcionarioLogado;
-
 	private List<Atendimento> atendimentos;
 
 	private Atendimento atendimento;
 	private Solicitacao solicitacao;
 
+	@Inject
+	@Named("funcionarioLogado")
+	private Funcionario funcionarioLogado;
+
+	@Override
 	@PostConstruct
 	public void init() {
+		showStatusDialog();
 		if (atendimento == null)
 			atendimento = new Atendimento();
 
 		atendimentos = AtendimentoDAO.getAll();
 
 		if (atendimentos == null) {
+			hideStatusDialog();
 			atendimentos = new ArrayList<Atendimento>();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!",
 					"Ocorreu uma falha ao listar os dados. Consulte o suporte da ferramenta."));
 		}
+		hideStatusDialog();
 	}
 
+	@Override
 	public void selecionar(ActionEvent evento) {
 		atendimento = (Atendimento) evento.getComponent().getAttributes().get("atendimentoSelecionada");
 	}
 
+	@Override
 	public void salvar() {
+		showStatusDialog();
 		if (AtendimentoDAO.merge(atendimento)) {
 			atendimento = new Atendimento();
 			Aviso aviso = new Aviso();
@@ -63,9 +70,11 @@ public class AtendimentoBean extends AbstractBean {
 			aviso.setSolicitacao_ID(solicitacao.get_ID());
 			aviso.setToken(solicitacao.getUsuario().getToken());
 			FirebaseHelper.enviarNotificacao(aviso);
+			hideStatusDialog();
 			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso!", "Dados gravados na nuvem."));
 		} else {
+			hideStatusDialog();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!",
 					"Ocorreu uma falha ao gravar os dados. Consulte o suporte da ferramenta."));
 		}
