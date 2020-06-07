@@ -27,21 +27,20 @@
 			rendered="#{funcionarioLogado != null}">
 			<p:menu style="width:100%;">
 				<p:submenu label="Gerenciamento">
-					<p:menuitem value="Atendimentos" url="/web/view/atendimentos.xhtml" />
-					<p:menuitem value="Solicitacoes" url="/web/view/solicitacoes.xhtml" />
-					<p:menuitem value="Mapeamento" url="/web/view/usuarios.xhtml" />
+					<p:menuitem value="Atendimentos" url="atendimentos.xhtml" />
+					<p:menuitem value="Solicitacoes" url="solicitacoes.xhtml" />
+					<p:menuitem value="Mapeamento" url="mapa.xhtml" />
 				</p:submenu>
 				<p:submenu label="Administrativo">
-					<p:menuitem value="Categorias" url="/web/view/categorias.xhtml" />
-					<p:menuitem value="Departamentos"
-						url="/web/view/departamentos.xhtml" />
-					<p:menuitem value="Permissões" url="/web/view/permissoes.xhtml" />
-					<p:menuitem value="Usuários" url="/web/view/usuarios.xhtml" />
+					<p:menuitem value="Categorias" url="categorias.xhtml" />
+					<p:menuitem value="Departamentos" url="departamentos.xhtml" />
+					<p:menuitem value="Permissões" url="permissoes.xhtml" />
+					<p:menuitem value="Usuários" url="usuarios.xhtml" />
 				</p:submenu>
 				<p:submenu label="Opções">
-					<p:menuitem value="Meus dados" url="/web/view/meusdados.xhtml" />
+					<p:menuitem value="Perfil" url="meusdados.xhtml" />
 					<p:menuitem value="Deslogar" onstart="PF('statusDialog').show();"
-							onerror="PF('statusDialog').hide();" oncomplete="logout()" />
+						onerror="PF('statusDialog').hide();" oncomplete="logout()" />
 				</p:submenu>
 			</p:menu>
 		</h:form>
