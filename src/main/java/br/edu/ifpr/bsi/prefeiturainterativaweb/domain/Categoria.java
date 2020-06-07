@@ -10,73 +10,95 @@ import com.google.cloud.firestore.annotation.Exclude;
 @SuppressWarnings("serial")
 public class Categoria implements Serializable {
 
-    private String _ID;
-    private String descricao;
-    private String departamento_ID;
-    private boolean habilitada;
+	public Categoria() {
+		
+	}
 
-    @Exclude
-    private boolean selecionada;
+	public Categoria(String _ID) {
+		this._ID = _ID;
+	}
+
+	private String _ID;
+	private String descricao;
+	private String departamento_ID;
+	private boolean habilitada;
+
+	@Exclude
+	private boolean selecionada;
+
+	@Exclude
+	private Departamento localDepartamento;
 
 //---------------------- Encapsulamento ----------------------
 
-    public String get_ID() {
-        return _ID;
-    }
+	public String get_ID() {
+		return _ID;
+	}
 
-    public void set_ID(String _ID) {
-        this._ID = _ID;
-    }
+	public void set_ID(String _ID) {
+		this._ID = _ID;
+	}
 
-    public String getDescricao() {
-        return descricao;
-    }
+	public String getDescricao() {
+		return descricao;
+	}
 
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
 
-    public String getDepartamento_ID() {
-        return departamento_ID;
-    }
+	public String getDepartamento_ID() {
+		return departamento_ID;
+	}
 
-    public void setDepartamento_ID(String departamento_ID) {
-        this.departamento_ID = departamento_ID;
-    }
+	public void setDepartamento_ID(String departamento_ID) {
+		this.departamento_ID = departamento_ID;
+	}
 
-    public boolean isHabilitada() {
-        return habilitada;
-    }
+	public boolean isHabilitada() {
+		return habilitada;
+	}
 
-    public void setHabilitada(boolean habilitada) {
-        this.habilitada = habilitada;
-    }
+	public void setHabilitada(boolean habilitada) {
+		this.habilitada = habilitada;
+	}
 
-    @Exclude
-    public boolean isSelecionada() {
-        return selecionada;
-    }
+	@Exclude
+	public Departamento getLocalDepartamento() {
+		return localDepartamento;
+	}
 
-    public void setSelecionada(boolean selecionada) {
-        this.selecionada = selecionada;
-    }
+	public void setLocalDepartamento(Departamento departamento) {
+		this.localDepartamento = departamento;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Categoria categoria = (Categoria) o;
-        return _ID.equals(categoria._ID);
-    }
+	@Exclude
+	public boolean isSelecionada() {
+		return selecionada;
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(_ID);
-    }
+	public void setSelecionada(boolean selecionada) {
+		this.selecionada = selecionada;
+	}
 
-    @Nonnull
-    @Override
-    public String toString() {
-        return this.descricao;
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Categoria categoria = (Categoria) o;
+		return _ID.equals(categoria._ID);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(_ID);
+	}
+
+	@Nonnull
+	@Override
+	public String toString() {
+		return this.descricao;
+	}
 }

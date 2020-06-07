@@ -47,14 +47,8 @@ public class DepartamentoDAO {
 		QuerySnapshot lista = DatabaseHelper.getAll(reference.orderBy("descricao"));
 		if (lista == null)
 			return null;
-		else {
-			List<Departamento> listaObjetos = lista.toObjects(Departamento.class);
-			listaObjetos.forEach((departamento) -> {
-				if (departamento.getCategorias() != null && !departamento.getCategorias().isEmpty())
-					departamento.setLocalCategorias(CategoriaDAO.getAll(departamento.getCategorias()));
-			});
-			return listaObjetos;
-		}
+		else
+			return lista.toObjects(Departamento.class);
 	}
 
 }
