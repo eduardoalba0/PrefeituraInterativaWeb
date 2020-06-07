@@ -32,7 +32,8 @@
 							value="#{departamento}" />
 					</p:commandButton>
 					<p:commandButton icon="pi pi-ban" styleClass="ui-danger-color"
-						title="Desabilitar" actionListener="#{departamentoBean.desabilitar}"
+						title="Desabilitar"
+						actionListener="#{departamentoBean.desabilitar}"
 						update=":mensagem">
 						<f:attribute name="departamentoSelecionado"
 							value="#{departamento}" />
@@ -46,12 +47,5 @@
 				</p:column>
 			</p:dataTable>
 		</h:form>
-		<p:dialog id="dialogResposta" widgetVar="dialogo" resizable="false"
-			draggable="false" modal="false">
-			<h:form id="formResposta">
-				<h:panelGrid columns="2">
-				</h:panelGrid>
-			</h:form>
-		</p:dialog>
 	</ui:define>
 </ui:composition>
