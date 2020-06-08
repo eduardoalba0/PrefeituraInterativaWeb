@@ -1,6 +1,6 @@
-function resizePfGmapFullScreen() {
-	var width = window.innerWidth -10;
-	var height = window.innerHeight -10;
+function resizeMap() {
+	var width = window.innerWidth;
+	var height = window.innerHeight;
 	var element = document.getElementById("form-map:map");
 	element.style.width = width + "px";
 	element.style.height = height + "px";
@@ -11,5 +11,5 @@ window.onload = function () {
 };
 
 window.onresize = function () {
-	resizePfGmapFullScreen();
+	resizeMap();
 };	
