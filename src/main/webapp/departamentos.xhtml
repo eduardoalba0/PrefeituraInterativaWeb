@@ -10,7 +10,7 @@
 	<ui:define name="conteudo">
 		<h:form id="form-departamentos">
 			<p:dataTable id="tabela-departamentos" var="departamento"
-				value="#{departamentos}"
+				value="#{departamentoBean.preencherDepartamentos()}"
 				emptyMessage="Nenhum departamento inserido no banco de dados."
 				clientCache="true" paginator="true" paginatorPosition="bottom"
 				rows="20">
@@ -20,7 +20,7 @@
 
 				<p:column headerText="Categorias" width="30%;"
 					styleClass="centeredColumn" resizable="true">
-					<p:chips id="categorias" value="#{departamento.localCategorias}"
+					<p:chips id="categorias" value="#{departamento.nomeCategorias}"
 						style="width:100%" />
 				</p:column>
 

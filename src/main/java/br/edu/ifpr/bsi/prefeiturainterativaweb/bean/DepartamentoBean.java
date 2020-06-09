@@ -6,13 +6,10 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.CategoriaDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.DepartamentoDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Categoria;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Departamento;
@@ -43,15 +40,28 @@ public class DepartamentoBean extends AbstractBean {
 		if (departamentos == null) {
 			hideStatusDialog();
 			departamentos = new ArrayList<Departamento>();
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!",
-					"Ocorreu uma falha ao listar os dados. Consulte o suporte da ferramenta."));
+			showErrorMessage("Ocorreu uma falha ao listar os dados. Consulte o suporte da ferramenta.");
 		} else {
-			departamentos.forEach((aux) -> {
-				aux.setLocalCategorias(CategoriaDAO.getAll(aux.getCategorias()));
-			});
 			hideStatusDialog();
 		}
-	};
+	}
+	@Override
+	public void cadastrar() {
+		departamento = new Departamento();
+	}
+	public List<Departamento> preencherDepartamentos() {
+		showStatusDialog();
+		departamentos.forEach((aux) -> {
+			List<String> strings = new ArrayList<>();
+			aux.getCategorias().forEach((string) -> {
+				Categoria categoria = categorias.get(categorias.indexOf(new Categoria(string)));
+				strings.add(categoria.getDescricao());
+			});
+			aux.setNomeCategorias(strings);
+		});
+		hideStatusDialog();
+		return departamentos;
+	}
 
 	@Override
 	public void selecionar(ActionEvent evento) {
@@ -64,17 +74,15 @@ public class DepartamentoBean extends AbstractBean {
 		if (DepartamentoDAO.merge(departamento)) {
 			hideStatusDialog();
 			departamento = new Departamento();
-			FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso!", "Dados gravados na nuvem."));
+			showSuccessMessage("Dados gravados na nuvem.");
 		} else {
 			hideStatusDialog();
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!",
-					"Ocorreu uma falha ao gravar os dados. Consulte o suporte da ferramenta."));
+			showErrorMessage("Ocorreu uma falha ao gravar os dados. Consulte o suporte da ferramenta.");
 		}
 	}
 
 	@Override
-	public void remover() {
+	public void remover(ActionEvent evento) {
 
 	}
 

@@ -11,7 +11,7 @@ import com.google.cloud.firestore.annotation.Exclude;
 public class Categoria implements Serializable {
 
 	public Categoria() {
-		
+
 	}
 
 	public Categoria(String _ID) {
@@ -27,7 +27,7 @@ public class Categoria implements Serializable {
 	private boolean selecionada;
 
 	@Exclude
-	private Departamento localDepartamento;
+	private String nomeDepartamento;
 
 //---------------------- Encapsulamento ----------------------
 
@@ -64,12 +64,12 @@ public class Categoria implements Serializable {
 	}
 
 	@Exclude
-	public Departamento getLocalDepartamento() {
-		return localDepartamento;
+	public String getNomeDepartamento() {
+		return nomeDepartamento;
 	}
 
-	public void setLocalDepartamento(Departamento departamento) {
-		this.localDepartamento = departamento;
+	public void setNomeDepartamento(String nomeDepartamento) {
+		this.nomeDepartamento = nomeDepartamento;
 	}
 
 	@Exclude

@@ -41,7 +41,7 @@ public class CategoriaDAO {
 		else
 			return objeto.toObject(Categoria.class);
 	}
-	
+
 	public static List<Categoria> getAll() {
 		init();
 		QuerySnapshot lista = DatabaseHelper.getAll(reference.orderBy("descricao"));
@@ -60,4 +60,12 @@ public class CategoriaDAO {
 			return lista.toObjects(Categoria.class);
 	}
 
+	public static boolean isAssociada(String categoria_ID) {
+		init();
+		if(!DepartamentoDAO.getAllPorCategoria(categoria_ID).isEmpty())
+			return true;
+		if(!SolicitacaoDAO.getAllPorCategoria(categoria_ID).isEmpty())
+			return true;
+		return false;
+	}
 }

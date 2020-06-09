@@ -63,6 +63,15 @@ public class SolicitacaoDAO {
 			return lista.toObjects(Solicitacao.class);
 	}
 
+	public static List<Solicitacao> getAllPorCategoria(String categoria_ID) {
+		init();
+		QuerySnapshot lista = DatabaseHelper.getAll(reference.whereArrayContains("categorias", categoria_ID));
+		if (lista == null)
+			return null;
+		else
+			return lista.toObjects(Solicitacao.class);
+	}
+
 	public static List<Solicitacao> getAllPorDepartamento(String departamento_ID) {
 		init();
 		QuerySnapshot lista = DatabaseHelper.getAll(
