@@ -3,7 +3,6 @@ package br.edu.ifpr.bsi.prefeiturainterativaweb.bean;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Produces;
-import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Named;
@@ -19,8 +18,8 @@ import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.FirebaseHelper;
 @SessionScoped
 @SuppressWarnings("serial")
 public class UsuarioBean extends AbstractBean {
-	//Todo fazer listagem de usuários que se atualiza conforme o ViewScoped
-	
+	// Todo fazer listagem de usuários que se atualiza conforme o ViewScoped
+
 	@Produces
 	@Named("funcionarioLogado")
 	private Funcionario funcionarioLogado;
@@ -36,6 +35,11 @@ public class UsuarioBean extends AbstractBean {
 			redirect("solicitacoes.xhtml");
 	}
 
+	@Override
+	public void cadastrar() {
+		usuario = new Usuario();
+	}
+
 	public void autenticar() {
 		String uid = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("uid");
 		usuario = new Gson().fromJson(uid, Usuario.class);
@@ -45,16 +49,14 @@ public class UsuarioBean extends AbstractBean {
 			usuario = new Usuario();
 			hideStatusDialog();
 			if (funcionarioLogado == null) {
-				redirect("index.xhtml", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!",
-						"Falha ao autenticar dados. Consulte o suporte da ferramenta."));
+				redirect("index.xhtml", "Falha ao autenticar dados. Consulte o suporte da ferramenta.");
 			} else if (funcionarioLogado.getTipoUsuario_ID().equals("6b395be8-a7c1-4971-8dc0-afa04be63a00")) {
 				funcionarioLogado = null;
-				redirect("index.xhtml", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!",
-						"Seu usuário não possuí privilégios para acessar a plataforma. Consulte o suporte da ferramenta."));
+				redirect("index.xhtml",
+						"Seu usuário não possuí privilégios para acessar a plataforma. Consulte o suporte da ferramenta.");
 			} else {
 				usuario = new Usuario();
-				redirect("solicitacoes.xhtml", new FacesMessage(FacesMessage.SEVERITY_INFO, "Bem vindo, ",
-						funcionarioLogado.getNome() + "! "));
+				redirect("solicitacoes.xhtml", "Bem vindo, " + funcionarioLogado.getNome() + "! ");
 			}
 		}
 
@@ -62,8 +64,7 @@ public class UsuarioBean extends AbstractBean {
 
 	public void deslogar() {
 		funcionarioLogado = null;
-		redirect("index.xhtml",
-				new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso!", "Obrigado por utilizar nossos serviços."));
+		redirect("index.xhtml", "Obrigado por utilizar nossos serviços.");
 	}
 
 	@Override
@@ -79,7 +80,7 @@ public class UsuarioBean extends AbstractBean {
 	}
 
 	@Override
-	public void remover() {
+	public void remover(ActionEvent evento) {
 		// TODO Auto-generated method stub
 
 	}

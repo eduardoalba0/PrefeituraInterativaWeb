@@ -5,8 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -46,10 +44,14 @@ public class AtendimentoBean extends AbstractBean {
 		if (atendimentos == null) {
 			hideStatusDialog();
 			atendimentos = new ArrayList<Atendimento>();
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!",
-					"Ocorreu uma falha ao listar os dados. Consulte o suporte da ferramenta."));
+			showErrorMessage("Ocorreu uma falha ao listar os dados. Consulte o suporte da ferramenta.");
 		}
 		hideStatusDialog();
+	}
+
+	@Override
+	public void cadastrar() {
+		atendimento = new Atendimento();
 	}
 
 	@Override
@@ -71,17 +73,15 @@ public class AtendimentoBean extends AbstractBean {
 			aviso.setToken(solicitacao.getUsuario().getToken());
 			FirebaseHelper.enviarNotificacao(aviso);
 			hideStatusDialog();
-			FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso!", "Dados gravados na nuvem."));
+			showSuccessMessage("Dados gravados na nuvem.");
 		} else {
 			hideStatusDialog();
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!",
-					"Ocorreu uma falha ao gravar os dados. Consulte o suporte da ferramenta."));
+			showErrorMessage("Ocorreu uma falha ao gravar os dados. Consulte o suporte da ferramenta.");
 		}
 	}
 
 	@Override
-	public void remover() {
+	public void remover(ActionEvent evento) {
 		// TODO Auto-generated method stub
 
 	}

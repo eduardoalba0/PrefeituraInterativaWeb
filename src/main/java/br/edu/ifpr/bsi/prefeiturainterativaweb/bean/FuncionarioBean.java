@@ -6,8 +6,6 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Produces;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -47,8 +45,7 @@ public class FuncionarioBean extends AbstractBean {
 		if (funcionarios == null) {
 			hideStatusDialog();
 			funcionarios = new ArrayList<Funcionario>();
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!",
-					"Ocorreu uma falha ao listar os dados. Consulte o suporte da ferramenta."));
+			showErrorMessage("Ocorreu uma falha ao listar os dados. Consulte o suporte da ferramenta.");
 		} else {
 			funcionarios.forEach((aux) -> {
 				funcionario.setTipoUsuario(
@@ -56,6 +53,11 @@ public class FuncionarioBean extends AbstractBean {
 			});
 			hideStatusDialog();
 		}
+	}
+
+	@Override
+	public void cadastrar() {
+		funcionario = new Funcionario();
 	}
 
 	@Override
@@ -69,17 +71,15 @@ public class FuncionarioBean extends AbstractBean {
 		if (UsuarioDAO.merge(funcionario)) {
 			hideStatusDialog();
 			funcionario = new Funcionario();
-			FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso!", "Dados gravados na nuvem."));
+			showSuccessMessage("Dados gravados na nuvem.");
 		} else {
 			hideStatusDialog();
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro!",
-					"Ocorreu uma falha ao gravar os dados. Consulte o suporte da ferramenta."));
+			showErrorMessage("Ocorreu uma falha ao gravar os dados. Consulte o suporte da ferramenta.");
 		}
 	}
 
 	@Override
-	public void remover() {
+	public void remover(ActionEvent evento) {
 
 	}
 

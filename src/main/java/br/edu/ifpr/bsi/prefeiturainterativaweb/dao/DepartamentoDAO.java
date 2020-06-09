@@ -51,4 +51,13 @@ public class DepartamentoDAO {
 			return lista.toObjects(Departamento.class);
 	}
 
+	public static List<Departamento> getAllPorCategoria(String categoria_ID) {
+		init();
+		QuerySnapshot lista = DatabaseHelper.getAll(reference.whereArrayContains("categorias", categoria_ID));
+		if (lista == null)
+			return null;
+		else
+			return lista.toObjects(Departamento.class);
+	}
+
 }
