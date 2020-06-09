@@ -18,6 +18,7 @@
 							<span class="ui-inputgroup-addon"><i
 								class="pi pi-envelope"></i></span>
 							<p:inputText id="email" value="#{usuarioBean.usuario.email}"
+								styleClass="ui-g-6" placeholder="Informe seu e-mail."
 								title="Informe seu e-mail." maxlength="40" required="true"
 								autocomplete="true" requiredMessage="E-mail é obrigatório."
 								validatorMessage="Seu e-mail está inválido.">
@@ -31,6 +32,7 @@
 						<div class="ui-inputgroup">
 							<span class="ui-inputgroup-addon"><i class="pi pi-key"></i></span>
 							<p:password id="senha" value="#{usuarioBean.usuario.senha}"
+								styleClass="ui-g-6" placeholder="Informe sua senha."
 								title="Informe sua Senha." maxlength="10" required="true"
 								autocomplete="true" requiredMessage="Senha é obrigatória." />
 							<p:tooltip for="senha" />
@@ -42,11 +44,13 @@
 							<h:outputText value="Esqueci minha senha" />
 						</p:commandLink>
 					</div>
+					<br />
 					<div class="ui-g-12">
 						<p:commandButton id="btLogar" type="submit" value="Entrar"
-							icon="pi pi-check" onstart="PF('statusDialog').show();"
+							styleClass="ui-success-color" icon="pi pi-arrow-right"
+							iconPos="right" onstart="PF('statusDialog').show();"
 							onerror="PF('statusDialog').hide();"
-							oncomplete="if(!args.validationFailed){login();}else{PF('statusDialog').hide();}"
+							oncomplete="if(args.validationFailed){PF('statusDialog').hide();}else{login();}"
 							update=":mensagem" />
 					</div>
 				</div>
@@ -64,6 +68,7 @@
 							<span class="ui-inputgroup-addon"><i
 								class="pi pi-envelope"></i></span>
 							<p:inputText id="email" value="#{usuarioBean.usuario.email}"
+								styleClass="ui-g-4" placeholder="Informe seu e-mail."
 								title="Informe seu e-mail." maxlength="40" required="true"
 								autocomplete="true" requiredMessage="E-mail é obrigatório."
 								validatorMessage="Seu e-mail está inválido.">
@@ -73,11 +78,14 @@
 							<p:tooltip for="email" />
 						</div>
 					</div>
+					<br />
 					<div class="ui-g-12">
-						<p:commandButton id="btRedefinir" type="submit" icon="pi pi-key"
-							value="Redefinir Senha" onstart="PF('statusDialog').show();"
+						<p:commandButton id="btRedefinir" type="submit"
+							styleClass="ui-success-color" icon="pi pi-arrow-right"
+							iconPos="right" value="Redefinir Senha"
+							onstart="PF('statusDialog').show();"
 							onerror="PF('statusDialog').hide();"
-							oncomplete="if(!args.validationFailed){redefinirSenha();}else{PF('statusDialog').hide();}"
+							oncomplete="if(args.validationFailed){PF('statusDialog').hide();else{redefinirSenha();}else{}"
 							update=":mensagem :dialogRedefinir :formLogin:painelLogin" />
 					</div>
 				</div>
