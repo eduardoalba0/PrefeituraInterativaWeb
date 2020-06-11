@@ -32,16 +32,17 @@ html, body {
 	border: var(--color-red) !important;
 }
 
-.ui-secondary-color {
+.ui-tooltip-text, .ui-secondary-color {
 	background-color: var(--color-blue) !important;
 	border: var(--color-blue) !important;
 }
+
 .ui-layout-unit, .ui-layout-resizer {
 	background: transparent !important;
 	border: transparent !important;
 }
 
-.ui-paginator-page, .ui-chips .ui-chips-container .ui-chips-token, .ui-button:not(.ui-success-color):not(.ui-danger-color):not(.ui-secondary-color){
+.ui-paginator-page, .ui-chips .ui-chips-container .ui-chips-token, .ui-button:not(.ui-success-color):not(.ui-danger-color):not(.ui-secondary-color) {
 	background-color: var(--color-orange) !important;
 	border: var(--color-orange) !important;
 	margin: 3px !important;
@@ -66,13 +67,18 @@ html, body {
 	border-color: var (--color-orange) ! important;
 }
 
-.ui-icon-check, .ui-inputgroup-addon:first-child, .ui-inputgroup .ui-inputgroup-addon>.pi {
+.ui-inputfield, .ui-icon-closethick, .ui-icon-check, .ui-inputgroup-addon:first-child, .ui-inputgroup .ui-inputgroup-addon>.pi {
 	color: white !important;
 }
 
 /* Sombras e Bordas*/
 
-.ui-button .ui-button-text, .ui-selectonemenu, .ui-inputgroup .ui-inputgroup-addon-checkbox, .ui-inputgroup .ui-inputgroup-addon:first-child, .ui-inputgroup>.ui-inputtext, .ui-inputgroup>.ui-password {
+.ui-chips-token, .ui-button:not(.ui-button-icon-only) {
+	border-radius: 30px !important;
+	box-shadow: 1px 2px 3px black !important;
+}
+
+.ui-chips-container:not(.ui-chips-onlyview), .ui-linkbutton, .ui-selectonemenu, .ui-inputgroup .ui-inputgroup-addon-checkbox, .ui-inputgroup .ui-inputgroup-addon:first-child, .ui-inputgroup>.ui-inputtext, .ui-inputgroup>.ui-password {
 	box-shadow: 0px 2px 2px black !important;
 }
 
@@ -111,7 +117,10 @@ html, body {
 
 .ui-dialog.ui-confirm-dialog .ui-dialog-content>span, .ui-dialog-footer, .centeredColumn {
 	text-align: center !important;
-	margin: 0 auto !important;
+	margin-right: auto !important;
+	margin-left: auto !important;
+	margin-top: auto !important;
+	margin-bottom: auto !important;
 }
 
 .centerDiv {
@@ -147,14 +156,21 @@ html, body {
 	margin-left: auto !important;
 }
 
+.ui-chips .ui-chips-onlyview {
+	width: 100% !important;
+}
+
 /* Exibicao de componentes */
 
-.ui-chips-token .ui-chips-token-icon, .ui-chips .ui-chips-container .ui-chips-input-token {
+.ui-chips-onlyview .ui-chips-token-icon, .ui-chips-onlyview .ui-chips-input-token {
 	display: none !important;
 }
 
-.ui-chips .ui-chips-container {
-	width: 100% !important;
+:focus {
+	outline: transparent !important;
+}
+
+.ui-chips .ui-chips-onlyview {
 	background: transparent !important;
 	border: transparent !important;
 	pointer-events: none !important;
@@ -166,7 +182,7 @@ html, body {
 
 /* Fontes */
 
-h1, h2, h3, .ui-paginator-page, .ui-texto, .ui-inputtext, .ui-password, .ui-inputgroup, .ui-panelgrid, .ui-button, .ui-commandlink, .ui-menu, .ui-chips, .ui-tooltip, .ui-dialog-title, .ui-datatable thead th, .ui-selectonemenu, .ui-dialog.ui-confirm-dialog .ui-dialog-content>span, .ui-datatable .ui-datatable-data tr {
+h1, h2, h3, .ui-tooltip-text, .ui-chips-input-token input, .ui-paginator-page, .ui-texto, .ui-inputtext, .ui-password, .ui-inputgroup, .ui-panelgrid, .ui-button, .ui-commandlink, .ui-menu, .ui-chips, .ui-tooltip, .ui-dialog-title, .ui-datatable thead th, .ui-selectonemenu, .ui-dialog.ui-confirm-dialog .ui-dialog-content>span, .ui-datatable .ui-datatable-data tr {
 	font-family: fredoka !important;
 	color: white !important;
 	text-shadow: 2px 2px 2px black !important;
