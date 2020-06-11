@@ -23,23 +23,21 @@ public class CategoriaBean extends AbstractBean {
 
 	private Categoria categoria;
 
-	@Produces
-	@Named("categorias")
 	private List<Categoria> categorias;
 
 	@Inject
-	@Named("departamentos")
 	private List<Departamento> departamentos;
 
 	@Override
 	@PostConstruct
-	public void init() {
+	public void listar() {
 		showStatusDialog();
-		if (categoria == null) {
+		if (categoria == null)
 			categoria = new Categoria();
-		}
 
-		categorias = CategoriaDAO.getAll();
+		if (categorias == null)
+			categorias = CategoriaDAO.getAll();
+
 		if (categorias == null) {
 			hideStatusDialog();
 			categorias = new ArrayList<Categoria>();
@@ -64,6 +62,8 @@ public class CategoriaBean extends AbstractBean {
 	@Override
 	public void cadastrar() {
 		categoria = new Categoria();
+		categoria.set_ID(UUID.randomUUID().toString());
+		categoria.setHabilitada(true);
 	}
 
 	@Override
@@ -73,16 +73,27 @@ public class CategoriaBean extends AbstractBean {
 
 	@Override
 	public void salvar() {
-		if (categoria.get_ID() == null || categoria.get_ID().trim().equals(""))
-			categoria.set_ID(UUID.randomUUID().toString());
-		Departamento departamento = DepartamentoDAO.get(categoria.getDepartamento_ID());
-		List<String> lista = departamento.getCategorias();
-		if (lista == null)
-			lista = new ArrayList<String>();
-		lista.add(categoria.get_ID());
-		departamento.setCategorias(lista);
+		boolean tasksSuccess = CategoriaDAO.merge(categoria);
 
-		if (CategoriaDAO.merge(categoria) && DepartamentoDAO.merge(departamento)) {
+		if (tasksSuccess) {
+			Departamento departamento = DepartamentoDAO.get(categoria.getDepartamento_ID());
+			List<String> lista = departamento.getCategorias();
+
+			if (categorias.contains(categoria))
+				categorias.remove(categoria);
+
+			if (lista == null)
+				lista = new ArrayList<String>();
+
+			if (!lista.contains(categoria.get_ID())) {
+				lista.add(categoria.get_ID());
+				departamento.setCategorias(lista);
+				tasksSuccess = DepartamentoDAO.merge(departamento);
+				departamentos.remove(departamento);
+				departamentos.add(departamento);
+			}
+		}
+		if (tasksSuccess) {
 			categorias.add(categoria);
 			categoria = new Categoria();
 			hideStatusDialog();
@@ -140,11 +151,22 @@ public class CategoriaBean extends AbstractBean {
 		this.categoria = categoria;
 	}
 
+	@Produces
 	public List<Categoria> getCategorias() {
+		if (categorias == null)
+			listar();
 		return categorias;
 	}
 
 	public void setCategorias(List<Categoria> categorias) {
 		this.categorias = categorias;
+	}
+
+	public List<Departamento> getDepartamentos() {
+		return departamentos;
+	}
+
+	public void setDepartamentos(List<Departamento> departamentos) {
+		this.departamentos = departamentos;
 	}
 }

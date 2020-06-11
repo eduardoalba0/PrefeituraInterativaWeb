@@ -2,6 +2,7 @@ package br.edu.ifpr.bsi.prefeiturainterativaweb.bean;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -21,22 +22,21 @@ public class DepartamentoBean extends AbstractBean {
 
 	private Departamento departamento;
 
-	@Produces
-	@Named("departamentos")
 	private List<Departamento> departamentos;
 
 	@Inject
-	@Named("categorias")
 	private List<Categoria> categorias;
 
 	@Override
 	@PostConstruct
-	public void init() {
+	public void listar() {
 		showStatusDialog();
 		if (departamento == null)
 			departamento = new Departamento();
 
-		departamentos = DepartamentoDAO.getAll();
+		if (departamentos == null)
+			departamentos = DepartamentoDAO.getAll();
+
 		if (departamentos == null) {
 			hideStatusDialog();
 			departamentos = new ArrayList<Departamento>();
@@ -45,22 +45,30 @@ public class DepartamentoBean extends AbstractBean {
 			hideStatusDialog();
 		}
 	}
+
 	@Override
 	public void cadastrar() {
 		departamento = new Departamento();
+		departamento.set_ID(UUID.randomUUID().toString());
+		departamento.setHabilitado(true);
 	}
+
 	public List<Departamento> preencherDepartamentos() {
 		showStatusDialog();
 		departamentos.forEach((aux) -> {
 			List<String> strings = new ArrayList<>();
 			aux.getCategorias().forEach((string) -> {
-				Categoria categoria = categorias.get(categorias.indexOf(new Categoria(string)));
-				strings.add(categoria.getDescricao());
+				if (categorias != null && categorias.contains(new Categoria(string))) {
+					Categoria categoria = categorias.get(categorias.indexOf(new Categoria(string)));
+					strings.add(categoria.getDescricao());
+				}
 			});
 			aux.setNomeCategorias(strings);
 		});
+
 		hideStatusDialog();
 		return departamentos;
+
 	}
 
 	@Override
@@ -86,8 +94,27 @@ public class DepartamentoBean extends AbstractBean {
 
 	}
 
-	public void desabilitar() {
-
+	public void desabilitar(ActionEvent evento) {
+		departamento = (Departamento) evento.getComponent().getAttributes().get("departamentoSelecionado");
+		if (departamento.isHabilitado()) {
+			departamento.setHabilitado(false);
+		} else {
+			departamento.setHabilitado(true);
+		}
+		if (DepartamentoDAO.merge(departamento)) {
+			departamentos.remove(departamento);
+			departamentos.add(departamento);
+			hideStatusDialog();
+			if (departamento.isHabilitado())
+				showSuccessMessage("O Departamento foi habilitado com sucesso.");
+			else
+				showWarningMessage(
+						"Enquanto estiver desabilitado, o departamento e suas categorias não aparecerão para os usuários");
+		} else {
+			hideStatusDialog();
+			showErrorMessage("Ocorreu um erro ao desabilitar o departamento. Consulte o suporte da ferramenta.");
+		}
+		departamento = new Departamento();
 	}
 
 	public Departamento getDepartamento() {
@@ -98,11 +125,22 @@ public class DepartamentoBean extends AbstractBean {
 		this.departamento = departamento;
 	}
 
+	@Produces
 	public List<Departamento> getDepartamentos() {
+		if (departamentos == null)
+			listar();
 		return departamentos;
 	}
 
 	public void setDepartamentos(List<Departamento> departamentos) {
 		this.departamentos = departamentos;
+	}
+
+	public List<Categoria> getCategorias() {
+		return categorias;
+	}
+
+	public void setCategorias(List<Categoria> categorias) {
+		this.categorias = categorias;
 	}
 }

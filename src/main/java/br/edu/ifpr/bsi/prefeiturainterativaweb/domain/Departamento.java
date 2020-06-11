@@ -21,6 +21,7 @@ public class Departamento implements Serializable {
 	private String _ID;
 	private String descricao;
 	private String departamentoSuperior_ID;
+	private boolean habilitado;
 	private List<String> categorias;
 
 	@Exclude
@@ -61,6 +62,14 @@ public class Departamento implements Serializable {
 
 	public void setCategorias(List<String> categorias) {
 		this.categorias = categorias;
+	}
+
+	public boolean isHabilitado() {
+		return habilitado;
+	}
+
+	public void setHabilitado(boolean habilitado) {
+		this.habilitado = habilitado;
 	}
 
 	@Exclude

@@ -2,7 +2,6 @@ package br.edu.ifpr.bsi.prefeiturainterativaweb.bean;
 
 import java.io.Serializable;
 
-import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -12,8 +11,7 @@ import org.primefaces.PrimeFaces;
 @SuppressWarnings("serial")
 public abstract class AbstractBean implements Serializable {
 
-	@PostConstruct
-	public abstract void init();
+	public abstract void listar();
 
 	public abstract void selecionar(ActionEvent event);
 
