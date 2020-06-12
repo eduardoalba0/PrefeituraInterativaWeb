@@ -2,59 +2,65 @@ package br.edu.ifpr.bsi.prefeiturainterativaweb.bean;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.TipoUsuarioDAO;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.UsuarioDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.TipoUsuario;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Usuario;
 
-@Named("tipousuarioBean")
+@Named("tipoUsuarioBean")
 @ApplicationScoped
 @SuppressWarnings("serial")
 public class TipoUsuarioBean extends AbstractBean {
 
-	private TipoUsuario tipousuario;
-
-	@Produces
-	@Named("tiposusuario")
+	private TipoUsuario tipoUsuario;
 	private List<TipoUsuario> tiposUsuario;
 
 	@Override
-	@PostConstruct
 	public void init() {
-		showStatusDialog();
-		if (tipousuario == null) {
-			tipousuario = new TipoUsuario();
+		if (tipoUsuario == null) {
+			tipoUsuario = new TipoUsuario();
 		}
+		if (tiposUsuario == null)
+			listar();
 
+	}
+
+	@Override
+	public List<TipoUsuario> listar() {
 		tiposUsuario = TipoUsuarioDAO.getAll();
 		if (tiposUsuario == null) {
 			tiposUsuario = new ArrayList<TipoUsuario>();
+			hideStatusDialog();
 			showErrorMessage("Ocorreu uma falha ao listar os dados. Consulte o suporte da ferramenta.");
 		}
 		hideStatusDialog();
+		return tiposUsuario;
 	}
 
 	@Override
 	public void cadastrar() {
-		tipousuario = new TipoUsuario();
+		tipoUsuario = new TipoUsuario();
+		tipoUsuario.set_ID(UUID.randomUUID().toString());
+		tipoUsuario.setPersonalizado(true);
 	}
 
 	@Override
 	public void selecionar(ActionEvent evento) {
-		tipousuario = (TipoUsuario) evento.getComponent().getAttributes().get("tipoUsuarioSelecionado");
+		tipoUsuario = (TipoUsuario) evento.getComponent().getAttributes().get("tipoUsuarioSelecionado");
 	}
 
 	@Override
-	public void salvar() {
-		showStatusDialog();
-		if (TipoUsuarioDAO.merge(tipousuario)) {
+	public void salvarEditar() {
+		if (TipoUsuarioDAO.merge(tipoUsuario)) {
+			tipoUsuario = new TipoUsuario();
 			hideStatusDialog();
-			tipousuario = new TipoUsuario();
 			showSuccessMessage("Dados gravados na nuvem.");
 		} else {
 			hideStatusDialog();
@@ -63,18 +69,31 @@ public class TipoUsuarioBean extends AbstractBean {
 	}
 
 	@Override
-	public void remover(ActionEvent evento) {
-
+	public void removerDesabilitar(ActionEvent evento) {
+		tipoUsuario = (TipoUsuario) evento.getComponent().getAttributes().get("tipoUsuarioSelecionado");
+		List<Usuario> task = UsuarioDAO.getAllPorTipo(tipoUsuario);
+		if (task != null && !task.isEmpty()) {
+			hideStatusDialog();
+			showErrorMessage(
+					"Para remover este tipo de usuário, antes você deve desassociá-lo de todos os usuários que o possuem.");
+		} else {
+			if (TipoUsuarioDAO.remove(tipoUsuario))
+				showSuccessMessage("O Tipo de usuário foi removido com sucesso!");
+			else
+				showErrorMessage("Ocorreu uma falha ao remover o tipo de usuário. Consulte o suporte da ferramenta.");
+		}
+		tipoUsuario = new TipoUsuario();
 	}
 
 	public TipoUsuario getTipoUsuario() {
-		return tipousuario;
+		return tipoUsuario;
 	}
 
 	public void setTipoUsuario(TipoUsuario tipousuario) {
-		this.tipousuario = tipousuario;
+		this.tipoUsuario = tipousuario;
 	}
 
+	@Produces
 	public List<TipoUsuario> getTiposUsuario() {
 		return tiposUsuario;
 	}

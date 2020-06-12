@@ -15,6 +15,7 @@ public class TipoUsuario implements Serializable {
 
 	private String _ID;
 	private String descricao;
+	private boolean personalizado;
 
 //---------------------- Encapsulamento ----------------------
 
@@ -32,6 +33,14 @@ public class TipoUsuario implements Serializable {
 
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
+	}
+
+	public boolean isPersonalizado() {
+		return personalizado;
+	}
+
+	public void setPersonalizado(boolean personalizado) {
+		this.personalizado = personalizado;
 	}
 
 	@Override
