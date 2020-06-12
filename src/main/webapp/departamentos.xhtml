@@ -28,6 +28,8 @@
 								actionListener="#{departamentoBean.cadastrar()}"
 								oncomplete="PF('dialogCadastro').show()"
 								update=":mensagem :form-cadastro">
+								<f:actionListener
+									type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
 							</p:commandButton>
 						</div>
 					</div>
@@ -57,6 +59,8 @@
 						update=":mensagem :form-tabela :form-cadastro">
 						<f:attribute name="departamentoSelecionado"
 							value="#{departamento}" />
+						<f:actionListener
+							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
 					</p:commandButton>
 					<p:commandButton
 						icon="#{departamento.habilitado ? 'pi pi-ban' : 'pi pi-check'}"
@@ -89,8 +93,8 @@
 					<h2>#{departamentoBean.departamento.descricao == null ?
 						'Cadastrar Departamento' : 'Editar Departamento'}</h2>
 				</div>
-				<div class="ui-inputgroup ui-g-12 ui-md-4">
-					<span class="ui-inputgroup-addon" style="width: 100%;">Descrição</span>
+				<div class="ui-inputgroup ui-g-12 ui-md-6">
+					<span class="ui-inputgroup-addon" style="width: 30%;">Descrição</span>
 					<p:inputText id="descricao" required="true"
 						placeholder="Informe o nome do departamento."
 						value="#{departamentoBean.departamento.descricao}"
@@ -99,8 +103,8 @@
 					</p:inputText>
 					<p:tooltip for="descricao" position="top" />
 				</div>
-				<div class="ui-inputgroup ui-g-12 ui-md-4">
-					<span class="ui-inputgroup-addon" style="width: 100%;">Superior</span>
+				<div class="ui-inputgroup ui-g-12 ui-md-6">
+					<span class="ui-inputgroup-addon" style="width: 30%;">Superior</span>
 					<p:selectOneMenu id="departamento" required="false"
 						style="margin-right:0 !important;"
 						value="#{departamentoBean.departamento.departamentoSuperior_ID}"
@@ -113,8 +117,8 @@
 					</p:selectOneMenu>
 					<p:tooltip for="departamento" position="top" />
 				</div>
-				<div class="ui-inputgroup ui-g-12 ui-md-4">
-					<span class="ui-inputgroup-addon" style="width: 100%;">Habilitado</span>
+				<div class="ui-inputgroup ui-g-12 ui-md-6">
+					<span class="ui-inputgroup-addon" style="width: 30%;">Habilitado</span>
 					<p:inputText id="habilitado" readonly="true"
 						title="Marque ao lado se deseja habilitar o departamento."
 						style="margin-right:0 !important;"
@@ -128,9 +132,9 @@
 					<p:tooltip for="habilitado" position="top" />
 				</div>
 				<div class="ui-inputgroup ui-g-12 ui-md-12">
-					<span class="ui-inputgroup-addon" style="width: 25%;">Categorias</span>
-					<p:linkButton styleClass="ui-success-color"
-						icon="pi pi-plus" href="categorias.xhtml" />
+					<span class="ui-inputgroup-addon" style="width: 30%;">Categorias</span>
+					<p:linkButton styleClass="ui-success-color" icon="pi pi-plus"
+						href="categorias.xhtml" />
 					<p:chips id="categorias" styleClass="ui-chips-onlyview"
 						inputStyleClass="ui-chips-onlyview"
 						placeholder="Nenhuma Categoria Inserida."
@@ -139,19 +143,22 @@
 					<p:tooltip for="categorias" position="top" />
 				</div>
 				<div class="ui-g-12">
-					<br />
+					<p:separator />
+					<p:messages styleClass="ui-g-12" skipDetailIfEqualsSummary="true"
+						showDetail="true" closable="true">
+						<p:autoUpdate />
+					</p:messages>
 				</div>
-				<div class="ui-g-3 centeredColumn">
+				<div class="ui-g-2 centeredColumn">
 					<p:commandButton id="btCadastrar" type="submit"
 						styleClass="ui-success-color" icon="pi pi-arrow-right"
 						iconPos="right" value="Salvar"
 						action="#{departamentoBean.salvarEditar()}"
 						onstart="PF('statusDialog').show();"
 						onerror="PF('statusDialog').hide();"
-						oncomplete="if(args.validationFailed)PF('statusDialog').hide();}"
-						update=":mensagem :form-tabela:tabela-departamentos :form-cadastro" />
+						oncomplete="if(args.validationFailed){PF('statusDialog').hide();}"
+						update=":form-tabela:tabela-departamentos :form-cadastro" />
 				</div>
-
 			</h:form>
 		</p:sidebar>
 	</ui:define>

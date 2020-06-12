@@ -28,6 +28,8 @@
 								actionListener="#{tipoUsuarioBean.cadastrar()}"
 								oncomplete="PF('dialogCadastro').show()"
 								update=":mensagem :form-cadastro">
+								<f:actionListener
+									type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
 							</p:commandButton>
 						</div>
 					</div>
@@ -49,6 +51,8 @@
 						oncomplete="PF('dialogCadastro').show()"
 						update=":mensagem :form-tabela :form-cadastro">
 						<f:attribute name="tipoUsuarioSelecionado" value="#{tipoUsuario}" />
+						<f:actionListener
+							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
 					</p:commandButton>
 					<p:commandButton
 						rendered="#{tipoUsuario.personalizado ? 'true' : 'false'}"
@@ -90,11 +94,14 @@
 					</p:inputText>
 					<p:tooltip for="descricao" position="top" />
 				</div>
-
 				<div class="ui-g-12">
-					<br />
+					<p:separator />
+					<p:messages styleClass="ui-g-12" skipDetailIfEqualsSummary="true"
+						showDetail="true" closable="true">
+						<p:autoUpdate />
+					</p:messages>
 				</div>
-				<div class="ui-g-3 centeredColumn">
+				<div class="ui-g-2 centeredColumn">
 					<p:commandButton id="btCadastrar" type="submit"
 						styleClass="ui-success-color" icon="pi pi-arrow-right"
 						iconPos="right" value="Salvar"
@@ -102,7 +109,7 @@
 						onstart="PF('statusDialog').show();"
 						onerror="PF('statusDialog').hide();"
 						oncomplete="if(args.validationFailed){PF('statusDialog').hide();}"
-						update=":mensagem :form-tabela:tabela-tipoUsuarios :form-cadastro" />
+						update=":form-tabela:tabela-tipoUsuarios :form-cadastro" />
 				</div>
 			</h:form>
 		</p:sidebar>

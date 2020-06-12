@@ -16,13 +16,12 @@
 						<div class="ui-inputgroup">
 							<span class="ui-inputgroup-addon"><i
 								class="pi pi-envelope"></i></span>
-							<p:inputText id="email" value="#{funcionarioBean.funcionario.email}"
-								styleClass="ui-g-6" placeholder="Informe seu e-mail."
-								title="Informe seu e-mail." maxlength="40" required="true"
-								autocomplete="true" requiredMessage="E-mail é obrigatório."
+							<p:inputText id="email"
+								value="#{funcionarioBean.funcionario.email}" styleClass="ui-g-6"
+								placeholder="Informe seu e-mail." title="Informe seu e-mail."
+								maxlength="40" required="true" autocomplete="true"
+								requiredMessage="E-mail é obrigatório."
 								validatorMessage="Seu e-mail está inválido.">
-								<f:validateRegex
-									pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
 							</p:inputText>
 							<p:tooltip for="email" />
 						</div>
@@ -30,10 +29,11 @@
 					<div class="ui-g-12">
 						<div class="ui-inputgroup">
 							<span class="ui-inputgroup-addon"><i class="pi pi-key"></i></span>
-							<p:password id="senha" value="#{funcionarioBean.funcionario.senha}"
-								styleClass="ui-g-6" placeholder="Informe sua senha."
-								title="Informe sua Senha." maxlength="10" required="true"
-								autocomplete="true" requiredMessage="Senha é obrigatória." />
+							<p:password id="senha"
+								value="#{funcionarioBean.funcionario.senha}" styleClass="ui-g-6"
+								placeholder="Informe sua senha." title="Informe sua Senha."
+								maxlength="11" required="true" autocomplete="true"
+								requiredMessage="Senha é obrigatória." />
 							<p:tooltip for="senha" />
 						</div>
 					</div>
@@ -41,9 +41,13 @@
 						<p:commandLink id="bt-redefinir"
 							onclick="PF('dialogRedefinir').show();">
 							<h:outputText value="Esqueci minha senha" />
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
 						</p:commandLink>
 					</div>
-					<br />
+					<div class="ui-g-12">
+						<p:separator />
+					</div>
 					<div class="ui-g-12">
 						<p:commandButton id="bt-logar" type="submit" value="Entrar"
 							styleClass="ui-success-color" icon="pi pi-arrow-right"
@@ -67,18 +71,23 @@
 						<div class="ui-inputgroup">
 							<span class="ui-inputgroup-addon"><i
 								class="pi pi-envelope"></i></span>
-							<p:inputText id="email" value="#{funcionarioBean.funcionario.email}"
-								styleClass="ui-g-4" placeholder="Informe seu e-mail."
-								title="Informe seu e-mail." maxlength="40" required="true"
-								autocomplete="true" requiredMessage="E-mail é obrigatório."
+							<p:inputText id="email"
+								value="#{funcionarioBean.funcionario.email}" styleClass="ui-g-4"
+								placeholder="Informe seu e-mail." title="Informe seu e-mail."
+								maxlength="40" required="true" autocomplete="true"
+								requiredMessage="E-mail é obrigatório."
 								validatorMessage="Seu e-mail está inválido.">
-								<f:validateRegex
-									pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
 							</p:inputText>
 							<p:tooltip for="email" />
 						</div>
 					</div>
-					<br />
+					<div class="ui-g-12">
+						<p:separator />
+						<p:messages styleClass="ui-g-12" skipDetailIfEqualsSummary="true"
+							showDetail="true" closable="true">
+							<p:autoUpdate />
+						</p:messages>
+					</div>
 					<div class="ui-g-12">
 						<p:commandButton id="btRedefinir" type="submit"
 							styleClass="ui-success-color" icon="pi pi-arrow-right"
@@ -86,7 +95,7 @@
 							onstart="PF('statusDialog').show();"
 							onerror="PF('statusDialog').hide();"
 							oncomplete="if(args.validationFailed){PF('statusDialog').hide();}else{redefinirSenha();}"
-							update=":mensagem :dialog-redefinir :form-login:painel-login" />
+							update=":dialog-redefinir :form-login:painel-login" />
 					</div>
 				</div>
 			</h:form>

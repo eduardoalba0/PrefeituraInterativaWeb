@@ -19,13 +19,19 @@
 		href="#{request.contextPath}/css/style.css" />
 </h:head>
 <h:body>
-	<p:growl id="mensagem" widgetVar="growl" showDetail="true" />
+	<p:growl id="mensagem" widgetVar="growl"
+		skipDetailIfEqualsSummary="true" showDetail="true" />
 	<h:outputStylesheet name="primeicons/primeicons.css"
 		library="primefaces" />
 	<div class="ui-g">
 		<h:form id="form-menu" class="ui-g-12 ui-md-2 ui-g-nopad"
 			rendered="#{funcionarioBean.funcionarioLogado != null}">
 			<p:menu style="width:100%;">
+				<p:submenu label="Gestão">
+					<p:menuitem value="Avaliações" url="avaliacoes.xhtml" />
+					<p:menuitem value="Indicadores" url="indicadores.xhtml" />
+					<p:menuitem value="Distribuição Geográfica" url="demandas.xhtml" />
+				</p:submenu>
 				<p:submenu label="Gerenciamento">
 					<p:menuitem value="Atendimentos" url="atendimentos.xhtml" />
 					<p:menuitem value="Solicitacoes" url="solicitacoes.xhtml" />
@@ -39,7 +45,7 @@
 				</p:submenu>
 				<p:submenu label="Opções">
 					<p:menuitem value="Perfil" url="meusdados.xhtml" />
-					<p:menuitem value="Deslogar" onstart="PF('statusDialog').show();"
+					<p:menuitem value="Sair" onstart="PF('statusDialog').show();"
 						onerror="PF('statusDialog').hide();"
 						actionListener="#{funcionarioBean.deslogar()}"
 						update=":mensagem :form-menu" />
