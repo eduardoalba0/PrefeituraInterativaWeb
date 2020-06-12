@@ -104,7 +104,11 @@ html, body {
 
 .ui-separator {
 	border: 1px solid var(--color-orange) !important;
-    box-shadow: 1px 1px 1px black;
+	box-shadow: 1px 1px 1px black;
+}
+
+.ui-inputgroup .ui-state-error:not(.ui-selectonemenu-trigger) {
+	border: 3px solid var(--color-red) !important;
 }
 
 .ui-growl-item-container, .ui-chips-token, .ui-button:not(.ui-button-icon-only) {
@@ -126,8 +130,6 @@ html, body {
 	border: transparent !important;
 	border-radius: 50px 50px 0px 0px !important;
 	box-shadow: 3px -5px 3px black;
-	padding: 50px !important;
-	height: 100%;
 }
 
 /* Icones */
@@ -160,14 +162,23 @@ html, body {
 	margin-top: auto !important;
 	margin-bottom: auto !important;
 }
-.ui-datatable-tablewrapper table{ 
+
+.ui-datatable-tablewrapper table {
 	table-layout: auto;
+}
+
+.ui-sidebar {
+	padding: 20px !important;
+	height: 100%;
+	z-index: 1017;
+    overflow: scroll;
 }
 
 .ui-inputgroup {
 	margin-top: 15px !important;
 	margin-bottom: 15px !important;
 }
+
 .centerDiv {
 	position: absolute;
 	left: 50%;
@@ -175,8 +186,7 @@ html, body {
 	transform: translate(-50%, -50%);
 }
 
-.ui-inputgroup-addon,
-.ui-dialog {
+.ui-inputgroup-addon, .ui-dialog {
 	text-align: center !important;
 	width: 40% !important;
 }
@@ -213,7 +223,7 @@ html, body {
 
 /* Exibicao de componentes */
 
-.ui-chips-onlyview .ui-chips-token-icon, .ui-chips-onlyview .ui-chips-input-token {
+.ui-invisible, .ui-chips-onlyview .ui-chips-token-icon, .ui-chips-onlyview .ui-chips-input-token {
 	display: none !important;
 }
 

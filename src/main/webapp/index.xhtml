@@ -12,30 +12,28 @@
 					style="background: transparent !important; width: 120px !important; height: 120px !important;" />
 				<h1>Prefeitura Interativa</h1>
 				<div class="ui-g">
-					<div class="ui-g-12">
-						<div class="ui-inputgroup">
-							<span class="ui-inputgroup-addon"><i
-								class="pi pi-envelope"></i></span>
-							<p:inputText id="email"
-								value="#{funcionarioBean.funcionario.email}" styleClass="ui-g-6"
-								placeholder="Informe seu e-mail." title="Informe seu e-mail."
-								maxlength="40" required="true" autocomplete="true"
-								requiredMessage="E-mail é obrigatório."
-								validatorMessage="Seu e-mail está inválido.">
-							</p:inputText>
-							<p:tooltip for="email" />
-						</div>
+					<div class="ui-inputgroup ui-g-12 ui-md-8 centeredColumn">
+						<span class="ui-inputgroup-addon" style="width: auto !important"><i
+							class="pi pi-envelope"></i></span>
+						<p:inputText id="email"
+							value="#{funcionarioBean.funcionario.email}"
+							placeholder="Informe seu e-mail." title="Informe seu e-mail."
+							maxlength="40" required="true" autocomplete="true"
+							requiredMessage="E-mail é obrigatório."
+							validatorMessage="Seu e-mail está inválido.">
+						</p:inputText>
+						<p:tooltip for="email" />
 					</div>
-					<div class="ui-g-12">
-						<div class="ui-inputgroup">
-							<span class="ui-inputgroup-addon"><i class="pi pi-key"></i></span>
-							<p:password id="senha"
-								value="#{funcionarioBean.funcionario.senha}" styleClass="ui-g-6"
-								placeholder="Informe sua senha." title="Informe sua Senha."
-								maxlength="11" required="true" autocomplete="true"
-								requiredMessage="Senha é obrigatória." />
-							<p:tooltip for="senha" />
-						</div>
+					<div class="ui-g-12" />
+					<div class="ui-inputgroup ui-g-12 ui-md-8 centeredColumn">
+						<span class="ui-inputgroup-addon" style="width: auto !important"><i
+							class="pi pi-key"></i></span>
+						<p:password id="senha"
+							value="#{funcionarioBean.funcionario.senha}"
+							placeholder="Informe sua senha." title="Informe sua Senha."
+							maxlength="11" required="true" autocomplete="true"
+							requiredMessage="Senha é obrigatória." />
+						<p:tooltip for="senha" />
 					</div>
 					<div class="ui-g-12">
 						<p:commandLink id="bt-redefinir"
@@ -48,7 +46,7 @@
 					<div class="ui-g-12">
 						<p:separator />
 					</div>
-					<div class="ui-g-12">
+					<div class="ui-g-12 ui-md-4 centeredColumn">
 						<p:commandButton id="bt-logar" type="submit" value="Entrar"
 							styleClass="ui-success-color" icon="pi pi-arrow-right"
 							iconPos="right" onstart="PF('statusDialog').show();"
