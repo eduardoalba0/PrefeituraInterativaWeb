@@ -1,6 +1,7 @@
 package br.edu.ifpr.bsi.prefeiturainterativaweb.bean;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -11,15 +12,17 @@ import org.primefaces.PrimeFaces;
 @SuppressWarnings("serial")
 public abstract class AbstractBean implements Serializable {
 
-	public abstract void listar();
+	public abstract void init();
+
+	public abstract List<?> listar();
 
 	public abstract void selecionar(ActionEvent event);
 
 	public abstract void cadastrar();
 
-	public abstract void salvar();
+	public abstract void salvarEditar();
 
-	public abstract void remover(ActionEvent event);
+	public abstract void removerDesabilitar(ActionEvent event);
 
 	public final void redirect(String pagina) {
 		try {

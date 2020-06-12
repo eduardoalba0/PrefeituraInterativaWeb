@@ -5,18 +5,19 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
+
+import org.omnifaces.cdi.ViewScoped;
 
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.DepartamentoDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Categoria;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Departamento;
 
 @Named("departamentoBean")
-@ApplicationScoped
+@ViewScoped
 @SuppressWarnings("serial")
 public class DepartamentoBean extends AbstractBean {
 
@@ -29,8 +30,7 @@ public class DepartamentoBean extends AbstractBean {
 
 	@Override
 	@PostConstruct
-	public void listar() {
-		showStatusDialog();
+	public void init() {
 		if (departamento == null)
 			departamento = new Departamento();
 
@@ -47,23 +47,14 @@ public class DepartamentoBean extends AbstractBean {
 	}
 
 	@Override
-	public void cadastrar() {
-		departamento = new Departamento();
-		departamento.set_ID(UUID.randomUUID().toString());
-		departamento.setHabilitado(true);
-	}
-
-	public List<Departamento> preencherDepartamentos() {
-		showStatusDialog();
+	public List<Departamento> listar() {
 		departamentos.forEach((aux) -> {
-			List<String> strings = new ArrayList<>();
+			List<Categoria> localCategorias = new ArrayList<>();
 			aux.getCategorias().forEach((string) -> {
-				if (categorias != null && categorias.contains(new Categoria(string))) {
-					Categoria categoria = categorias.get(categorias.indexOf(new Categoria(string)));
-					strings.add(categoria.getDescricao());
-				}
+				if (categorias != null && categorias.contains(new Categoria(string)))
+					localCategorias.add(categorias.get(categorias.indexOf(new Categoria(string))));
 			});
-			aux.setNomeCategorias(strings);
+			aux.setLocalCategorias(localCategorias);
 		});
 
 		hideStatusDialog();
@@ -72,17 +63,24 @@ public class DepartamentoBean extends AbstractBean {
 	}
 
 	@Override
+	public void cadastrar() {
+		departamento = new Departamento();
+		departamento.set_ID(UUID.randomUUID().toString());
+		departamento.setHabilitado(true);
+	}
+
+	@Override
 	public void selecionar(ActionEvent evento) {
 		departamento = (Departamento) evento.getComponent().getAttributes().get("departamentoSelecionado");
 	}
 
 	@Override
-	public void salvar() {
-		showStatusDialog();
+	public void salvarEditar() {
 		if (DepartamentoDAO.merge(departamento)) {
 			hideStatusDialog();
 			departamento = new Departamento();
 			showSuccessMessage("Dados gravados na nuvem.");
+
 		} else {
 			hideStatusDialog();
 			showErrorMessage("Ocorreu uma falha ao gravar os dados. Consulte o suporte da ferramenta.");
@@ -90,11 +88,7 @@ public class DepartamentoBean extends AbstractBean {
 	}
 
 	@Override
-	public void remover(ActionEvent evento) {
-
-	}
-
-	public void desabilitar(ActionEvent evento) {
+	public void removerDesabilitar(ActionEvent evento) {
 		departamento = (Departamento) evento.getComponent().getAttributes().get("departamentoSelecionado");
 		if (departamento.isHabilitado()) {
 			departamento.setHabilitado(false);
@@ -102,14 +96,13 @@ public class DepartamentoBean extends AbstractBean {
 			departamento.setHabilitado(true);
 		}
 		if (DepartamentoDAO.merge(departamento)) {
-			departamentos.remove(departamento);
-			departamentos.add(departamento);
 			hideStatusDialog();
 			if (departamento.isHabilitado())
 				showSuccessMessage("O Departamento foi habilitado com sucesso.");
 			else
 				showWarningMessage(
-						"Enquanto estiver desabilitado, o departamento e suas categorias não aparecerão para os usuários");
+						"Enquanto estiver desabilitado, o departamento e suas categorias não aparecerão para os usuários."
+								+ "Os dados existentes não serão alterados e as solicitações que já foram salvas OFFLINE ainda poderão apresentar este departamento temporariamente.");
 		} else {
 			hideStatusDialog();
 			showErrorMessage("Ocorreu um erro ao desabilitar o departamento. Consulte o suporte da ferramenta.");
@@ -128,7 +121,7 @@ public class DepartamentoBean extends AbstractBean {
 	@Produces
 	public List<Departamento> getDepartamentos() {
 		if (departamentos == null)
-			listar();
+			init();
 		return departamentos;
 	}
 
