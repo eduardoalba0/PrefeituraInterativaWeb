@@ -28,7 +28,7 @@ public class Departamento implements Serializable {
 	private Departamento departamentoSuperior;
 
 	@Exclude
-	private List<String> nomeCategorias;
+	private List<Categoria> localCategorias;
 
 //---------------------- Encapsulamento ----------------------
 
@@ -82,12 +82,12 @@ public class Departamento implements Serializable {
 	}
 
 	@Exclude
-	public List<String> getNomeCategorias() {
-		return nomeCategorias;
+	public List<Categoria> getLocalCategorias() {
+		return localCategorias;
 	}
 
-	public void setNomeCategorias(List<String> nomeCategorias) {
-		this.nomeCategorias = nomeCategorias;
+	public void setLocalCategorias(List<Categoria> localCategorias) {
+		this.localCategorias = localCategorias;
 	}
 
 	@Override
