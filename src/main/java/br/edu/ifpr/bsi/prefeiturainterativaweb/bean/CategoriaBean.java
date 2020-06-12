@@ -5,11 +5,12 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
+
+import org.omnifaces.cdi.ViewScoped;
 
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.CategoriaDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.DepartamentoDAO;
@@ -17,12 +18,11 @@ import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Categoria;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Departamento;
 
 @Named("categoriaBean")
-@ApplicationScoped
+@ViewScoped
 @SuppressWarnings("serial")
 public class CategoriaBean extends AbstractBean {
 
 	private Categoria categoria;
-
 	private List<Categoria> categorias;
 
 	@Inject
@@ -30,8 +30,7 @@ public class CategoriaBean extends AbstractBean {
 
 	@Override
 	@PostConstruct
-	public void listar() {
-		showStatusDialog();
+	public void init() {
 		if (categoria == null)
 			categoria = new Categoria();
 
@@ -46,14 +45,12 @@ public class CategoriaBean extends AbstractBean {
 			hideStatusDialog();
 		}
 	}
-
-	public List<Categoria> preencherCategorias() {
-		showStatusDialog();
+	
+	@Override
+	public List<Categoria> listar() {
 		categorias.forEach((aux) -> {
-			Departamento departamento = departamentos
-					.get(departamentos.indexOf(new Departamento(aux.getDepartamento_ID())));
-			if (departamento != null)
-				aux.setNomeDepartamento(departamento.getDescricao());
+			aux.setLocalDepartamento(
+					departamentos.get(departamentos.indexOf(new Departamento(aux.getDepartamento_ID()))));
 		});
 		hideStatusDialog();
 		return categorias;
@@ -72,32 +69,52 @@ public class CategoriaBean extends AbstractBean {
 	}
 
 	@Override
-	public void salvar() {
+	public void salvarEditar() {
 		boolean tasksSuccess = CategoriaDAO.merge(categoria);
+		Departamento departamento = null;
 
+		// Se a operação foi concluida com êxito, continua.
 		if (tasksSuccess) {
-			Departamento departamento = DepartamentoDAO.get(categoria.getDepartamento_ID());
-			List<String> lista = departamento.getCategorias();
+			departamento = DepartamentoDAO.get(categoria.getDepartamento_ID());
+			tasksSuccess = departamento != null;
+		}
 
-			if (categorias.contains(categoria))
-				categorias.remove(categoria);
+		// Se a operação foi concluida com êxito, continua.
+		if (tasksSuccess) {
+			List<String> listaAdicionar = departamento.getCategorias();
+			// Caso o departamento não possua nenhuma, precisa ser criada uma lista.
+			if (listaAdicionar == null)
+				listaAdicionar = new ArrayList<String>();
 
-			if (lista == null)
-				lista = new ArrayList<String>();
-
-			if (!lista.contains(categoria.get_ID())) {
-				lista.add(categoria.get_ID());
-				departamento.setCategorias(lista);
+			// Caso seja uma categoria nova, ela precisa ser associada à um departamento.
+			if (!listaAdicionar.contains(categoria.get_ID())) {
+				listaAdicionar.add(categoria.get_ID());
+				departamento.setCategorias(listaAdicionar);
 				tasksSuccess = DepartamentoDAO.merge(departamento);
-				departamentos.remove(departamento);
-				departamentos.add(departamento);
 			}
 		}
+
+		// Se a operação foi concluida com êxito, continua.
 		if (tasksSuccess) {
-			categorias.add(categoria);
+			// Caso o departamento for alterado, ela precisa ser desassociada
+			departamento = categoria.getLocalDepartamento();
+			if (departamento != null && departamento.getCategorias() != null) {
+				List<String> listaRemover = departamento.getCategorias();
+				if (listaRemover.contains(categoria.get_ID())) {
+					listaRemover.remove(categoria.get_ID());
+					departamento.setCategorias(listaRemover);
+					departamentos.remove(departamento);
+					departamentos.add(departamento);
+					tasksSuccess = DepartamentoDAO.merge(categoria.getLocalDepartamento());
+				}
+			}
+		}
+		// Se a operação foi concluida com êxito, mostra mensagem de sucesso.
+		if (tasksSuccess) {
 			categoria = new Categoria();
 			hideStatusDialog();
 			showSuccessMessage("Dados gravados na nuvem.");
+			// Se ocorreu erro em qualquer etapa, mostra mensagem de erro.
 		} else {
 			hideStatusDialog();
 			showErrorMessage("Ocorreu uma falha ao gravar os dados. Consulte o suporte da ferramenta.");
@@ -105,23 +122,7 @@ public class CategoriaBean extends AbstractBean {
 	}
 
 	@Override
-	public void remover(ActionEvent evento) {
-		categoria = (Categoria) evento.getComponent().getAttributes().get("categoriaSelecionada");
-		if (CategoriaDAO.isAssociada(categoria.get_ID())) {
-			showErrorMessage(
-					"Antes de removê-la, por favor, desassocie esta categoria de todos as solicitações e departamentos que a possuem.");
-		} else if (CategoriaDAO.remove(categoria)) {
-			categorias.remove(categoria);
-			hideStatusDialog();
-			showSuccessMessage("A categoria foi removida.");
-		} else {
-			hideStatusDialog();
-			showErrorMessage("Ocorreu um erro ao remover a categoria. Consulte o suporte da ferramenta.");
-		}
-
-	}
-
-	public void desabilitar(ActionEvent evento) {
+	public void removerDesabilitar(ActionEvent evento) {
 		categoria = (Categoria) evento.getComponent().getAttributes().get("categoriaSelecionada");
 		if (categoria.isHabilitada()) {
 			categoria.setHabilitada(false);
@@ -129,13 +130,12 @@ public class CategoriaBean extends AbstractBean {
 			categoria.setHabilitada(true);
 		}
 		if (CategoriaDAO.merge(categoria)) {
-			categorias.remove(categoria);
-			categorias.add(categoria);
 			hideStatusDialog();
 			if (categoria.isHabilitada())
 				showSuccessMessage("A categoria foi habilitada com sucesso.");
 			else
-				showWarningMessage("Enquanto estiver desabilitada, a categoria não aparecerá para os usuários");
+				showWarningMessage("Enquanto estiver desabilitada, a categoria não aparecerá para os usuários."
+						+ "Os dados existentes não serão alterados e as solicitações que já foram salvas OFFLINE ainda poderão apresentar esta categoria temporariamente.");
 		} else {
 			hideStatusDialog();
 			showErrorMessage("Ocorreu um erro ao desabilitar a categoria. Consulte o suporte da ferramenta.");
@@ -154,7 +154,7 @@ public class CategoriaBean extends AbstractBean {
 	@Produces
 	public List<Categoria> getCategorias() {
 		if (categorias == null)
-			listar();
+			init();
 		return categorias;
 	}
 
