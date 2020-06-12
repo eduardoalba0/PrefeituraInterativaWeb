@@ -11,9 +11,10 @@
 	<ui:define name="conteudo">
 		<h:form id="form-tabela">
 			<p:dataTable id="tabela-departamentos" var="departamento"
-				value="#{departamentoBean.preencherDepartamentos()}"
+				value="#{departamentoBean.listar()}"
+				sortBy="#{departamento.descricao}" widgetVar="tabelaDepartamentos"
 				emptyMessage="Nenhum departamento encontrado." paginator="true"
-				paginatorPosition="bottom" rows="15" widgetVar="tabelaDepartamentos">
+				paginatorPosition="bottom" rows="15">
 				<f:facet name="header">
 					<div class="ui-g">
 						<div class="ui-g-6 ui-g-nopad centeredColumn">
@@ -31,23 +32,24 @@
 						</div>
 					</div>
 				</f:facet>
-				<p:column headerText="Descrição" sortBy="#{departamento.descricao}"
+				<p:column headerText="Departamento"
+					sortBy="#{departamento.descricao}"
 					filterBy="#{departamento.descricao}" filterStyle="display:none">
 					<h:outputText value="#{departamento.descricao}" />
 				</p:column>
 				<p:column headerText="Categorias"
-					filterBy="#{departamento.nomeCategorias}" width="30%;"
+					filterBy="#{departamento.localCategorias}" width="30%;"
 					styleClass="centeredColumn" filterStyle="display:none">
 					<p:chips inputStyleClass="ui-chips-onlyview"
 						styleClass="ui-chips-onlyview"
-						value="#{departamento.nomeCategorias}" style="width:100%" />
+						value="#{departamento.localCategorias}" style="width:100%" />
 				</p:column>
 				<p:column headerText="Habilitado" styleClass="centeredColumn"
 					style="width:13%;" sortBy="#{departamento.habilitado}"
 					filterBy="#{departamento.habilitado}" filterStyle="display:none">
 					<h:outputText value=" #{departamento.habilitado ? 'Sim' : 'Não' }" />
 				</p:column>
-				<p:column headerText="Opções" style="width:13%;"
+				<p:column headerText="Opções" style="width:10%;"
 					styleClass="centeredColumn">
 					<p:commandButton icon="pi pi-pencil" title="Editar"
 						actionListener="#{departamentoBean.selecionar}"
@@ -59,19 +61,11 @@
 					<p:commandButton
 						icon="#{departamento.habilitado ? 'pi pi-ban' : 'pi pi-check'}"
 						styleClass="#{departamento.habilitado ? 'ui-secondary-color' : 'ui-success-color'}"
-						title="#{departamento.habilitado ? 'Desabilitar' : 'Habilitar'}"
-						actionListener="#{departamentoBean.desabilitar}"
+						title="#{departamento.habilitado ? 'Desativar' : 'Habilitar'}"
+						actionListener="#{departamentoBean.removerDesabilitar}"
 						update=":mensagem :form-tabela :form-cadastro">
 						<p:confirm header="Atenção!"
-							message="Tem certeza que deseja #{departamento.habilitado ? 'DESABILITAR' : 'HABILITAR'} o departamento: [#{departamento.descricao}]?" />
-						<f:attribute name="departamentoSelecionado"
-							value="#{departamento}" />
-					</p:commandButton>
-					<p:commandButton icon="pi pi-trash" styleClass="ui-danger-color"
-						title="Remover" actionListener="#{departamentoBean.remover}"
-						update=":mensagem :form-tabela :form-cadastro">
-						<p:confirm header="Atenção!"
-							message="Tem certeza que deseja excluir o departamento: [#{departamento.descricao}]?" />
+							message="Tem certeza que deseja #{departamento.habilitado ? 'DESATIVAR' : 'HABILITAR'} o departamento: [#{departamento.descricao}]?" />
 						<f:attribute name="departamentoSelecionado"
 							value="#{departamento}" />
 					</p:commandButton>
@@ -135,9 +129,13 @@
 				</div>
 				<div class="ui-inputgroup ui-g-12 ui-md-12">
 					<span class="ui-inputgroup-addon" style="width: 25%;">Categorias</span>
-					<p:chips id="categorias"
-						title="Digite o nome da categoria e aperter enter."
-						value="#{departamentoBean.departamento.nomeCategorias}" />
+					<p:linkButton styleClass="ui-success-color"
+						icon="pi pi-plus" href="categorias.xhtml" />
+					<p:chips id="categorias" styleClass="ui-chips-onlyview"
+						inputStyleClass="ui-chips-onlyview"
+						placeholder="Nenhuma Categoria Inserida."
+						title="Clique no botão ao lado para adicionar categorias."
+						value="#{departamentoBean.departamento.localCategorias}" />
 					<p:tooltip for="categorias" position="top" />
 				</div>
 				<div class="ui-g-12">
@@ -147,7 +145,7 @@
 					<p:commandButton id="btCadastrar" type="submit"
 						styleClass="ui-success-color" icon="pi pi-arrow-right"
 						iconPos="right" value="Salvar"
-						action="#{departamentoBean.salvar()}"
+						action="#{departamentoBean.salvarEditar()}"
 						onstart="PF('statusDialog').show();"
 						onerror="PF('statusDialog').hide();"
 						oncomplete="if(args.validationFailed)PF('statusDialog').hide();}"

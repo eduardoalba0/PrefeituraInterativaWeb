@@ -11,7 +11,7 @@
 	<ui:define name="conteudo">
 		<h:form id="form-tabela">
 			<p:dataTable id="tabela-categorias" var="categoria"
-				value="#{categoriaBean.preencherCategorias()}" paginator="true"
+				value="#{categoriaBean.listar()}" paginator="true"
 				emptyMessage="Nenhuma categoria encontrada."
 				sortBy="#{categoria.descricao}" paginatorPosition="bottom" rows="15"
 				widgetVar="tabelaCategorias">
@@ -32,21 +32,21 @@
 						</div>
 					</div>
 				</f:facet>
-				<p:column headerText="Descrição" sortBy="#{categoria.descricao}"
+				<p:column headerText="Categoria" sortBy="#{categoria.descricao}"
 					filterBy="#{categoria.descricao}" filterStyle="display:none">
 					<h:outputText value="#{categoria.descricao}" />
 				</p:column>
 				<p:column headerText="Departamento"
-					sortBy="#{categoria.nomeDepartamento}"
-					filterBy="#{categoria.nomeDepartamento}" filterStyle="display:none">
-					<h:outputText value="#{categoria.nomeDepartamento}" />
+					sortBy="#{categoria.loacalDepartamento}"
+					filterBy="#{categoria.localDepartamento}" filterStyle="display:none">
+					<h:outputText value="#{categoria.localDepartamento}" />
 				</p:column>
 				<p:column headerText="Habilitada" styleClass="centeredColumn"
 					style="width:13%;" sortBy="#{categoria.habilitada}"
 					filterBy="#{categoria.habilitada}" filterStyle="display:none">
 					<h:outputText value=" #{categoria.habilitada ? 'Sim' : 'Não' }" />
 				</p:column>
-				<p:column headerText="Opções" style="width:13%;"
+				<p:column headerText="Opções" style="width:10%;"
 					styleClass="centeredColumn">
 					<p:commandButton icon="pi pi-pencil" title="Editar"
 						actionListener="#{categoriaBean.selecionar}"
@@ -57,18 +57,11 @@
 					<p:commandButton
 						icon="#{categoria.habilitada ? 'pi pi-ban' : 'pi pi-check'}"
 						styleClass="#{categoria.habilitada ? 'ui-secondary-color' : 'ui-success-color'}"
-						title="#{categoria.habilitada ? 'Desabilitar' : 'Habilitar'}"
-						actionListener="#{categoriaBean.desabilitar}"
+						title="#{categoria.habilitada ? 'Desativar' : 'Habilitar'}"
+						actionListener="#{categoriaBean.removerDesabilitar}"
 						update=":mensagem :form-tabela :form-cadastro">
 						<p:confirm header="Atenção!"
-							message="Tem certeza que deseja #{categoria.habilitada ? 'DESABILITAR' : 'HABILITAR'} a categoria: [#{categoria.descricao}]?" />
-						<f:attribute name="categoriaSelecionada" value="#{categoria}" />
-					</p:commandButton>
-					<p:commandButton icon="pi pi-trash" styleClass="ui-danger-color"
-						title="Remover" actionListener="#{categoriaBean.remover}"
-						update=":mensagem :form-tabela :form-cadastro">
-						<p:confirm header="Atenção!"
-							message="Tem certeza que deseja excluir a categoria: [#{categoria.descricao}]?" />
+							message="Tem certeza que deseja #{categoria.habilitada ? 'DESATIVAR' : 'HABILITAR'} a categoria: [#{categoria.descricao}]?" />
 						<f:attribute name="categoriaSelecionada" value="#{categoria}" />
 					</p:commandButton>
 				</p:column>
@@ -92,7 +85,8 @@
 						Categoria' : 'Editar Categoria'}</h2>
 				</div>
 				<div class="ui-inputgroup ui-g-12 ui-md-4">
-					<span class="ui-inputgroup-addon ui-g-12 ui-md-3" style="width:100%;">Descrição</span>
+					<span class="ui-inputgroup-addon ui-g-12 ui-md-3"
+						style="width: 100%;">Descrição</span>
 					<p:inputText id="descricao"
 						placeholder="Informe o nome da categoria."
 						value="#{categoriaBean.categoria.descricao}"
@@ -102,7 +96,7 @@
 					<p:tooltip for="descricao" position="top" />
 				</div>
 				<div class="ui-inputgroup ui-g-12 ui-md-5">
-					<span class="ui-inputgroup-addon" style="width:100%;">Departamento</span>
+					<span class="ui-inputgroup-addon" style="width: 100%;">Departamento</span>
 					<p:selectOneMenu id="departamento"
 						style="margin-right:0 !important;"
 						value="#{categoriaBean.categoria.departamento_ID}"
@@ -121,7 +115,7 @@
 					<p:tooltip for="departamento" position="top" />
 				</div>
 				<div class="ui-inputgroup ui-g-12 ui-md-3">
-					<span class="ui-inputgroup-addon" style="width:100%;">Habilitada</span>
+					<span class="ui-inputgroup-addon" style="width: 100%;">Habilitada</span>
 					<p:inputText id="habilitada"
 						title="Marque ao lado se deseja habilitar a categoria."
 						style="margin-right:0 !important;"
@@ -141,7 +135,7 @@
 				<div class="ui-g-3 centeredColumn">
 					<p:commandButton id="btCadastrar" type="submit"
 						styleClass="ui-success-color" icon="pi pi-arrow-right"
-						iconPos="right" value="Salvar" action="#{categoriaBean.salvar()}"
+						iconPos="right" value="Salvar" action="#{categoriaBean.salvarEditar()}"
 						onstart="PF('statusDialog').show();"
 						onerror="PF('statusDialog').hide();"
 						oncomplete="if(args.validationFailed){PF('statusDialog').hide();}"

@@ -71,8 +71,18 @@ html, body {
 	color: white !important;
 }
 
+.ui-growl-info{
+		background: var(--color-green) !important;
+}
+.ui-growl-warn{
+		background: var(--color-yellow) !important;
+}
+.ui-growl-error, .ui.growl-fatal{
+		background: var(--color-red) !important;
+}
 /* Sombras e Bordas*/
 
+.ui-growl-item-container,
 .ui-chips-token, .ui-button:not(.ui-button-icon-only) {
 	border-radius: 30px !important;
 	box-shadow: 1px 2px 3px black !important;
@@ -113,6 +123,10 @@ html, body {
 	-webkit-mask-size: contain !important;
 }
 
+.ui-growl-image-info, .ui-growl-image-warn, .ui-growl-image-error, ui-growl-image-fatal{
+    color: white !important;	
+}
+
 /* Posicionamento e tamanho*/
 
 .ui-dialog.ui-confirm-dialog .ui-dialog-content>span, .ui-dialog-footer, .centeredColumn {
@@ -137,6 +151,12 @@ html, body {
 
 .ui-selectonemenu {
 	min-width: 0 !important;
+}
+
+
+.ui-icon-closethick{
+	margin-right: 3% !important;
+	margin-top: 3% !important;
 }
 
 .ui-widget-content .ui-datatable-empty-message, .ui-widget-header {
@@ -170,6 +190,10 @@ html, body {
 	outline: transparent !important;
 }
 
+.ui-growl-item-container{
+	opacity: 100% !important;
+}
+
 .ui-chips .ui-chips-onlyview {
 	background: transparent !important;
 	border: transparent !important;
@@ -189,11 +213,25 @@ h1, h2, h3, .ui-tooltip-text, .ui-chips-input-token input, .ui-paginator-page, .
 	line-height: 30px;
 }
 
+.ui-growl-title {
+	font-weight: unset !important;
+	font-size: 22px !important;
+}
+
+.ui-growl-item-container{
+	color: white !important;
+}
+
 .ui-growl-message, .ui-button, .ui-menu, .ui-chips {
 	font-size: 13pt !important;
 	font-family: fredoka !important;
 }
 
+.ui-growl-message{
+	text-align: justify;
+  	text-justify: inter-character;
+}
+  
 @font-face {
 	font-family: fredoka;
 	src: url("../fonts/fredoka.ttf");
