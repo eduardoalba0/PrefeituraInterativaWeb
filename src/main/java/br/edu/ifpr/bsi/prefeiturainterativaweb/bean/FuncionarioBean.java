@@ -10,9 +10,12 @@ import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.primefaces.PrimeFaces;
+
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.UsuarioDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Funcionario;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.TipoUsuario;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.FirebaseHelper;
 
 @Named("funcionarioBean")
 @SessionScoped
@@ -21,22 +24,17 @@ public class FuncionarioBean extends AbstractBean {
 
 	private Funcionario funcionario;
 
-	@Produces
-	@Named("funcionarios")
 	private List<Funcionario> funcionarios;
 
-	@Inject
-	@Named("funcionarioLogado")
+	@Produces
 	private Funcionario funcionarioLogado;
 
 	@Inject
-	@Named("tiposusuario")
 	private List<TipoUsuario> tiposUsuario;
 
 	@Override
 	@PostConstruct
 	public void init() {
-		showStatusDialog();
 		if (funcionario == null) {
 			funcionario = new Funcionario();
 		}
@@ -55,6 +53,40 @@ public class FuncionarioBean extends AbstractBean {
 		}
 	}
 
+	public void autenticar() {
+		String _ID = FirebaseHelper.autenticar(funcionario);
+		if (_ID != null && !_ID.trim().equals("")) {
+			funcionarioLogado = UsuarioDAO.getFuncionario(_ID);
+			funcionario = new Funcionario();
+			hideStatusDialog();
+			if (funcionarioLogado == null) {
+				redirect("index.xhtml", "Falha ao autenticar dados. Consulte o suporte da ferramenta.");
+			} else if (funcionarioLogado.getTipoUsuario_ID().equals("6b395be8-a7c1-4971-8dc0-afa04be63a00")) {
+				funcionarioLogado = null;
+				redirect("index.xhtml",
+						"Seu usuário não possuí privilégios para acessar a plataforma. Consulte o suporte da ferramenta.");
+			} else {
+				funcionario = new Funcionario();
+				redirect("solicitacoes.xhtml", "Bem vindo, " + funcionarioLogado.getNome() + "! ");
+			}
+		} else {
+			showStatusDialog();
+			PrimeFaces.current().executeScript("login();");
+		}
+	}
+
+	public void deslogar() {
+		funcionarioLogado = null;
+		showStatusDialog();
+		PrimeFaces.current().executeScript("logout();");
+		redirect("index.xhtml", "Obrigado por utilizar nossos serviços.");
+	}
+
+	@Override
+	public List<Funcionario> listar() {
+		return null;
+	}
+
 	@Override
 	public void cadastrar() {
 		funcionario = new Funcionario();
@@ -66,7 +98,7 @@ public class FuncionarioBean extends AbstractBean {
 	}
 
 	@Override
-	public void salvar() {
+	public void salvarEditar() {
 		showStatusDialog();
 		if (UsuarioDAO.merge(funcionario)) {
 			hideStatusDialog();
@@ -79,7 +111,7 @@ public class FuncionarioBean extends AbstractBean {
 	}
 
 	@Override
-	public void remover(ActionEvent evento) {
+	public void removerDesabilitar(ActionEvent evento) {
 
 	}
 
@@ -99,11 +131,23 @@ public class FuncionarioBean extends AbstractBean {
 		this.funcionario = funcionario;
 	}
 
+	@Produces
 	public List<Funcionario> getFuncionarios() {
+		if (funcionarios == null)
+			init();
 		return funcionarios;
 	}
 
 	public void setFuncionarios(List<Funcionario> funcionarios) {
 		this.funcionarios = funcionarios;
 	}
+
+	public List<TipoUsuario> getTiposUsuario() {
+		return tiposUsuario;
+	}
+
+	public void setTiposUsuario(List<TipoUsuario> tiposUsuario) {
+		this.tiposUsuario = tiposUsuario;
+	}
+
 }

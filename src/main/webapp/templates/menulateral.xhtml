@@ -23,8 +23,8 @@
 	<h:outputStylesheet name="primeicons/primeicons.css"
 		library="primefaces" />
 	<div class="ui-g">
-		<h:form class="ui-g-12 ui-md-2 ui-g-nopad"
-			rendered="#{funcionarioLogado != null}">
+		<h:form id="form-menu" class="ui-g-12 ui-md-2 ui-g-nopad"
+			rendered="#{funcionarioBean.funcionarioLogado != null}">
 			<p:menu style="width:100%;">
 				<p:submenu label="Gerenciamento">
 					<p:menuitem value="Atendimentos" url="atendimentos.xhtml" />
@@ -34,13 +34,15 @@
 				<p:submenu label="Administrativo">
 					<p:menuitem value="Categorias" url="categorias.xhtml" />
 					<p:menuitem value="Departamentos" url="departamentos.xhtml" />
-					<p:menuitem value="Permissões" url="permissoes.xhtml" />
+					<p:menuitem value="Tipos de Usuários" url="tiposusuarios.xhtml" />
 					<p:menuitem value="Usuários" url="usuarios.xhtml" />
 				</p:submenu>
 				<p:submenu label="Opções">
 					<p:menuitem value="Perfil" url="meusdados.xhtml" />
 					<p:menuitem value="Deslogar" onstart="PF('statusDialog').show();"
-						onerror="PF('statusDialog').hide();" oncomplete="logout()" />
+						onerror="PF('statusDialog').hide();"
+						actionListener="#{funcionarioBean.deslogar()}"
+						update=":mensagem :form-menu" />
 				</p:submenu>
 			</p:menu>
 		</h:form>
@@ -66,15 +68,11 @@
 		header="Aguarde um momento...">
 		<br />
 		<div class="centeredColumn">
-		<i class="pi pi-spin pi-spinner" style="font-size: 5em"></i>
+			<i class="pi pi-spin pi-spinner" style="font-size: 5em"></i>
 		</div>
 		<br />
-
 	</p:dialog>
 	<h:form>
-		<p:remoteCommand name="autenticar"
-			action="#{usuarioBean.autenticar()}" />
-		<p:remoteCommand name="deslogar" action="#{usuarioBean.deslogar()}" />
 	</h:form>
 </h:body>
 </html>

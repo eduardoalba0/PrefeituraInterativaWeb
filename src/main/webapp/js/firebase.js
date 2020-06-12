@@ -23,11 +23,9 @@ function login() {
 	var  valemail = document.getElementById("formLogin:email").value;
 	var  valsenha = document.getElementById("formLogin:senha").value;
 	auth.signInWithEmailAndPassword(valemail, valsenha)
-		.then(function(user){
-			var usuario = {email:valemail, senha:valsenha};
-			autenticar([{name: "uid" , value:JSON.stringify(usuario)}]);
-		}).catch(function(error) {
+		.catch(function(error) {
 			PF('statusDialog').hide();
+			window.location.href = "index.xhtml";
 			switch(error.code){
 			case 'auth/wrong-password':	
 				PF('growl').removeAll();
@@ -47,7 +45,10 @@ function login() {
 function logout(){
 	initFirebase();
 	auth.signOut()
-	.then(deslogar())
+	.then(function(){
+		PF('statusDialog').hide();
+		window.location.href = "index.xhtml";
+	})
 	.catch(function(error) {
 		console.log(error);
 		PF('statusDialog').hide();
@@ -57,9 +58,8 @@ function logout(){
 }
 
 function redefinirSenha() {
-	var valemail = document.getElementById("formRedefinicao:email").value;
-	if(auth == null)
-		initFirebase();
+	initFirebase();
+	var valemail = document.getElementById("form-redefinicao:email").value;
 	auth.sendPasswordResetEmail(valemail).then(function(){
 		PF('statusDialog').hide();
 		PF('growl').removeAll();

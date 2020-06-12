@@ -109,27 +109,18 @@ public class FirebaseHelper {
 		return buscarUsuario(usuario.get_ID());
 	}
 
-	public static UserRecord cadastrarUsuario(Usuario usuario) {
-		try {
-			init();
-			return auth.createUser(new CreateRequest().setEmail(usuario.getEmail()).setPassword(usuario.getSenha())
-					.setDisplayName(usuario.getNome()).setPhotoUrl(usuario.getUriFoto()).setEmailVerified(false)
-					.setDisabled(!usuario.isHabilitado()));
-		} catch (Exception ex) {
-			return null;
-		}
-
+	public static UserRecord cadastrarUsuario(Usuario usuario) throws Exception {
+		init();
+		return auth.createUser(new CreateRequest().setEmail(usuario.getEmail()).setPassword(usuario.getSenha())
+				.setDisplayName(usuario.getNome()).setPhotoUrl(usuario.getUriFoto()).setEmailVerified(false)
+				.setDisabled(!usuario.isHabilitado()));
 	}
 
-	public static UserRecord alterarUsuario(Usuario usuario) {
-		try {
-			init();
-			return auth.updateUser(new UpdateRequest(usuario.get_ID()).setEmail(usuario.getEmail())
-					.setPassword(usuario.getSenha()).setDisplayName(usuario.getNome()).setPhotoUrl(usuario.getUriFoto())
-					.setEmailVerified(false).setDisabled(!usuario.isHabilitado()));
-		} catch (Exception ex) {
-			return null;
-		}
+	public static UserRecord alterarUsuario(Usuario usuario) throws Exception {
+		init();
+		return auth.updateUser(new UpdateRequest(usuario.get_ID()).setEmail(usuario.getEmail())
+				.setPassword(usuario.getSenha()).setDisplayName(usuario.getNome()).setPhotoUrl(usuario.getUriFoto())
+				.setEmailVerified(false).setDisabled(!usuario.isHabilitado()));
 	}
 
 	public static Blob carregarImagemUsuario(Usuario usuario) {

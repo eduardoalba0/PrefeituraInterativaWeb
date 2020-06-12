@@ -6,9 +6,8 @@
 	template="templates/menulateral.xhtml">
 
 	<ui:define name="conteudo">
-		<f:event type="preRenderView" listener="#{usuarioBean.init()}" />
-		<h:form id="formLogin" class="centerDiv">
-			<p:panel id="painelLogin" class="centeredColumn">
+		<h:form id="form-login" class="centerDiv">
+			<p:panel id="painel-login" class="centeredColumn">
 				<p:commandButton icon="icon-app" iconPos="center"
 					style="background: transparent !important; width: 120px !important; height: 120px !important;" />
 				<h1>Prefeitura Interativa</h1>
@@ -17,7 +16,7 @@
 						<div class="ui-inputgroup">
 							<span class="ui-inputgroup-addon"><i
 								class="pi pi-envelope"></i></span>
-							<p:inputText id="email" value="#{usuarioBean.usuario.email}"
+							<p:inputText id="email" value="#{funcionarioBean.funcionario.email}"
 								styleClass="ui-g-6" placeholder="Informe seu e-mail."
 								title="Informe seu e-mail." maxlength="40" required="true"
 								autocomplete="true" requiredMessage="E-mail é obrigatório."
@@ -31,7 +30,7 @@
 					<div class="ui-g-12">
 						<div class="ui-inputgroup">
 							<span class="ui-inputgroup-addon"><i class="pi pi-key"></i></span>
-							<p:password id="senha" value="#{usuarioBean.usuario.senha}"
+							<p:password id="senha" value="#{funcionarioBean.funcionario.senha}"
 								styleClass="ui-g-6" placeholder="Informe sua senha."
 								title="Informe sua Senha." maxlength="10" required="true"
 								autocomplete="true" requiredMessage="Senha é obrigatória." />
@@ -39,26 +38,27 @@
 						</div>
 					</div>
 					<div class="ui-g-12">
-						<p:commandLink id="btRedefinir"
+						<p:commandLink id="bt-redefinir"
 							onclick="PF('dialogRedefinir').show();">
 							<h:outputText value="Esqueci minha senha" />
 						</p:commandLink>
 					</div>
 					<br />
 					<div class="ui-g-12">
-						<p:commandButton id="btLogar" type="submit" value="Entrar"
+						<p:commandButton id="bt-logar" type="submit" value="Entrar"
 							styleClass="ui-success-color" icon="pi pi-arrow-right"
 							iconPos="right" onstart="PF('statusDialog').show();"
 							onerror="PF('statusDialog').hide();"
-							oncomplete="if(args.validationFailed){PF('statusDialog').hide();}else{login();}"
+							actionListener="#{funcionarioBean.autenticar}"
+							oncomplete="if(args.validationFailed){PF('statusDialog').hide();}"
 							update=":mensagem" />
 					</div>
 				</div>
 			</p:panel>
 		</h:form>
-		<p:sidebar id="dialogRedefinir" widgetVar="dialogRedefinir"
+		<p:sidebar id="dialog-redefinir" widgetVar="dialogRedefinir"
 			position="bottom">
-			<h:form id="formRedefinicao" class="centeredColumn">
+			<h:form id="form-redefinicao" class="centeredColumn">
 				<div class="ui-g">
 					<div class="ui-g-12">
 						<h2>Esqueci minha senha</h2>
@@ -67,7 +67,7 @@
 						<div class="ui-inputgroup">
 							<span class="ui-inputgroup-addon"><i
 								class="pi pi-envelope"></i></span>
-							<p:inputText id="email" value="#{usuarioBean.usuario.email}"
+							<p:inputText id="email" value="#{funcionarioBean.funcionario.email}"
 								styleClass="ui-g-4" placeholder="Informe seu e-mail."
 								title="Informe seu e-mail." maxlength="40" required="true"
 								autocomplete="true" requiredMessage="E-mail é obrigatório."
@@ -85,8 +85,8 @@
 							iconPos="right" value="Redefinir Senha"
 							onstart="PF('statusDialog').show();"
 							onerror="PF('statusDialog').hide();"
-							oncomplete="if(args.validationFailed){PF('statusDialog').hide();else{redefinirSenha();}else{}"
-							update=":mensagem :dialogRedefinir :formLogin:painelLogin" />
+							oncomplete="if(args.validationFailed){PF('statusDialog').hide();}else{redefinirSenha();}"
+							update=":mensagem :dialog-redefinir :form-login:painel-login" />
 					</div>
 				</div>
 			</h:form>
