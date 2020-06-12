@@ -27,7 +27,7 @@ public class Categoria implements Serializable {
 	private boolean selecionada;
 
 	@Exclude
-	private String nomeDepartamento;
+	private Departamento localDepartamento;
 
 //---------------------- Encapsulamento ----------------------
 
@@ -64,12 +64,12 @@ public class Categoria implements Serializable {
 	}
 
 	@Exclude
-	public String getNomeDepartamento() {
-		return nomeDepartamento;
+	public Departamento getLocalDepartamento() {
+		return localDepartamento;
 	}
 
-	public void setNomeDepartamento(String nomeDepartamento) {
-		this.nomeDepartamento = nomeDepartamento;
+	public void setLocalDepartamento(Departamento localDepartamento) {
+		this.localDepartamento = localDepartamento;
 	}
 
 	@Exclude
