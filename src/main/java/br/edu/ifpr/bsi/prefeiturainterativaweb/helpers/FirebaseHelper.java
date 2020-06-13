@@ -81,9 +81,12 @@ public class FirebaseHelper {
 			urlRequest.connect();
 			inputStream = new InputStreamReader((InputStream) urlRequest.getContent());
 			JsonObject rootobj = JsonParser.parseReader(inputStream).getAsJsonObject();
-			if (rootobj != null && rootobj.get("localId") != null)
-				return rootobj.get("localId").getAsString();
-			else
+			if (rootobj != null && rootobj.get("localId") != null) {
+				if (buscarUsuario(rootobj.get("localId").getAsString()).isEmailVerified())
+					return rootobj.get("localId").getAsString();
+				else
+					return null;
+			} else
 				return null;
 		} catch (Exception ex) {
 			return null;
