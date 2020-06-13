@@ -45,12 +45,11 @@
 					<h:outputText value="#{categoria.localDepartamento}" />
 				</p:column>
 				<p:column headerText="Habilitada" styleClass="centeredColumn"
-					 sortBy="#{categoria.habilitada}"
-					filterBy="#{categoria.habilitada}" filterStyle="display:none">
+					sortBy="#{categoria.habilitada}" filterBy="#{categoria.habilitada}"
+					filterStyle="display:none">
 					<h:outputText value=" #{categoria.habilitada ? 'Sim' : 'Não' }" />
 				</p:column>
-				<p:column headerText="Opções" style="width:10%;"
-					styleClass="centeredColumn">
+				<p:column headerText="Opções" styleClass="centeredColumn">
 					<p:commandButton icon="pi pi-pencil" title="Editar"
 						actionListener="#{categoriaBean.selecionar}"
 						oncomplete="PF('dialogCadastro').show()"
@@ -122,10 +121,9 @@
 						title="Marque ao lado se deseja habilitar a categoria."
 						value="#{categoriaBean.categoria.habilitada ? 'Sim' : 'Não'}"
 						readonly="true" />
-					<span class="ui-inputgroup-addon-checkbox">
-						<p:selectBooleanCheckbox
+					<span class="ui-inputgroup-addon-checkbox"> <p:selectBooleanCheckbox
 							value="#{categoriaBean.categoria.habilitada}">
-							<f:ajax event="change" render="input-habilitada" />
+							<f:ajax event="change" render="habilitada" />
 						</p:selectBooleanCheckbox>
 					</span>
 					<p:tooltip for="habilitada" position="top" />
@@ -137,7 +135,13 @@
 						<p:autoUpdate />
 					</p:messages>
 				</div>
-				<div class="ui-g-2 centeredColumn">
+				<div class="ui-g-12 ui-md-3 centeredColumn">
+					<p:commandButton id="btFechar" icon="pi pi-arrow-left"
+						iconPos="left" value="Voltar"
+						oncomplete="PF('dialogCadastro').hide();" update=":form-cadastro" />
+				</div>
+				<div class="ui-md-6" />
+				<div class="ui-g-12 ui-md-3 centeredColumn">
 					<p:commandButton id="btCadastrar" type="submit"
 						styleClass="ui-success-color" icon="pi pi-arrow-right"
 						iconPos="right" value="Salvar"
