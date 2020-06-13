@@ -36,6 +36,7 @@
 					<p:menuitem value="Categorias" url="categorias.xhtml" />
 					<p:menuitem value="Departamentos" url="departamentos.xhtml" />
 					<p:menuitem value="Tipos de Usuários" url="tiposusuarios.xhtml" />
+					<p:menuitem value="Funcionários" url="funcionarios.xhtml" />
 					<p:menuitem value="Usuários" url="usuarios.xhtml" />
 				</p:submenu>
 				<p:submenu label="Gerenciamento">
@@ -47,7 +48,7 @@
 					<p:menuitem value="Perfil" url="meusdados.xhtml" />
 					<p:menuitem value="Sair" onstart="PF('statusDialog').show();"
 						onerror="PF('statusDialog').hide();"
-						actionListener="#{funcionarioBean.deslogar()}"
+						actionListener="#{usuarioBean.deslogar()}"
 						update=":mensagem :form-menu" />
 				</p:submenu>
 			</p:menu>

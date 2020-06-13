@@ -12,7 +12,7 @@
 	<ui:define name="conteudo">
 		<h:form id="form-tabela">
 			<p:dataTable id="tabela-usuarios" var="usuario" rows="15"
-				value="#{usuarioBean.usuarios}" sortBy="#{usuario.nome}"
+				value="#{usuarioBean.funcionarios}" sortBy="#{usuario.nome}"
 				widgetVar="tabelausuarios" emptyMessage="Nenhum usuario encontrado."
 				paginator="true" paginatorPosition="bottom">
 				<f:facet name="header">
@@ -34,29 +34,33 @@
 						</div>
 					</div>
 				</f:facet>
-				<p:column headerText="Usuario" sortBy="#{usuario.nome}"
+				<p:column headerText="Funcionario" sortBy="#{usuario.nome}"
 					filterBy="#{usuario.nome}" filterStyle="display:none">
 					<h:outputText value="#{usuario.nome}" />
-				</p:column>
-				<p:column headerText="CPF" sortBy="#{usuario.cpf}" priority="1"
-					styleClass="centeredColumn" filterBy="#{usuario.cpf}"
-					filterStyle="display:none">
-					<h:outputText value="#{usuario.cpf}" />
 				</p:column>
 				<p:column headerText="E-mail" sortBy="#{usuario.email}" priority="5"
 					styleClass="centeredColumn" filterBy="#{usuario.email}"
 					filterStyle="display:none">
 					<h:outputText value="#{usuario.email}" />
 				</p:column>
-				<p:column headerText="Tipo" sortBy="#{usuario.localTipoUsuario}"
+				<p:column headerText="Cargo"
+					sortBy="#{usuario.dadosFuncionais.cargo}" priority="4"
+					styleClass="centeredColumn"
+					filterBy="#{usuario.dadosFuncionais.cargo}"
+					filterStyle="display:none">
+					<h:outputText value="#{usuario.dadosFuncionais.cargo}" />
+				</p:column>
+				<p:column headerText="Departamento"
+					sortBy="#{usuario.dadosFuncionais.localDepartamento}"
+					styleClass="centeredColumn"
+					filterBy="#{usuario.dadosFuncionais.localDepartamento}"
+					filterStyle="display:none">
+					<h:outputText value="#{usuario.dadosFuncionais.localDepartamento}" />
+				</p:column>
+				<p:column headerText="Tipo" sortBy="#{usuario.localTipoUsuario}" 
 					styleClass="centeredColumn" priority="4"
 					filterBy="#{usuario.localTipoUsuario}" filterStyle="display:none">
 					<h:outputText value="#{usuario.localTipoUsuario}" />
-				</p:column>
-				<p:column headerText="Habilitado" styleClass="centeredColumn"
-					sortBy="#{usuario.habilitado}" priority="3"
-					filterBy="#{usuario.habilitado}" filterStyle="display:none">
-					<h:outputText value=" #{usuario.habilitado ? 'Sim' : 'Não' }" />
 				</p:column>
 				<p:column headerText="Opções" styleClass="centeredColumn">
 					<p:commandButton icon="pi pi-pencil" title="Editar"
@@ -144,7 +148,7 @@
 						title="Selecione o tipo do usuário."
 						requiredMessage="O tipo do usuário é obrigatório."
 						converter="omnifaces.SelectItemsConverter">
-						<f:selectItem noSelectionOption="true" 
+						<f:selectItem noSelectionOption="true"
 							itemLabel="Selecione um tipo de Usuário..." />
 						<f:selectItems value="#{tipoUsuarioBean.tiposUsuario}"
 							var="tipoUsuario" itemValue="#{tipoUsuario}"

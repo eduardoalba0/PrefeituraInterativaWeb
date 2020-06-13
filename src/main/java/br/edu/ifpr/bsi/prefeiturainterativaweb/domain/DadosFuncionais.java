@@ -2,20 +2,17 @@ package br.edu.ifpr.bsi.prefeiturainterativaweb.domain;
 
 import java.io.Serializable;
 
-import javax.validation.constraints.Digits;
-
 import com.google.cloud.firestore.annotation.Exclude;
 
 @SuppressWarnings("serial")
 public class DadosFuncionais implements Serializable {
-	
-	@Digits(integer = 10, fraction = 0, message = "São aceitos apenas números na matrícula.")
+
 	private String matricula;
 	private String cargo;
 	private String departamento_ID;
 
 	@Exclude
-	private Departamento departamento;
+	private Departamento localDepartamento;
 
 //---------------------- Encapsulamento ----------------------
 
@@ -44,12 +41,14 @@ public class DadosFuncionais implements Serializable {
 	}
 
 	@Exclude
-	public Departamento getDepartamento() {
-		return departamento;
+	public Departamento getLocalDepartamento() {
+		return localDepartamento;
 	}
 
-	public void setDepartamento(Departamento departamento) {
-		this.departamento = departamento;
+	public void setLocalDepartamento(Departamento localDepartamento) {
+		if (localDepartamento != null && localDepartamento.get_ID() != null)
+			this.setDepartamento_ID(localDepartamento.get_ID());
+		this.localDepartamento = localDepartamento;
 	}
 
 }

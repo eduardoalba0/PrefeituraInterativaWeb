@@ -114,16 +114,23 @@ public class FirebaseHelper {
 
 	public static UserRecord cadastrarUsuario(Usuario usuario) throws Exception {
 		init();
-		return auth.createUser(new CreateRequest().setEmail(usuario.getEmail()).setPassword(usuario.getSenha())
-				.setDisplayName(usuario.getNome()).setPhotoUrl(usuario.getUriFoto()).setEmailVerified(false)
-				.setDisabled(!usuario.isHabilitado()));
+		CreateRequest request = new CreateRequest().setEmail(usuario.getEmail()).setPassword(usuario.getSenha())
+				.setDisplayName(usuario.getNome()).setEmailVerified(false).setDisabled(!usuario.isHabilitado());
+		if (usuario.getLocalUriFoto() != null)
+			request.setPhotoUrl(carregarImagemUsuario(usuario).getMediaLink());
+		return auth.createUser(request);
 	}
 
 	public static UserRecord alterarUsuario(Usuario usuario) throws Exception {
 		init();
-		return auth.updateUser(
-				new UpdateRequest(usuario.get_ID()).setEmail(usuario.getEmail()).setDisplayName(usuario.getNome())
-						.setPhotoUrl(usuario.getUriFoto()).setDisabled(!usuario.isHabilitado()));
+		UpdateRequest request = new UpdateRequest(usuario.get_ID()).setEmail(usuario.getEmail())
+				.setDisplayName(usuario.getNome()).setPhotoUrl(usuario.getUriFoto())
+				.setDisabled(!usuario.isHabilitado());
+		if (!buscarUsuario(usuario).getEmail().contentEquals(usuario.getEmail()))
+			request.setEmailVerified(false);
+		else
+			request.setEmailVerified(true);
+		return auth.updateUser(request);
 	}
 
 	public static UserRecord alterarSenha(Usuario usuario) throws Exception {

@@ -14,6 +14,7 @@ import org.primefaces.PrimeFaces;
 
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.UsuarioDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.DadosFuncionais;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Departamento;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.TipoUsuario;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Usuario;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.FirebaseHelper;
@@ -22,7 +23,7 @@ import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.FirebaseHelper;
 @SessionScoped
 @SuppressWarnings("serial")
 public class UsuarioBean extends AbstractBean {
-//todo enviar verificação de e-mail se ele não estiver confirmado
+
 	private Usuario usuario;
 	private DadosFuncionais dadosFuncionais;
 
@@ -34,9 +35,17 @@ public class UsuarioBean extends AbstractBean {
 	@Named("usuarios")
 	private List<Usuario> usuarios;
 
+	@Produces
+	@Named("funcionarios")
+	private List<Usuario> funcionarios;
+
 	@Inject
 	@Named("tiposUsuario")
 	private List<TipoUsuario> tiposUsuario;
+
+	@Inject
+	@Named("departamentos")
+	private List<Departamento> departamentos;
 
 	@Override
 	@PostConstruct
@@ -44,12 +53,13 @@ public class UsuarioBean extends AbstractBean {
 		if (usuario == null)
 			usuario = new Usuario();
 
-		if (usuarios == null) {
-			usuarios = UsuarioDAO.getAll();
+		if (usuarios == null || funcionarios == null) {
+			listar();
 		}
-		if (usuarios == null) {
+		if (usuarios == null || funcionarios == null) {
 			hideStatusDialog();
 			usuarios = new ArrayList<Usuario>();
+			funcionarios = new ArrayList<Usuario>();
 			showErrorMessage("Ocorreu uma falha ao listar os dados. Consulte o suporte da ferramenta.");
 		} else {
 			hideStatusDialog();
@@ -66,8 +76,16 @@ public class UsuarioBean extends AbstractBean {
 	@Override
 	public List<Usuario> listar() {
 		showStatusDialog();
+		usuarios = UsuarioDAO.getAll();
+		funcionarios = new ArrayList<Usuario>();
+
 		usuarios.forEach((aux) -> {
 			aux.setLocalTipoUsuario(tiposUsuario.get(tiposUsuario.indexOf(new TipoUsuario(aux.getTipoUsuario_ID()))));
+			if (aux.getLocalTipoUsuario().isFuncionario() && aux.getDadosFuncionais() != null) {
+				aux.getDadosFuncionais().setLocalDepartamento(departamentos
+						.get(departamentos.indexOf(new Departamento(aux.getDadosFuncionais().getDepartamento_ID()))));
+				funcionarios.add(aux);
+			}
 		});
 		hideStatusDialog();
 		return usuarios;
@@ -89,23 +107,32 @@ public class UsuarioBean extends AbstractBean {
 			else
 				usuario.setDadosFuncionais(null);
 
-			if (usuario.get_ID() == null || usuario.get_ID().trim().equals(""))
+			if (usuario.get_ID() == null || usuario.get_ID().trim().equals("")) {
 				usuario.set_ID(FirebaseHelper.cadastrarUsuario(usuario).getUid());
-			else
+			} else {
 				usuario.set_ID(FirebaseHelper.alterarUsuario(usuario).getUid());
+			}
 			boolean tasksSuccess = usuario.get_ID() != null && !usuario.get_ID().trim().equals("");
 			if (tasksSuccess) {
 				tasksSuccess = UsuarioDAO.merge(usuario);
+				usuario = new Usuario();
+				usuarios = null;
+				init();
 				hideStatusDialog();
-				showSuccessMessage("Usuário cadastrado com sucesso.");
+				showSuccessMessage("Dados do Usuário gravados com sucesso.");
 			} else {
 				hideStatusDialog();
 				showErrorMessage("Ocorreu um erro ao cadastrar o usuário. Consulte o suporte da ferramenta.");
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
 			hideStatusDialog();
-			showErrorMessage("Ocorreu um erro ao cadastrar o usuário. Consulte o suporte da ferramenta.");
+			ex.printStackTrace();
+			if (ex.getCause().toString().contains("EMAIL_EXISTS"))
+				showErrorMessage("O e-mail informado já pertence à um usuário.");
+			else if (ex.getCause().toString().contains("INVALID_EMAIL"))
+				showErrorMessage("O e-mail informado está inválido, por favor verifique-o e tente novamente.");
+			else
+				showErrorMessage("Ocorreu um erro ao cadastrar o usuário. Consulte o suporte da ferramenta.");
 		}
 	}
 
@@ -131,7 +158,6 @@ public class UsuarioBean extends AbstractBean {
 				}
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
 			hideStatusDialog();
 			showErrorMessage(
 					"Ocorreu um erro ao gravar as alterações no banco de dados. Consulte o suporte da ferramenta.");
@@ -202,6 +228,7 @@ public class UsuarioBean extends AbstractBean {
 		if (tasksSuccess) {
 			// Login com Sucesso, redireciona à pagina principal.
 			funcionarioLogado = usuario;
+			usuario = new Usuario();
 			hideStatusDialog();
 			redirect("solicitacoes.xhtml", "Bem vindo, " + funcionarioLogado.getNome() + "! ");
 		} else {
@@ -248,8 +275,18 @@ public class UsuarioBean extends AbstractBean {
 
 	public List<Usuario> getUsuarios() {
 		if (usuarios == null)
-			init();
+			listar();
 		return usuarios;
+	}
+
+	public void setFuncionarios(List<Usuario> funcionarios) {
+		this.funcionarios = funcionarios;
+	}
+
+	public List<Usuario> getFuncionarios() {
+		if (funcionarios == null)
+			listar();
+		return funcionarios;
 	}
 
 	public List<TipoUsuario> getTiposUsuario() {
@@ -258,5 +295,13 @@ public class UsuarioBean extends AbstractBean {
 
 	public void setTiposUsuario(List<TipoUsuario> tiposUsuario) {
 		this.tiposUsuario = tiposUsuario;
+	}
+
+	public List<Departamento> getDepartamentos() {
+		return departamentos;
+	}
+
+	public void setDepartamentos(List<Departamento> departamentos) {
+		this.departamentos = departamentos;
 	}
 }
