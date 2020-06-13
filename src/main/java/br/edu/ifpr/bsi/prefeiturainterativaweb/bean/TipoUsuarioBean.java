@@ -21,8 +21,6 @@ public class TipoUsuarioBean extends AbstractBean {
 
 	private TipoUsuario tipoUsuario;
 
-	@Produces
-	@Named("tiposUsuario")
 	private List<TipoUsuario> tiposUsuario;
 
 	@Override
@@ -99,6 +97,8 @@ public class TipoUsuarioBean extends AbstractBean {
 		this.tipoUsuario = tipousuario;
 	}
 	
+	@Produces
+	@Named("tiposUsuario")
 	public List<TipoUsuario> getTiposUsuario() {
 		if (tiposUsuario == null)
 			listar();

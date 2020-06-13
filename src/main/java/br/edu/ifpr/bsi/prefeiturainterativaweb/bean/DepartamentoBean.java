@@ -21,9 +21,6 @@ import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Departamento;
 public class DepartamentoBean extends AbstractBean {
 
 	private Departamento departamento;
-
-	@Produces
-	@Named("departamentos")
 	private List<Departamento> departamentos;
 
 	@Inject
@@ -120,6 +117,8 @@ public class DepartamentoBean extends AbstractBean {
 		this.departamento = departamento;
 	}
 
+	@Produces
+	@Named("departamentos")
 	public List<Departamento> getDepartamentos() {
 		if (departamentos == null)
 			init();

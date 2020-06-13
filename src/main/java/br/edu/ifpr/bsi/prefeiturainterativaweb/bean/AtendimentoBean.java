@@ -15,8 +15,8 @@ import org.omnifaces.cdi.ViewScoped;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.AtendimentoDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Atendimento;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Aviso;
-import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.DadosFuncionais;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Solicitacao;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Usuario;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.FirebaseHelper;
 
 @Named("atendimentoBean")
@@ -24,17 +24,13 @@ import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.FirebaseHelper;
 @SuppressWarnings("serial")
 public class AtendimentoBean extends AbstractBean {
 
-
 	private Atendimento atendimento;
 	private Solicitacao solicitacao;
-	
-	@Produces
-	@Named("atendimentos")
 	private List<Atendimento> atendimentos;
 
 	@Inject
 	@Named("funcionarioLogado")
-	private DadosFuncionais funcionarioLogado;
+	private Usuario funcionarioLogado;
 
 	@Override
 	@PostConstruct
@@ -56,6 +52,7 @@ public class AtendimentoBean extends AbstractBean {
 	@Override
 	public void cadastrar() {
 		atendimento = new Atendimento();
+		atendimento.setFuncionario(funcionarioLogado);
 	}
 
 	@Override
@@ -95,11 +92,11 @@ public class AtendimentoBean extends AbstractBean {
 
 	}
 
-	public DadosFuncionais getFuncionarioLogado() {
+	public Usuario getFuncionarioLogado() {
 		return funcionarioLogado;
 	}
 
-	public void setFuncionarioLogado(DadosFuncionais funcionarioLogado) {
+	public void setFuncionarioLogado(Usuario funcionarioLogado) {
 		this.funcionarioLogado = funcionarioLogado;
 	}
 
@@ -111,7 +108,11 @@ public class AtendimentoBean extends AbstractBean {
 		this.atendimento = atendimento;
 	}
 
+	@Produces
+	@Named("atendimentos")
 	public List<Atendimento> getAtendimentos() {
+		if (atendimentos == null)
+			init();
 		return atendimentos;
 	}
 

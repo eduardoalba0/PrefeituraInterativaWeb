@@ -57,11 +57,6 @@
 					filterStyle="display:none">
 					<h:outputText value="#{usuario.dadosFuncionais.localDepartamento}" />
 				</p:column>
-				<p:column headerText="Tipo" sortBy="#{usuario.localTipoUsuario}" 
-					styleClass="centeredColumn" priority="4"
-					filterBy="#{usuario.localTipoUsuario}" filterStyle="display:none">
-					<h:outputText value="#{usuario.localTipoUsuario}" />
-				</p:column>
 				<p:column headerText="Opções" styleClass="centeredColumn">
 					<p:commandButton icon="pi pi-pencil" title="Editar"
 						actionListener="#{usuarioBean.selecionar}"

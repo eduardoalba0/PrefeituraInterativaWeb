@@ -23,9 +23,6 @@ import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Departamento;
 public class CategoriaBean extends AbstractBean {
 
 	private Categoria categoria;
-
-	@Produces
-	@Named("categorias")
 	private List<Categoria> categorias;
 
 	@Inject
@@ -154,7 +151,9 @@ public class CategoriaBean extends AbstractBean {
 	public void setCategoria(Categoria categoria) {
 		this.categoria = categoria;
 	}
-
+	
+	@Produces
+	@Named("categorias")
 	public List<Categoria> getCategorias() {
 		if (categorias == null)
 			init();

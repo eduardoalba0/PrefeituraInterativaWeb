@@ -13,24 +13,22 @@ import org.omnifaces.cdi.ViewScoped;
 
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.SolicitacaoDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Atendimento;
-import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.DadosFuncionais;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Solicitacao;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Usuario;
 
 @Named("solicitacaoBean")
 @ViewScoped
 @SuppressWarnings("serial")
 public class SolicitacaoBean extends AbstractBean {
 
-	private Solicitacao solicitacao;
 	private Atendimento atendimento;
+	private Solicitacao solicitacao;
+	private List<Solicitacao> solicitacoes;
 
 	@Inject
 	@Named("funcionarioLogado")
-	private DadosFuncionais funcionarioLogado;
+	private Usuario funcionarioLogado;
 
-	@Produces
-	@Named("solicitacoes")
-	private List<Solicitacao> solicitacoes;
 
 	@Override
 	@PostConstruct
@@ -50,6 +48,7 @@ public class SolicitacaoBean extends AbstractBean {
 	@Override
 	public void cadastrar() {
 		solicitacao = new Solicitacao();
+
 	}
 
 	@Override
@@ -79,11 +78,11 @@ public class SolicitacaoBean extends AbstractBean {
 
 	}
 
-	public DadosFuncionais getFuncionarioLogado() {
+	public Usuario getFuncionarioLogado() {
 		return funcionarioLogado;
 	}
 
-	public void setFuncionarioLogado(DadosFuncionais funcionarioLogado) {
+	public void setFuncionarioLogado(Usuario funcionarioLogado) {
 		this.funcionarioLogado = funcionarioLogado;
 	}
 
@@ -95,7 +94,11 @@ public class SolicitacaoBean extends AbstractBean {
 		this.solicitacao = solicitacao;
 	}
 
+	@Produces
+	@Named("solicitacoes")
 	public List<Solicitacao> getSolicitacoes() {
+		if (solicitacoes == null)
+			init();
 		return solicitacoes;
 	}
 

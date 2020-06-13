@@ -26,18 +26,12 @@ public class UsuarioBean extends AbstractBean {
 
 	private Usuario usuario;
 	private DadosFuncionais dadosFuncionais;
+	private List<Usuario> usuarios;
+	private List<Usuario> funcionarios;
 
 	@Produces
 	@Named("funcionarioLogado")
 	private Usuario funcionarioLogado;
-
-	@Produces
-	@Named("usuarios")
-	private List<Usuario> usuarios;
-
-	@Produces
-	@Named("funcionarios")
-	private List<Usuario> funcionarios;
 
 	@Inject
 	@Named("tiposUsuario")
@@ -272,7 +266,9 @@ public class UsuarioBean extends AbstractBean {
 	public void setUsuarios(List<Usuario> usuarios) {
 		this.usuarios = usuarios;
 	}
-
+	
+	@Produces
+	@Named("usuarios")
 	public List<Usuario> getUsuarios() {
 		if (usuarios == null)
 			listar();
@@ -282,7 +278,9 @@ public class UsuarioBean extends AbstractBean {
 	public void setFuncionarios(List<Usuario> funcionarios) {
 		this.funcionarios = funcionarios;
 	}
-
+	
+	@Produces
+	@Named("funcionarios")
 	public List<Usuario> getFuncionarios() {
 		if (funcionarios == null)
 			listar();

@@ -78,6 +78,8 @@ public class Atendimento implements Serializable {
 	}
 
 	public void setFuncionario(Usuario funcionario) {
+		if (funcionario != null && funcionario.get_ID() != null)
+			this.setFuncionario_ID(funcionario.get_ID());
 		this.funcionario = funcionario;
 	}
 
