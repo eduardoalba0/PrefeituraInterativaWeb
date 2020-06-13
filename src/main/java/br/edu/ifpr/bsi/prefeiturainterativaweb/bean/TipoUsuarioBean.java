@@ -95,6 +95,8 @@ public class TipoUsuarioBean extends AbstractBean {
 
 	@Produces
 	public List<TipoUsuario> getTiposUsuario() {
+		if (tiposUsuario == null)
+			init();
 		return tiposUsuario;
 	}
 

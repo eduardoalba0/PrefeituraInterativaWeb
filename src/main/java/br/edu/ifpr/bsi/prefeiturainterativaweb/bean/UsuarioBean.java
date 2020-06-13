@@ -1,88 +1,153 @@
 package br.edu.ifpr.bsi.prefeiturainterativaweb.bean;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Produces;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.google.gson.Gson;
+import org.omnifaces.cdi.ViewScoped;
 
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.UsuarioDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Funcionario;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.TipoUsuario;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Usuario;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.FirebaseHelper;
 
 @Named("usuarioBean")
-@SessionScoped
+@ViewScoped
 @SuppressWarnings("serial")
 public class UsuarioBean extends AbstractBean {
-	// Todo fazer listagem de usuários que se atualiza conforme o ViewScoped
-
-	@Produces
-	@Named("funcionarioLogado")
-	private Funcionario funcionarioLogado;
-
+//todo enviar verificação de e-mail se ele não estiver confirmado
 	private Usuario usuario;
+	private Funcionario funcionario;
+	private List<Usuario> usuarios;
+
+	@Inject
+	private List<TipoUsuario> tiposUsuario;
 
 	@Override
 	@PostConstruct
 	public void init() {
 		if (usuario == null)
 			usuario = new Usuario();
-		if (funcionarioLogado != null)
-			redirect("solicitacoes.xhtml");
+
+		if (usuarios == null) {
+			usuarios = UsuarioDAO.getAll();
+		}
+		if (usuarios == null) {
+			hideStatusDialog();
+			usuarios = new ArrayList<Usuario>();
+			showErrorMessage("Ocorreu uma falha ao listar os dados. Consulte o suporte da ferramenta.");
+		} else {
+			hideStatusDialog();
+		}
 	}
 
 	@Override
 	public void cadastrar() {
 		usuario = new Usuario();
+		funcionario = new Funcionario();
+		usuario.setHabilitado(true);
 	}
 
-	public void autenticar() {
-		String uid = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("uid");
-		usuario = new Gson().fromJson(uid, Usuario.class);
-		String _ID = FirebaseHelper.autenticar(usuario);
-		if (_ID != null && !_ID.trim().equals("")) {
-			funcionarioLogado = UsuarioDAO.getFuncionario(_ID);
-			usuario = new Usuario();
-			hideStatusDialog();
-			if (funcionarioLogado == null) {
-				redirect("index.xhtml", "Falha ao autenticar dados. Consulte o suporte da ferramenta.");
-			} else if (funcionarioLogado.getTipoUsuario_ID().equals("6b395be8-a7c1-4971-8dc0-afa04be63a00")) {
-				funcionarioLogado = null;
-				redirect("index.xhtml",
-						"Seu usuário não possuí privilégios para acessar a plataforma. Consulte o suporte da ferramenta.");
+	@Override
+	public List<Usuario> listar() {
+		showStatusDialog();
+		usuarios.forEach((aux) -> {
+			aux.setLocalTipoUsuario(tiposUsuario.get(tiposUsuario.indexOf(new TipoUsuario(aux.getTipoUsuario_ID()))));
+		});
+		hideStatusDialog();
+		return usuarios;
+	}
+
+	@Override
+	public void selecionar(ActionEvent evento) {
+		usuario = (Usuario) evento.getComponent().getAttributes().get("usuarioSelecionado");
+	}
+
+	public void redefinirSenha() {
+		try {
+			if (FirebaseHelper.alterarSenha(usuario).getUid() != null) {
+				hideStatusDialog();
+				showSuccessMessage("Senha alterada com sucesso.");
 			} else {
-				usuario = new Usuario();
-				redirect("solicitacoes.xhtml", "Bem vindo, " + funcionarioLogado.getNome() + "! ");
+				hideStatusDialog();
+				showErrorMessage("Falha ao redefinir a senha do usuário. Consulte o suporte da ferramenta.");
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			hideStatusDialog();
+			showErrorMessage("Falha ao redefinir a senha do usuário. Consulte o suporte da ferramenta.");
 		}
-
-	}
-
-	public void deslogar() {
-		funcionarioLogado = null;
-		redirect("index.xhtml", "Obrigado por utilizar nossos serviços.");
 	}
 
 	@Override
-	public void salvar() {
-		// TODO Auto-generated method stub
+	public void salvarEditar() {
+		try {
+			if (usuario.get_ID() == null || usuario.get_ID().trim().equals(""))
+				usuario.set_ID(FirebaseHelper.cadastrarUsuario(usuario).getUid());
+			else
+				usuario.set_ID(FirebaseHelper.alterarUsuario(usuario).getUid());
+			boolean tasksSuccess = usuario.get_ID() != null && !usuario.get_ID().trim().equals("");
+			if (tasksSuccess) {
+				if (isTipoFuncionario())
+					tasksSuccess = UsuarioDAO.merge(new Funcionario(usuario));
+				else
+					tasksSuccess = UsuarioDAO.merge(usuario);
+			}
+			hideStatusDialog();
+			if (tasksSuccess)
+				showSuccessMessage("Usuário cadastrado com sucesso.");
+			else
+				showErrorMessage("Ocorreu um erro ao cadastrar o usuário. Consulte o suporte da ferramenta.");
 
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			hideStatusDialog();
+			showErrorMessage("Ocorreu um erro ao cadastrar o usuário. Consulte o suporte da ferramenta.");
+		}
 	}
 
 	@Override
-	public void selecionar(ActionEvent event) {
-		// TODO Auto-generated method stub
-
+	public void removerDesabilitar(ActionEvent evento) {
+		try {
+			usuario = (Usuario) evento.getComponent().getAttributes().get("usuarioSelecionado");
+			if (usuario.isHabilitado())
+				usuario.setHabilitado(false);
+			else
+				usuario.setHabilitado(true);
+			if (FirebaseHelper.alterarUsuario(usuario) != null) {
+				if (UsuarioDAO.merge(usuario)) {
+					hideStatusDialog();
+					if (usuario.isHabilitado())
+						showSuccessMessage("Usuário habilitado com sucesso!");
+					else
+						showSuccessMessage("O usuário foi desabilitado. Seu acesso à ferramenta foi bloqueado.");
+				} else {
+					hideStatusDialog();
+					showErrorMessage(
+							"Ocorreu um erro ao gravar as alterações no banco de dados. Consulte o suporte da ferramenta.");
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			hideStatusDialog();
+			showErrorMessage(
+					"Ocorreu um erro ao gravar as alterações no banco de dados. Consulte o suporte da ferramenta.");
+		}
 	}
 
-	@Override
-	public void remover(ActionEvent evento) {
-		// TODO Auto-generated method stub
-
+	public boolean isTipoFuncionario() {
+		if (usuario == null)
+			return false;
+		if (usuario.getLocalTipoUsuario() == null)
+			return false;
+		else
+			return usuario.getLocalTipoUsuario().isFuncionario();
 	}
 
 	public void setUsuario(Usuario usuario) {
@@ -93,12 +158,30 @@ public class UsuarioBean extends AbstractBean {
 		return usuario;
 	}
 
-	public void setFuncionarioLogado(Funcionario funcionarioLogado) {
-		this.funcionarioLogado = funcionarioLogado;
+	public void setFuncionario(Funcionario funcionario) {
+		this.funcionario = funcionario;
 	}
 
-	public Funcionario getFuncionarioLogado() {
-		return funcionarioLogado;
+	public Funcionario getFuncionario() {
+		return funcionario;
 	}
 
+	public void setUsuarios(List<Usuario> usuarios) {
+		this.usuarios = usuarios;
+	}
+
+	@Produces
+	public List<Usuario> getUsuarios() {
+		if (usuarios == null)
+			listar();
+		return usuarios;
+	}
+
+	public List<TipoUsuario> getTiposUsuario() {
+		return tiposUsuario;
+	}
+
+	public void setTiposUsuario(List<TipoUsuario> tiposUsuario) {
+		this.tiposUsuario = tiposUsuario;
+	}
 }

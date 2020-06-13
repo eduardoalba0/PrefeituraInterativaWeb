@@ -46,7 +46,7 @@ public class FuncionarioBean extends AbstractBean {
 			showErrorMessage("Ocorreu uma falha ao listar os dados. Consulte o suporte da ferramenta.");
 		} else {
 			funcionarios.forEach((aux) -> {
-				funcionario.setTipoUsuario(
+				funcionario.setLocalTipoUsuario(
 						tiposUsuario.get(tiposUsuario.indexOf(new TipoUsuario(aux.getTipoUsuario_ID()))));
 			});
 			hideStatusDialog();
@@ -131,7 +131,7 @@ public class FuncionarioBean extends AbstractBean {
 		this.funcionario = funcionario;
 	}
 
-	@Produces
+	//@Produces
 	public List<Funcionario> getFuncionarios() {
 		if (funcionarios == null)
 			init();

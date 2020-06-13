@@ -5,6 +5,11 @@ import java.net.URI;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.br.CPF;
 
 import com.google.cloud.firestore.annotation.Exclude;
 
@@ -12,10 +17,15 @@ import com.google.cloud.firestore.annotation.Exclude;
 public class Usuario implements Serializable {
 
 	private String _ID;
+	@Length(min = 8, message = "Seu nome está inválido.")
 	private String nome;
+	@CPF(message = "O CPF informado está inválido.")
 	private String cpf;
+	@Email(message = "O endereço de E-mail informado está inválido.")
 	private String email;
+	@NotNull(message = "Informe o tipo do usuário.")
 	private String tipoUsuario_ID;
+
 	private String token;
 	private String uriFoto;
 	private String motivoDesabilitacao;
@@ -26,7 +36,7 @@ public class Usuario implements Serializable {
 	@Exclude
 	private String senha;
 	@Exclude
-	private TipoUsuario tipoUsuario;
+	private TipoUsuario localTipoUsuario;
 
 //---------------------- Encapsulamento ----------------------
 
@@ -97,14 +107,16 @@ public class Usuario implements Serializable {
 	}
 
 	@Exclude
-	public TipoUsuario getTipoUsuario() {
-		return tipoUsuario;
+	public TipoUsuario getLocalTipoUsuario() {
+		return localTipoUsuario;
 	}
 
-	public void setTipoUsuario(TipoUsuario tipoUsuario) {
-		this.tipoUsuario = tipoUsuario;
+	public void setLocalTipoUsuario(TipoUsuario tipoUsuario) {
+		if (tipoUsuario != null)
+			this.tipoUsuario_ID = tipoUsuario.get_ID();
+		this.localTipoUsuario = tipoUsuario;
 	}
-	
+
 	public String getMotivoDesabilitacao() {
 		return motivoDesabilitacao;
 	}

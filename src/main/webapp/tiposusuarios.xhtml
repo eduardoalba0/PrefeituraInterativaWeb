@@ -39,13 +39,18 @@
 					filterBy="#{tipoUsuario.descricao}" filterStyle="display:none">
 					<h:outputText value="#{tipoUsuario.descricao}" />
 				</p:column>
-				<p:column headerText="Personalizado" styleClass="centeredColumn"
-					style="width:13%;" sortBy="#{categoria.habilitada}"
-					filterBy="#{categoria.habilitada}" filterStyle="display:none">
-					<h:outputText value=" #{categoria.personalizado ? 'Sim' : 'Não' }" />
+				<p:column headerText="Funcionário" styleClass="centeredColumn"
+					filterBy="#{tipoUsuario.funcionario}"
+					sortBy="#{tipoUsuario.funcionario}" filterStyle="display:none">
+					<h:outputText value=" #{tipoUsuario.funcionario ? 'Sim' : 'Não' }" />
 				</p:column>
-				<p:column headerText="Opções" style="width:10%;"
-					styleClass="centeredColumn">
+				<p:column headerText="Personalizado" styleClass="centeredColumn"
+					filterBy="#{tipoUsuario.personalizado}"
+					sortBy="#{tipoUsuario.personalizado}" filterStyle="display:none">
+					<h:outputText
+						value=" #{tipoUsuario.personalizado ? 'Sim' : 'Não' }" />
+				</p:column>
+				<p:column headerText="Opções" styleClass="centeredColumn">
 					<p:commandButton icon="pi pi-pencil" title="Editar"
 						actionListener="#{tipoUsuarioBean.selecionar}"
 						oncomplete="PF('dialogCadastro').show()"
@@ -83,7 +88,7 @@
 					<h2>#{tipoUsuarioBean.tipoUsuario.descricao == null ?
 						'Cadastrar Tipo de Usuário' : 'Editar Tipo de Usuário'}</h2>
 				</div>
-				<div class="ui-inputgroup ui-g-12 ui-md-5 centeredColumn">
+				<div class="ui-inputgroup ui-g-12 ui-md-6 centeredColumn">
 					<span class="ui-inputgroup-addon ui-g-12 ui-md-3"
 						style="width: 100%;">Descrição</span>
 					<p:inputText id="descricao"
@@ -94,6 +99,20 @@
 					</p:inputText>
 					<p:tooltip for="descricao" position="top" />
 				</div>
+				<div class="ui-inputgroup ui-g-12 ui-md-6">
+					<span class="ui-inputgroup-addon">Funcionário</span>
+					<p:inputText id="funcionario"
+						title="#{tipoUsuarioBean.tipoUsuario.personalizado ? 'Marque ao lado se o tipo de usuário é para funcionários da prefeitura.' : 'Você só pode alterar esta propriedade em tipos de usuário personalizados.'}"
+						value="#{tipoUsuarioBean.tipoUsuario.funcionario ? 'Sim' : 'Não'}"
+						readonly="true" />
+					<span class="ui-inputgroup-addon-checkbox"> <p:selectBooleanCheckbox
+							value="#{tipoUsuarioBean.tipoUsuario.funcionario}"
+							disabled="#{tipoUsuarioBean.tipoUsuario.personalizado ? 'false' : 'true'}">
+							<f:ajax event="change" render="funcionario" />
+						</p:selectBooleanCheckbox>
+					</span>
+					<p:tooltip for="funcionario" position="top" />
+				</div>
 				<div class="ui-g-12">
 					<p:separator />
 					<p:messages styleClass="ui-g-12" skipDetailIfEqualsSummary="true"
@@ -101,7 +120,14 @@
 						<p:autoUpdate />
 					</p:messages>
 				</div>
-				<div class="ui-g-2 centeredColumn">
+				<div class="ui-g-12 ui-md-3 centeredColumn">
+					<p:commandButton id="btFechar" icon="pi pi-arrow-left"
+						iconPos="left" value="Voltar"
+						oncomplete="PF('dialogCadastro').hide();"
+						update=":form-tabela:tabela-tipoUsuarios :form-cadastro" />
+				</div>
+				<div class="ui-md-6" />
+				<div class="ui-g-12 ui-md-3 centeredColumn">
 					<p:commandButton id="btCadastrar" type="submit"
 						styleClass="ui-success-color" icon="pi pi-arrow-right"
 						iconPos="right" value="Salvar"

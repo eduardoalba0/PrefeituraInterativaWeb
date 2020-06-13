@@ -118,9 +118,14 @@ public class FirebaseHelper {
 
 	public static UserRecord alterarUsuario(Usuario usuario) throws Exception {
 		init();
-		return auth.updateUser(new UpdateRequest(usuario.get_ID()).setEmail(usuario.getEmail())
-				.setPassword(usuario.getSenha()).setDisplayName(usuario.getNome()).setPhotoUrl(usuario.getUriFoto())
-				.setEmailVerified(false).setDisabled(!usuario.isHabilitado()));
+		return auth.updateUser(
+				new UpdateRequest(usuario.get_ID()).setEmail(usuario.getEmail()).setDisplayName(usuario.getNome())
+						.setPhotoUrl(usuario.getUriFoto()).setDisabled(!usuario.isHabilitado()));
+	}
+
+	public static UserRecord alterarSenha(Usuario usuario) throws Exception {
+		init();
+		return auth.updateUser(new UpdateRequest(usuario.get_ID()).setPassword(usuario.getSenha()));
 	}
 
 	public static Blob carregarImagemUsuario(Usuario usuario) {

@@ -5,10 +5,8 @@ import java.util.List;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
-import com.google.cloud.firestore.Query.Direction;
 
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Funcionario;
-import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.TipoUsuario;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Usuario;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.DatabaseHelper;
 
@@ -61,17 +59,7 @@ public class UsuarioDAO {
 
 	public static List<Usuario> getAll() {
 		init();
-		QuerySnapshot lista = DatabaseHelper.getAll(reference.orderBy("nome", Direction.ASCENDING));
-		if (lista == null)
-			return null;
-		else
-			return lista.toObjects(Usuario.class);
-	}
-
-	public static List<Usuario> getAllPorTipo(TipoUsuario tipo) {
-		init();
-		QuerySnapshot lista = DatabaseHelper
-				.getAll(reference.orderBy("nome", Direction.ASCENDING).whereEqualTo("tipoUsuario_ID", tipo.get_ID()));
+		QuerySnapshot lista = DatabaseHelper.getAll(reference);
 		if (lista == null)
 			return null;
 		else
@@ -80,9 +68,7 @@ public class UsuarioDAO {
 
 	public static List<Funcionario> getAllFuncionarios() {
 		init();
-		QuerySnapshot lista = DatabaseHelper.getAll(reference.orderBy("nome", Direction.ASCENDING)
-				.whereLessThan("tipoUsuario_ID", "6b395be8-a7c1-4971-8dc0-afa04be63a00")
-				.whereGreaterThan("tipoUsuario_ID", "6b395be8-a7c1-4971-8dc0-afa04be63a00"));
+		QuerySnapshot lista = DatabaseHelper.getAll(reference.whereGreaterThan("cargo", ""));
 		if (lista == null)
 			return null;
 		else

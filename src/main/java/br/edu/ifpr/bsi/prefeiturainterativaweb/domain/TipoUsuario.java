@@ -3,6 +3,8 @@ package br.edu.ifpr.bsi.prefeiturainterativaweb.domain;
 import java.io.Serializable;
 import java.util.Objects;
 
+import org.hibernate.validator.constraints.Length;
+
 @SuppressWarnings("serial")
 public class TipoUsuario implements Serializable {
 
@@ -14,8 +16,10 @@ public class TipoUsuario implements Serializable {
 	}
 
 	private String _ID;
+	@Length(max = 20, min = 1, message = "A descrição deve ter entre 1 e 20 caracteres.")
 	private String descricao;
 	private boolean personalizado;
+	private boolean funcionario;
 
 //---------------------- Encapsulamento ----------------------
 
@@ -33,6 +37,14 @@ public class TipoUsuario implements Serializable {
 
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
+	}
+
+	public boolean isFuncionario() {
+		return funcionario;
+	}
+
+	public void setFuncionario(boolean funcionario) {
+		this.funcionario = funcionario;
 	}
 
 	public boolean isPersonalizado() {
