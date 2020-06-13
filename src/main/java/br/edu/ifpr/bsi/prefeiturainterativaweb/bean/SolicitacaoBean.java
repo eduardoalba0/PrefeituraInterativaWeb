@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.inject.Produces;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -12,7 +13,7 @@ import org.omnifaces.cdi.ViewScoped;
 
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.SolicitacaoDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Atendimento;
-import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Funcionario;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.DadosFuncionais;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Solicitacao;
 
 @Named("solicitacaoBean")
@@ -20,19 +21,20 @@ import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Solicitacao;
 @SuppressWarnings("serial")
 public class SolicitacaoBean extends AbstractBean {
 
-	@Inject
-	@Named("funcionarioLogado")
-	private Funcionario funcionarioLogado;
-
-	private List<Solicitacao> solicitacoes;
-
 	private Solicitacao solicitacao;
 	private Atendimento atendimento;
+
+	@Inject
+	@Named("funcionarioLogado")
+	private DadosFuncionais funcionarioLogado;
+
+	@Produces
+	@Named("solicitacoes")
+	private List<Solicitacao> solicitacoes;
 
 	@Override
 	@PostConstruct
 	public void init() {
-		showStatusDialog();
 		if (solicitacao == null)
 			solicitacao = new Solicitacao();
 
@@ -44,19 +46,24 @@ public class SolicitacaoBean extends AbstractBean {
 		}
 		hideStatusDialog();
 	}
-	
+
 	@Override
 	public void cadastrar() {
 		solicitacao = new Solicitacao();
 	}
+
+	@Override
+	public List<Solicitacao> listar() {
+		return solicitacoes;
+	}
+
 	@Override
 	public void selecionar(ActionEvent evento) {
 		solicitacao = (Solicitacao) evento.getComponent().getAttributes().get("solicitacaoSelecionada");
 	}
 
 	@Override
-	public void salvar() {
-		showStatusDialog();
+	public void salvarEditar() {
 		if (SolicitacaoDAO.merge(solicitacao)) {
 			hideStatusDialog();
 			solicitacao = new Solicitacao();
@@ -68,15 +75,15 @@ public class SolicitacaoBean extends AbstractBean {
 	}
 
 	@Override
-	public void remover(ActionEvent evento) {
+	public void removerDesabilitar(ActionEvent evento) {
 
 	}
 
-	public Funcionario getFuncionarioLogado() {
+	public DadosFuncionais getFuncionarioLogado() {
 		return funcionarioLogado;
 	}
 
-	public void setFuncionarioLogado(Funcionario funcionarioLogado) {
+	public void setFuncionarioLogado(DadosFuncionais funcionarioLogado) {
 		this.funcionarioLogado = funcionarioLogado;
 	}
 

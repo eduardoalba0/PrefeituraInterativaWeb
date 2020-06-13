@@ -5,27 +5,29 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Produces;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import org.omnifaces.cdi.ViewScoped;
 
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.DepartamentoDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Categoria;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Departamento;
 
 @Named("departamentoBean")
-@ViewScoped
+@SessionScoped
 @SuppressWarnings("serial")
 public class DepartamentoBean extends AbstractBean {
 
 	private Departamento departamento;
 
+	@Produces
+	@Named("departamentos")
 	private List<Departamento> departamentos;
 
 	@Inject
+	@Named("categorias")
 	private List<Categoria> categorias;
 
 	@Override
@@ -118,7 +120,6 @@ public class DepartamentoBean extends AbstractBean {
 		this.departamento = departamento;
 	}
 
-	@Produces
 	public List<Departamento> getDepartamentos() {
 		if (departamentos == null)
 			init();

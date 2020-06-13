@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.inject.Produces;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -14,7 +15,7 @@ import org.omnifaces.cdi.ViewScoped;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.AtendimentoDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Atendimento;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Aviso;
-import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Funcionario;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.DadosFuncionais;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Solicitacao;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.FirebaseHelper;
 
@@ -23,14 +24,17 @@ import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.FirebaseHelper;
 @SuppressWarnings("serial")
 public class AtendimentoBean extends AbstractBean {
 
-	private List<Atendimento> atendimentos;
 
 	private Atendimento atendimento;
 	private Solicitacao solicitacao;
+	
+	@Produces
+	@Named("atendimentos")
+	private List<Atendimento> atendimentos;
 
 	@Inject
 	@Named("funcionarioLogado")
-	private Funcionario funcionarioLogado;
+	private DadosFuncionais funcionarioLogado;
 
 	@Override
 	@PostConstruct
@@ -55,12 +59,17 @@ public class AtendimentoBean extends AbstractBean {
 	}
 
 	@Override
+	public List<Atendimento> listar() {
+		return atendimentos;
+	}
+
+	@Override
 	public void selecionar(ActionEvent evento) {
 		atendimento = (Atendimento) evento.getComponent().getAttributes().get("atendimentoSelecionada");
 	}
 
 	@Override
-	public void salvar() {
+	public void salvarEditar() {
 		showStatusDialog();
 		if (AtendimentoDAO.merge(atendimento)) {
 			atendimento = new Atendimento();
@@ -81,16 +90,16 @@ public class AtendimentoBean extends AbstractBean {
 	}
 
 	@Override
-	public void remover(ActionEvent evento) {
+	public void removerDesabilitar(ActionEvent evento) {
 		// TODO Auto-generated method stub
 
 	}
 
-	public Funcionario getFuncionarioLogado() {
+	public DadosFuncionais getFuncionarioLogado() {
 		return funcionarioLogado;
 	}
 
-	public void setFuncionarioLogado(Funcionario funcionarioLogado) {
+	public void setFuncionarioLogado(DadosFuncionais funcionarioLogado) {
 		this.funcionarioLogado = funcionarioLogado;
 	}
 
