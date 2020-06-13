@@ -1,31 +1,15 @@
 package br.edu.ifpr.bsi.prefeiturainterativaweb.domain;
 
+import java.io.Serializable;
+
 import javax.validation.constraints.Digits;
 
 import com.google.cloud.firestore.annotation.Exclude;
 
 @SuppressWarnings("serial")
-public class Funcionario extends Usuario {
-
-	public Funcionario() {
-	}
-
-	public Funcionario(Usuario usuario) {
-		this.set_ID(usuario.get_ID());
-		this.setNome(usuario.getNome());
-		this.setCpf(usuario.getCpf());
-		this.setHabilitado(usuario.isHabilitado());
-		this.setEmail(usuario.getEmail());
-		this.setSenha(usuario.getSenha());
-		this.setUriFoto(usuario.getUriFoto());
-		this.setToken(usuario.getToken());
-		this.setTipoUsuario_ID(usuario.getTipoUsuario_ID());
-		this.setMotivoDesabilitacao(usuario.getMotivoDesabilitacao());
-		this.setLocalTipoUsuario(usuario.getLocalTipoUsuario());
-		this.setLocalUriFoto(usuario.getLocalUriFoto());
-	}
+public class DadosFuncionais implements Serializable {
 	
-	@Digits(integer = 10, fraction = 0, message = "São aceitos apenas números inteiros na matrícula.")
+	@Digits(integer = 10, fraction = 0, message = "São aceitos apenas números na matrícula.")
 	private String matricula;
 	private String cargo;
 	private String departamento_ID;

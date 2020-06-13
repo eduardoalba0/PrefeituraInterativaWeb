@@ -20,12 +20,21 @@ function initFirebase() {
 
 function login() {
 	initFirebase();
-	var  valemail = document.getElementById("formLogin:email").value;
-	var  valsenha = document.getElementById("formLogin:senha").value;
+	var  valemail = document.getElementById("form-login:email").value;
+	var  valsenha = document.getElementById("form-login:senha").value;
 	auth.signInWithEmailAndPassword(valemail, valsenha)
+		.then(function(user){
+		if(!user.emailVerified)
+			logout();
+			window.location.href = "index.xhtml";
+			user.sendEmailVerification().catch(function(error){
+				console.log(error);
+				PF('growl').removeAll();
+				PF('growl').renderMessage({summary:"Erro!", detail: "Ocorreu um erro ao logar. Consulte o suporte da ferramenta.", severity: "error"});
+			});
+		})
 		.catch(function(error) {
 			PF('statusDialog').hide();
-			window.location.href = "index.xhtml";
 			switch(error.code){
 			case 'auth/wrong-password':	
 				PF('growl').removeAll();
@@ -37,7 +46,7 @@ function login() {
 				break;
 			default:
 				PF('growl').removeAll();
-				PF('growl').renderMessage({summary:"Erro!", detail: "Ocorreu um erro ao logar. Consulte o suporte do sistema.", severity: "error"});
+				PF('growl').renderMessage({summary:"Erro!", detail: "Ocorreu um erro ao logar. Consulte o suporte da ferramenta.", severity: "error"});
 			}
 		});
 }

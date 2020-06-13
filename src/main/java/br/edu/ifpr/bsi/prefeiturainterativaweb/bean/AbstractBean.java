@@ -11,7 +11,7 @@ import org.primefaces.PrimeFaces;
 
 @SuppressWarnings("serial")
 public abstract class AbstractBean implements Serializable {
-
+	
 	public abstract void init();
 
 	public abstract List<?> listar();

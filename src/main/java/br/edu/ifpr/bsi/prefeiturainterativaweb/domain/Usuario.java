@@ -30,6 +30,7 @@ public class Usuario implements Serializable {
 	private String uriFoto;
 	private String motivoDesabilitacao;
 	private boolean habilitado;
+	private DadosFuncionais dadosFuncionais;
 
 	@Exclude
 	private URI localUriFoto;
@@ -139,6 +140,14 @@ public class Usuario implements Serializable {
 
 	public void setToken(String token) {
 		this.token = token;
+	}
+
+	public DadosFuncionais getDadosFuncionais() {
+		return dadosFuncionais;
+	}
+
+	public void setDadosFuncionais(DadosFuncionais dadosFuncionais) {
+		this.dadosFuncionais = dadosFuncionais;
 	}
 
 	@Override

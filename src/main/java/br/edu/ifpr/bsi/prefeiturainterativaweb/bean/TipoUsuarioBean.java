@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Produces;
 import javax.faces.event.ActionEvent;
 import javax.inject.Named;
@@ -15,11 +15,12 @@ import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.TipoUsuario;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Usuario;
 
 @Named("tipoUsuarioBean")
-@ApplicationScoped
+@SessionScoped
 @SuppressWarnings("serial")
 public class TipoUsuarioBean extends AbstractBean {
 
 	private TipoUsuario tipoUsuario;
+
 	private List<TipoUsuario> tiposUsuario;
 
 	@Override
@@ -71,7 +72,11 @@ public class TipoUsuarioBean extends AbstractBean {
 	@Override
 	public void removerDesabilitar(ActionEvent evento) {
 		tipoUsuario = (TipoUsuario) evento.getComponent().getAttributes().get("tipoUsuarioSelecionado");
-		List<Usuario> task = UsuarioDAO.getAllPorTipo(tipoUsuario);
+		if (!tipoUsuario.isPersonalizado()) {
+			showErrorMessage("Você pode remover apenas os tipos de usuário personalizados.");
+			return;
+		}
+		List<Usuario> task = UsuarioDAO.getAllPorTipo(tipoUsuario.get_ID());
 		if (task != null && !task.isEmpty()) {
 			hideStatusDialog();
 			showErrorMessage(
@@ -82,7 +87,6 @@ public class TipoUsuarioBean extends AbstractBean {
 			else
 				showErrorMessage("Ocorreu uma falha ao remover o tipo de usuário. Consulte o suporte da ferramenta.");
 		}
-		tipoUsuario = new TipoUsuario();
 	}
 
 	public TipoUsuario getTipoUsuario() {
@@ -92,11 +96,12 @@ public class TipoUsuarioBean extends AbstractBean {
 	public void setTipoUsuario(TipoUsuario tipousuario) {
 		this.tipoUsuario = tipousuario;
 	}
-
+	
 	@Produces
+	@Named("tiposUsuario")
 	public List<TipoUsuario> getTiposUsuario() {
 		if (tiposUsuario == null)
-			init();
+			listar();
 		return tiposUsuario;
 	}
 

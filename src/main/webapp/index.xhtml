@@ -6,7 +6,7 @@
 	template="templates/menulateral.xhtml">
 
 	<ui:define name="conteudo">
-		<h:form id="form-login" class="centerDiv">
+		<h:form id="form-login" class="ui-g ui-fluid centerDiv">
 			<p:panel id="painel-login" class="centeredColumn">
 				<p:commandButton icon="icon-app" iconPos="center"
 					style="background: transparent !important; width: 120px !important; height: 120px !important;" />
@@ -15,8 +15,7 @@
 					<div class="ui-inputgroup ui-g-12 ui-md-8 centeredColumn">
 						<span class="ui-inputgroup-addon" style="width: auto !important"><i
 							class="pi pi-envelope"></i></span>
-						<p:inputText id="email"
-							value="#{funcionarioBean.funcionario.email}"
+						<p:inputText id="email" value="#{usuarioBean.usuario.email}"
 							placeholder="Informe seu e-mail." title="Informe seu e-mail."
 							maxlength="40" required="true" autocomplete="true"
 							requiredMessage="E-mail é obrigatório."
@@ -28,8 +27,7 @@
 					<div class="ui-inputgroup ui-g-12 ui-md-8 centeredColumn">
 						<span class="ui-inputgroup-addon" style="width: auto !important"><i
 							class="pi pi-key"></i></span>
-						<p:password id="senha"
-							value="#{funcionarioBean.funcionario.senha}"
+						<p:password id="senha" value="#{usuarioBean.usuario.senha}"
 							placeholder="Informe sua senha." title="Informe sua Senha."
 							maxlength="11" required="true" autocomplete="true"
 							requiredMessage="Senha é obrigatória." />
@@ -51,7 +49,7 @@
 							styleClass="ui-success-color" icon="pi pi-arrow-right"
 							iconPos="right" onstart="PF('statusDialog').show();"
 							onerror="PF('statusDialog').hide();"
-							actionListener="#{funcionarioBean.autenticar}"
+							actionListener="#{usuarioBean.autenticar}"
 							oncomplete="if(args.validationFailed){PF('statusDialog').hide();}"
 							update=":mensagem" />
 					</div>
@@ -60,41 +58,43 @@
 		</h:form>
 		<p:sidebar id="dialog-redefinir" widgetVar="dialogRedefinir"
 			position="bottom">
-			<h:form id="form-redefinicao" class="centeredColumn">
-				<div class="ui-g">
-					<div class="ui-g-12">
-						<h2>Esqueci minha senha</h2>
-					</div>
-					<div class="ui-g-12">
-						<div class="ui-inputgroup">
-							<span class="ui-inputgroup-addon"><i
-								class="pi pi-envelope"></i></span>
-							<p:inputText id="email"
-								value="#{funcionarioBean.funcionario.email}" styleClass="ui-g-4"
-								placeholder="Informe seu e-mail." title="Informe seu e-mail."
-								maxlength="40" required="true" autocomplete="true"
-								requiredMessage="E-mail é obrigatório."
-								validatorMessage="Seu e-mail está inválido.">
-							</p:inputText>
-							<p:tooltip for="email" />
-						</div>
-					</div>
-					<div class="ui-g-12">
-						<p:separator />
-						<p:messages styleClass="ui-g-12" skipDetailIfEqualsSummary="true"
-							showDetail="true" closable="true">
-							<p:autoUpdate />
-						</p:messages>
-					</div>
-					<div class="ui-g-12">
-						<p:commandButton id="btRedefinir" type="submit"
-							styleClass="ui-success-color" icon="pi pi-arrow-right"
-							iconPos="right" value="Redefinir Senha"
-							onstart="PF('statusDialog').show();"
-							onerror="PF('statusDialog').hide();"
-							oncomplete="if(args.validationFailed){PF('statusDialog').hide();}else{redefinirSenha();}"
-							update=":dialog-redefinir :form-login:painel-login" />
-					</div>
+			<h:form id="form-redefinir" class="ui-g ui-fluid">
+				<div class="ui-g-12 centeredColumn">
+					<h2>Esqueci minha senha</h2>
+				</div>
+				<div class="ui-inputgroup ui-g-12 ui-md-6 centeredColumn">
+					<span class="ui-inputgroup-addon"><i class="pi pi-envelope"></i></span>
+					<p:inputText id="email" value="#{usuarioBean.usuario.email}"
+						placeholder="Informe seu e-mail." title="Informe seu e-mail."
+						maxlength="40" required="true" autocomplete="true"
+						requiredMessage="E-mail é obrigatório."
+						validatorMessage="Seu e-mail está inválido.">
+					</p:inputText>
+					<p:tooltip for="email" />
+				</div>
+				<div class="ui-g-12">
+					<p:separator />
+					<p:messages styleClass="ui-g-12" skipDetailIfEqualsSummary="true"
+						showDetail="true" closable="true">
+					</p:messages>
+				</div>
+				<div class="ui-g-12 ui-md-3 centeredColumn">
+					<p:commandButton id="btFechar" icon="pi pi-arrow-left"
+						iconPos="left" value="Voltar"
+						oncomplete="PF('dialogRedefinir').hide();"
+						update=":form-redefinir">
+						<f:actionListener
+							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+					</p:commandButton>
+				</div>
+				<div class="ui-md-6" />
+				<div class="ui-g-12 ui-md-3 centeredColumn">
+					<p:commandButton id="btRedefinir" styleClass="ui-success-color"
+						icon="pi pi-arrow-right" iconPos="right" value="Redefinir Senha"
+						onstart="PF('statusDialog').show();"
+						onerror="PF('statusDialog').hide();"
+						oncomplete="if(args.validationFailed){PF('statusDialog').hide();}else{redefinirSenha();}"
+						update=":form-redefinir :form-login:painel-login" />
 				</div>
 			</h:form>
 		</p:sidebar>

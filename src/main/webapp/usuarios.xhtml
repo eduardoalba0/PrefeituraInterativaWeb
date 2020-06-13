@@ -152,12 +152,12 @@
 					</p:selectOneMenu>
 					<p:tooltip for="tipo-usuario" position="top" />
 				</div>
-				<div id="div-funcionario"
+				<div id="div-dadosfuncionais"
 					class="ui-g-12 ui-md-12 ui-g-nopad #{usuarioBean.isTipoFuncionario() ? '' : 'ui-invisible'}">
 					<div class="ui-inputgroup ui-g-12 ui-md-6">
 						<span class="ui-inputgroup-addon">Matrícula</span>
 						<p:inputText id="matricula"
-							value="#{usuarioBean.funcionario.matricula}"
+							value="#{usuarioBean.dadosfuncionais.matricula}"
 							placeholder="Informe a matrícula do usuário."
 							title="Informe o cargo do usuário." maxlength="20"
 							required="#{usuarioBean.isTipoFuncionario()}" autocomplete="true"
@@ -171,7 +171,7 @@
 						<span class="ui-inputgroup-addon">Departamento</span>
 						<p:selectOneMenu id="departamento"
 							required="#{usuarioBean.isTipoFuncionario()}"
-							value="#{usuarioBean.funcionario.departamento_ID}"
+							value="#{usuarioBean.dadosfuncionais.departamento_ID}"
 							title="Selecione o departamento do usuário."
 							requiredMessage="O departamento do usuário é obrigatório."
 							converter="omnifaces.SelectItemsConverter">
@@ -186,7 +186,7 @@
 					</div>
 					<div class="ui-inputgroup ui-g-12 ui-md-6">
 						<span class="ui-inputgroup-addon">Cargo</span>
-						<p:inputText id="cargo" value="#{usuarioBean.funcionario.cargo}"
+						<p:inputText id="cargo" value="#{usuarioBean.dadosfuncionais.cargo}"
 							placeholder="Informe o cargo do usuário."
 							title="Informe o cargo do usuário." maxlength="40"
 							required="#{usuarioBean.isTipoFuncionario()}" autocomplete="true"

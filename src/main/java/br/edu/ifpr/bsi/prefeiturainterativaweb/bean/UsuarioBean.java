@@ -4,29 +4,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Produces;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.PrimeFaces;
 
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.UsuarioDAO;
-import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Funcionario;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.DadosFuncionais;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.TipoUsuario;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Usuario;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.FirebaseHelper;
 
 @Named("usuarioBean")
-@ViewScoped
+@SessionScoped
 @SuppressWarnings("serial")
 public class UsuarioBean extends AbstractBean {
 //todo enviar verificação de e-mail se ele não estiver confirmado
 	private Usuario usuario;
-	private Funcionario funcionario;
+	private DadosFuncionais dadosFuncionais;
+
+	@Produces
+	@Named("funcionarioLogado")
+	private Usuario funcionarioLogado;
+
+	@Produces
+	@Named("usuarios")
 	private List<Usuario> usuarios;
 
 	@Inject
+	@Named("tiposUsuario")
 	private List<TipoUsuario> tiposUsuario;
 
 	@Override
@@ -50,7 +59,7 @@ public class UsuarioBean extends AbstractBean {
 	@Override
 	public void cadastrar() {
 		usuario = new Usuario();
-		funcionario = new Funcionario();
+		dadosFuncionais = new DadosFuncionais();
 		usuario.setHabilitado(true);
 	}
 
@@ -67,44 +76,32 @@ public class UsuarioBean extends AbstractBean {
 	@Override
 	public void selecionar(ActionEvent evento) {
 		usuario = (Usuario) evento.getComponent().getAttributes().get("usuarioSelecionado");
-	}
-
-	public void redefinirSenha() {
-		try {
-			if (FirebaseHelper.alterarSenha(usuario).getUid() != null) {
-				hideStatusDialog();
-				showSuccessMessage("Senha alterada com sucesso.");
-			} else {
-				hideStatusDialog();
-				showErrorMessage("Falha ao redefinir a senha do usuário. Consulte o suporte da ferramenta.");
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			hideStatusDialog();
-			showErrorMessage("Falha ao redefinir a senha do usuário. Consulte o suporte da ferramenta.");
-		}
+		dadosFuncionais = usuario.getDadosFuncionais();
+		if (dadosFuncionais == null)
+			dadosFuncionais = new DadosFuncionais();
 	}
 
 	@Override
 	public void salvarEditar() {
 		try {
+			if (isTipoFuncionario())
+				usuario.setDadosFuncionais(dadosFuncionais);
+			else
+				usuario.setDadosFuncionais(null);
+
 			if (usuario.get_ID() == null || usuario.get_ID().trim().equals(""))
 				usuario.set_ID(FirebaseHelper.cadastrarUsuario(usuario).getUid());
 			else
 				usuario.set_ID(FirebaseHelper.alterarUsuario(usuario).getUid());
 			boolean tasksSuccess = usuario.get_ID() != null && !usuario.get_ID().trim().equals("");
 			if (tasksSuccess) {
-				if (isTipoFuncionario())
-					tasksSuccess = UsuarioDAO.merge(new Funcionario(usuario));
-				else
-					tasksSuccess = UsuarioDAO.merge(usuario);
-			}
-			hideStatusDialog();
-			if (tasksSuccess)
+				tasksSuccess = UsuarioDAO.merge(usuario);
+				hideStatusDialog();
 				showSuccessMessage("Usuário cadastrado com sucesso.");
-			else
+			} else {
+				hideStatusDialog();
 				showErrorMessage("Ocorreu um erro ao cadastrar o usuário. Consulte o suporte da ferramenta.");
-
+			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			hideStatusDialog();
@@ -141,6 +138,22 @@ public class UsuarioBean extends AbstractBean {
 		}
 	}
 
+	public void redefinirSenha() {
+		try {
+			if (FirebaseHelper.alterarSenha(usuario).getUid() != null) {
+				hideStatusDialog();
+				showSuccessMessage("Senha alterada com sucesso.");
+			} else {
+				hideStatusDialog();
+				showErrorMessage("Falha ao redefinir a senha do usuário. Consulte o suporte da ferramenta.");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			hideStatusDialog();
+			showErrorMessage("Falha ao redefinir a senha do usuário. Consulte o suporte da ferramenta.");
+		}
+	}
+
 	public boolean isTipoFuncionario() {
 		if (usuario == null)
 			return false;
@@ -148,6 +161,61 @@ public class UsuarioBean extends AbstractBean {
 			return false;
 		else
 			return usuario.getLocalTipoUsuario().isFuncionario();
+	}
+
+	public void autenticar() {
+		String _ID = FirebaseHelper.autenticar(usuario);
+		boolean tasksSuccess = _ID != null && !_ID.trim().equals("");
+		if (tasksSuccess) {
+			// Login com sucesso.
+			// Verifica se o usuário possui as informações complementares.
+			usuario = UsuarioDAO.get(_ID);
+			tasksSuccess = usuario != null;
+
+			// Usuário possui informações complementares.
+			if (tasksSuccess) {
+				tasksSuccess = false;
+				// Verifica se o usuário está habilitado
+				if (usuario.isHabilitado()) {
+					if (usuario.getTipoUsuario_ID() != null) {
+						if (tiposUsuario != null && !tiposUsuario.isEmpty()) {
+							int index = tiposUsuario.indexOf(new TipoUsuario(usuario.getTipoUsuario_ID()));
+							if (index >= 0 && tiposUsuario.get(index) != null) {
+								if (tiposUsuario.get(index).isFuncionario())
+									tasksSuccess = true;
+								else {
+									hideStatusDialog();
+									showErrorMessage(
+											"Seu usuário não possuí privilégios para acessar a plataforma. Consulte o suporte da ferramenta.");
+								}
+							}
+						}
+					}
+				}
+			}
+		} else {
+			// Chama a função .JS para mostrar o erro do login.
+			PrimeFaces.current().executeScript("login();");
+			return;
+		}
+
+		if (tasksSuccess) {
+			// Login com Sucesso, redireciona à pagina principal.
+			funcionarioLogado = usuario;
+			hideStatusDialog();
+			redirect("solicitacoes.xhtml", "Bem vindo, " + funcionarioLogado.getNome() + "! ");
+		} else {
+			// Falha ao logar.
+			hideStatusDialog();
+			showErrorMessage("Falha ao autenticar dados. Consulte o suporte da ferramenta.");
+		}
+	}
+
+	public void deslogar() {
+		funcionarioLogado = null;
+		showStatusDialog();
+		PrimeFaces.current().executeScript("logout();");
+		redirect("index.xhtml", "Obrigado por utilizar nossos serviços.");
 	}
 
 	public void setUsuario(Usuario usuario) {
@@ -158,22 +226,29 @@ public class UsuarioBean extends AbstractBean {
 		return usuario;
 	}
 
-	public void setFuncionario(Funcionario funcionario) {
-		this.funcionario = funcionario;
+	public void setDadosFuncionais(DadosFuncionais dadosFuncionais) {
+		this.dadosFuncionais = dadosFuncionais;
 	}
 
-	public Funcionario getFuncionario() {
-		return funcionario;
+	public DadosFuncionais getDadosFuncionais() {
+		return dadosFuncionais;
+	}
+
+	public void setFuncionarioLogado(Usuario funcionarioLogado) {
+		this.funcionarioLogado = funcionarioLogado;
+	}
+
+	public Usuario getFuncionarioLogado() {
+		return funcionarioLogado;
 	}
 
 	public void setUsuarios(List<Usuario> usuarios) {
 		this.usuarios = usuarios;
 	}
 
-	@Produces
 	public List<Usuario> getUsuarios() {
 		if (usuarios == null)
-			listar();
+			init();
 		return usuarios;
 	}
 
