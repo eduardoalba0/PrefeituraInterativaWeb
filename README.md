@@ -17,14 +17,20 @@
 
 ## Lista de Funcionalidades
 
-* Geral
- > - [x] Autenticação de usuários
- > - [x] Gravação de dados na nuvem
- > - [x] Gravação de imagens na nuvem
- > - [x] Recepção das demandas cadastradas
+
+* Segurança
+ > - [x] Autenticação com e-mail e senha
+ > - [x] Cadastro apenas com número do CPF
+ > - [x] Cadastro único por e-mail
  > - [ ] Controle de Permissões
+ > - [ ] Regras de Segurança do Banco de dados
+
+* Interação com o usuário
  > - [ ] Envio de notificações para o usuário
- > - [ ] Mapeamento das demandas
+
+ * Persistência 
+  > - [x] Banco de dados em núvem
+  > - [x] Armazenamento de arquivos em núvem
 
 * Gerenciamento 
  > - [x] Cidadãos
