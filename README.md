@@ -17,8 +17,12 @@
 
 ## Lista de Funcionalidades
 
-* Interação
+* Geral
+ > - [x] Autenticação de usuários
+ > - [x] Gravação de dados na nuvem
+ > - [x] Gravação de imagens na nuvem
  > - [x] Recepção das demandas cadastradas
+ > - [ ] Controle de Permissões
  > - [ ] Envio de notificações para o usuário
  > - [ ] Mapeamento das demandas
 
