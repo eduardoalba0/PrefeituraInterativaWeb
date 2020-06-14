@@ -29,8 +29,9 @@
  > - [ ] Envio de notificações para o usuário
 
  * Persistência 
-  > - [x] Banco de dados em núvem
-  > - [x] Armazenamento de arquivos em núvem
+ > - [x] Armazenamento de arquivos em núvem
+ > - [x] Banco de dados em núvem
+ > - [ ] Data Warehouse
 
 * Gerenciamento 
  > - [x] Cidadãos
