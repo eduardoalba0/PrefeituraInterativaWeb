@@ -109,7 +109,7 @@
 					styleClass="ui-confirmdialog-yes ui-success-color"
 					icon="pi pi-check" onstart="PF('statusDialog').show();"
 					onerror="PF('statusDialog').hide();"
-					oncomplete="if(args.validationFailed)PF('statusDialog').hide();}"
+					oncomplete="if(args.validationFailed){PF('statusDialog').hide();}"
 					iconPos="right" update=":mensagem :form-tabela :form-cadastro" />
 			</p:confirmDialog>
 		</h:form>
@@ -139,8 +139,7 @@
 								<ui:repeat var="imagem"
 									value="#{solicitacaoBean.solicitacao.urlImagens}">
 									<h:outputLink value="#{imagem}">
-										<p:graphicImage url="#{imagem}"
-											style="height: 100px; width: 150px" />
+										<p:graphicImage url="#{imagem}" styleClass="ui-image"/>
 									</h:outputLink>
 								</ui:repeat>
 							</p:lightBox>
