@@ -13,6 +13,7 @@ import org.omnifaces.cdi.ViewScoped;
 
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.SolicitacaoDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Atendimento;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Categoria;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Solicitacao;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Usuario;
 
@@ -29,6 +30,13 @@ public class SolicitacaoBean extends AbstractBean {
 	@Named("funcionarioLogado")
 	private Usuario funcionarioLogado;
 
+	@Inject
+	@Named("categorias")
+	private List<Categoria> categorias;
+
+	@Inject
+	@Named("usuarios")
+	private List<Usuario> usuarios;
 
 	@Override
 	@PostConstruct
@@ -48,11 +56,22 @@ public class SolicitacaoBean extends AbstractBean {
 	@Override
 	public void cadastrar() {
 		solicitacao = new Solicitacao();
-
 	}
 
 	@Override
 	public List<Solicitacao> listar() {
+		solicitacoes.forEach((aux) -> {
+			List<Categoria> localCategorias = new ArrayList<>();
+			aux.getCategorias().forEach((string) -> {
+				if (categorias != null && categorias.contains(new Categoria(string)))
+					localCategorias.add(categorias.get(categorias.indexOf(new Categoria(string))));
+			});
+			aux.setLocalCidadao(usuarios.get(usuarios.indexOf(new Usuario(aux.getUsuario_ID()))));
+			localCategorias.sort((Categoria o1, Categoria o2) -> o1.getDescricao().compareTo(o2.getDescricao()));
+			aux.setLocalCategorias(localCategorias);
+		});
+
+		hideStatusDialog();
 		return solicitacoes;
 	}
 

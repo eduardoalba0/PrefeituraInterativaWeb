@@ -53,12 +53,12 @@ public class DepartamentoBean extends AbstractBean {
 				if (categorias != null && categorias.contains(new Categoria(string)))
 					localCategorias.add(categorias.get(categorias.indexOf(new Categoria(string))));
 			});
+			localCategorias.sort((Categoria o1, Categoria o2) -> o1.getDescricao().compareTo(o2.getDescricao()));
 			aux.setLocalCategorias(localCategorias);
 		});
 
 		hideStatusDialog();
 		return departamentos;
-
 	}
 
 	@Override

@@ -135,8 +135,7 @@
 					<p:linkButton styleClass="ui-success-color" icon="pi pi-plus"
 						href="categorias.xhtml" />
 					<p:chips id="categorias" styleClass="ui-chips-onlyview"
-						inputStyleClass="ui-chips-onlyview"
-						placeholder="Nenhuma Categoria Inserida."
+						placeholder="#{departamentoBean.departamento.localCategorias.isEmpty() ? 'Nenhuma Categoria associada.' : ''}"
 						title="Clique no botão ao lado para adicionar categorias."
 						value="#{departamentoBean.departamento.localCategorias}" />
 					<p:tooltip for="categorias" position="top" />

@@ -16,6 +16,13 @@ import com.google.cloud.firestore.annotation.Exclude;
 @SuppressWarnings("serial")
 public class Usuario implements Serializable {
 
+	public Usuario() {
+	}
+	
+	public Usuario(String _ID) {
+		this._ID = _ID;
+	}
+	
 	private String _ID;
 	@Length(min = 8, message = "Seu nome está inválido.")
 	private String nome;

@@ -55,7 +55,8 @@ html, body {
 	border: transparent !important;
 }
 
-.ui-paginator-page, .ui-chips .ui-chips-container .ui-chips-token, .ui-button:not(.ui-success-color):not(.ui-danger-color):not(.ui-warning-color):not(.ui-secondary-color):not(.ui-tertiary-color):not(.ui-quartiary-color) {
+.ui-tabs-selected,
+.ui-accordion-header.ui-state-active, .ui-paginator-page, .ui-chips .ui-chips-container .ui-chips-token, .ui-button:not(.ui-success-color):not(.ui-danger-color):not(.ui-warning-color):not(.ui-secondary-color):not(.ui-tertiary-color):not(.ui-quartiary-color) {
 	background-color: var(--color-orange) !important;
 	border: var(--color-orange) !important;
 	margin: 3px !important;
@@ -71,7 +72,7 @@ html, body {
 	border-radius: 50px !important;
 }
 
-.ui-icon-check, .ui-chkbox .ui-chkbox-box.ui-state-active, .ui-inputgroup .ui-inputgroup-addon-checkbox, .ui-inputgroup .ui-inputgroup-addon {
+.ui-icon-check, .ui-fieldset-legend, .ui-wizard-step-title, .ui-chkbox .ui-chkbox-box.ui-state-active, .ui-inputgroup .ui-inputgroup-addon-checkbox, .ui-inputgroup .ui-inputgroup-addon {
 	background-color: var(--color-orange) !important;
 	border-color: var(--color-orange) !important;
 }
@@ -116,7 +117,7 @@ html, body {
 	box-shadow: 1px 2px 3px black !important;
 }
 
-.ui-datatable, .ui-menu, .ui-messages-error, .ui-messages-info, .ui-messages-warn, .ui-messages-fatal, .ui-chips-container:not(.ui-chips-onlyview), .ui-linkbutton, .ui-selectonemenu, .ui-inputgroup .ui-inputgroup-addon-checkbox, .ui-inputgroup .ui-inputgroup-addon:first-child, .ui-inputgroup>.ui-inputtext, .ui-inputgroup>.ui-password {
+.ui-datatable, .ui-inputtextarea, .ui-menu, .ui-messages-error, .ui-messages-info, .ui-messages-warn, .ui-messages-fatal, .ui-chips-container:not(.ui-chips-onlyview), .ui-linkbutton, .ui-selectonemenu, .ui-inputgroup .ui-inputgroup-addon-checkbox, .ui-inputgroup .ui-inputgroup-addon:first-child, .ui-inputgroup>.ui-inputtext, .ui-inputgroup>.ui-password {
 	box-shadow: 0px 2px 2px black !important;
 }
 
@@ -131,7 +132,10 @@ html, body {
 	border-radius: 50px 50px 0px 0px !important;
 	box-shadow: 3px -5px 3px black;
 }
-
+.ui-tabs .ui-tabs-panels,
+.ui-galleria{
+	border: transparent !important;
+}
 /* Icones */
 
 .icon-app {
@@ -149,7 +153,7 @@ html, body {
 	-webkit-mask-size: contain !important;
 }
 
-.ui-messages-info-icon, .ui-messages-warn-icon, .ui-messages-error-icon, .ui-messages-fatal-icon, .ui-growl-image-info, .ui-growl-image-warn, .ui-growl-image-error, ui-growl-image-fatal {
+.ui-fieldset-toggler.ui-icon,.ui-messages-info-icon, .ui-messages-warn-icon, .ui-messages-error-icon, .ui-messages-fatal-icon, .ui-growl-image-info, .ui-growl-image-warn, .ui-growl-image-error, ui-growl-image-fatal {
 	color: white !important;
 }
 
@@ -241,13 +245,21 @@ html, body {
 	pointer-events: none !important;
 }
 
+.ui-chips-container{
+	pointer-events: none !important;
+}
+
+.ui-chips-token:not(.ui-chips-onlyview) {
+	pointer-events: all !important;
+}
+	
 ::-webkit-scrollbar {
 	display: none;
 }
 
 /* Fontes */
 
-h1, h2, h3, .ui-tooltip-text, .ui-chips-input-token input, .ui-paginator-page, .ui-texto, .ui-inputtext, .ui-password, .ui-inputgroup, .ui-panelgrid, .ui-button, .ui-commandlink, .ui-menu, .ui-chips, .ui-tooltip, .ui-dialog-title, .ui-datatable thead th, .ui-selectonemenu, .ui-dialog.ui-confirm-dialog .ui-dialog-content>span, .ui-datatable .ui-datatable-data tr {
+h1, h2, h3, .ui-fieldset-legend, .ui-tabs-header,.ui-tabs-header.ui-state-active a, .ui-accordion-header, .ui-wizard-step-title, .ui-tooltip-text, .ui-chips-input-token input, .ui-paginator-page, .ui-texto, .ui-inputtext, .ui-password, .ui-inputgroup, .ui-panelgrid, .ui-button, .ui-commandlink, .ui-menu, .ui-chips, .ui-tooltip, .ui-dialog-title, .ui-datatable thead th, .ui-selectonemenu, .ui-dialog.ui-confirm-dialog .ui-dialog-content>span, .ui-datatable .ui-datatable-data tr {
 	font-family: fredoka !important;
 	color: white !important;
 	text-shadow: 2px 2px 2px black !important;

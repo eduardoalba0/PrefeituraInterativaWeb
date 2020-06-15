@@ -76,7 +76,7 @@ public class AtendimentoBean extends AbstractBean {
 			aviso.setCorpo(atendimento.getResposta());
 			aviso.setData(new Date());
 			aviso.setSolicitacao_ID(solicitacao.get_ID());
-			aviso.setToken(solicitacao.getUsuario().getToken());
+			aviso.setToken(solicitacao.getLocalCidadao().getToken());
 			FirebaseHelper.enviarNotificacao(aviso);
 			hideStatusDialog();
 			showSuccessMessage("Dados gravados na nuvem.");
