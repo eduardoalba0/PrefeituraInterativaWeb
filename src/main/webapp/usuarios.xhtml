@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:jsf="http://xmlns.jcp.org/jsf"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="templates/menulateral.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form-tabela">
+			<p:dataTable id="tabela-usuarios" var="usuario" rows="15"
+				value="#{usuarioBean.usuarios}" sortBy="#{usuario.nome}"
+				widgetVar="tabelausuarios" emptyMessage="Nenhum usuario encontrado."
+				paginator="true" paginatorPosition="bottom">
+				<f:facet name="header">
+					<div class="ui-g">
+						<div class="ui-g-6 ui-g-nopad centeredColumn">
+							<p:inputText id="globalFilter" styleClass="ui-input-busca"
+								placeholder="Pesquise..."
+								onkeyup="PF('tabelausuarios').filter()" />
+						</div>
+						<div class="ui-g-1 ui-g-nopad centeredColumn">
+							<p:commandButton icon="pi pi-plus" title="Cadastrar"
+								styleClass="ui-success-color"
+								actionListener="#{usuarioBean.cadastrar()}"
+								oncomplete="PF('dialogCadastro').show()"
+								update=":mensagem :form-cadastro">
+								<f:actionListener
+									type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+							</p:commandButton>
+						</div>
+					</div>
+				</f:facet>
+				<p:column headerText="Usuario" sortBy="#{usuario.nome}"
+					filterBy="#{usuario.nome}" filterStyle="display:none">
+					<h:outputText value="#{usuario.nome}" />
+				</p:column>
+				<p:column headerText="CPF" sortBy="#{usuario.cpf}" priority="1"
+					styleClass="centeredColumn" filterBy="#{usuario.cpf}"
+					filterStyle="display:none">
+					<h:outputText value="#{usuario.cpf}" />
+				</p:column>
+				<p:column headerText="E-mail" sortBy="#{usuario.email}" priority="5"
+					styleClass="centeredColumn" filterBy="#{usuario.email}"
+					filterStyle="display:none">
+					<h:outputText value="#{usuario.email}" />
+				</p:column>
+				<p:column headerText="Tipo" sortBy="#{usuario.localTipoUsuario}"
+					styleClass="centeredColumn" priority="4"
+					filterBy="#{usuario.localTipoUsuario}" filterStyle="display:none">
+					<h:outputText value="#{usuario.localTipoUsuario}" />
+				</p:column>
+				<p:column headerText="Habilitado" styleClass="centeredColumn"
+					sortBy="#{usuario.habilitado}" priority="3"
+					filterBy="#{usuario.habilitado}" filterStyle="display:none">
+					<h:outputText value=" #{usuario.habilitado ? 'Sim' : 'Não' }" />
+				</p:column>
+				<p:column headerText="Opções" styleClass="centeredColumn">
+					<p:commandButton icon="pi pi-pencil" title="Editar"
+						actionListener="#{usuarioBean.selecionar}"
+						oncomplete="PF('dialogCadastro').show()"
+						update=":mensagem :form-tabela :form-cadastro">
+						<f:attribute name="usuarioSelecionado" value="#{usuario}" />
+						<f:actionListener
+							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+					</p:commandButton>
+					<p:commandButton icon="pi pi-key" title="Redefinir Senha"
+						actionListener="#{usuarioBean.selecionar}"
+						styleClass="ui-warning-color"
+						oncomplete="PF('dialogRedefinir').show()"
+						update=":mensagem :form-tabela :form-cadastro :form-redefinir">
+						<f:attribute name="usuarioSelecionado" value="#{usuario}" />
+						<f:actionListener
+							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+					</p:commandButton>
+					<p:commandButton
+						icon="#{usuario.habilitado ? 'pi pi-ban' : 'pi pi-check'}"
+						styleClass="#{usuario.habilitado ? 'ui-secondary-color' : 'ui-success-color'}"
+						title="#{usuario.habilitado ? 'Desativar' : 'Habilitar'}"
+						actionListener="#{usuarioBean.removerDesabilitar}"
+						update=":mensagem :form-tabela :form-cadastro">
+						<p:confirm header="Atenção!"
+							message="Tem certeza que deseja #{usuario.habilitado ? 'DESATIVAR' : 'HABILITAR'} o usuario: [#{usuario.nome}]?" />
+						<f:attribute name="usuarioSelecionado" value="#{usuario}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+			<p:confirmDialog global="true">
+				<p:commandButton value="Não" type="button"
+					styleClass="ui-confirmdialog-no ui-danger-color"
+					icon="pi pi-arrow-left" iconPos="left" />
+				<p:commandButton value="Sim" type="button"
+					styleClass="ui-confirmdialog-yes ui-success-color"
+					icon="pi pi-check" onstart="PF('statusDialog').show();"
+					onerror="PF('statusDialog').hide();"
+					oncomplete="if(args.validationFailed)PF('statusDialog').hide();}"
+					iconPos="right" update=":mensagem :form-tabela :form-cadastro" />
+			</p:confirmDialog>
+		</h:form>
+		<p:sidebar widgetVar="dialogCadastro" position="bottom">
+			<h:form id="form-cadastro" class="ui-g ui-fluid">
+				<div class="ui-g-12 centeredColumn">
+					<h2>#{usuarioBean.usuario._ID == null ? 'Cadastrar usuario' :
+						'Editar usuario'}</h2>
+				</div>
+				<div class="ui-inputgroup ui-g-12 ui-md-6">
+					<span class="ui-inputgroup-addon">Nome</span>
+					<p:inputText id="descricao" required="true"
+						placeholder="Informe o nome do usuario."
+						value="#{usuarioBean.usuario.nome}"
+						title="Informe o nome do usuario."
+						requiredMessage="Nome do usuario é obrigatório.">
+					</p:inputText>
+					<p:tooltip for="descricao" position="top" />
+				</div>
+				<div class="ui-inputgroup ui-g-12 ui-md-6">
+					<span class="ui-inputgroup-addon">CPF</span>
+					<p:inputText id="cpf" required="true"
+						placeholder="Informe o CPF do usuario."
+						value="#{usuarioBean.usuario.cpf}"
+						title="Informe o CPF do usuario." maxlength="11"
+						requiredMessage="CPF do usuario é obrigatório.">
+						<p:keyFilter mask="num" />
+					</p:inputText>
+					<p:tooltip for="cpf" position="top" />
+				</div>
+				<div class="ui-inputgroup ui-g-12 ui-md-6">
+					<span class="ui-inputgroup-addon">E-mail</span>
+					<p:inputText id="email" value="#{usuarioBean.usuario.email}"
+						placeholder="Informe o e-mail do usuário."
+						title="Informe o e-mail do usuário." maxlength="40"
+						required="true" autocomplete="true"
+						requiredMessage="E-mail é obrigatório.">
+					</p:inputText>
+					<p:tooltip for="email" position="top" />
+				</div>
+				<div class="ui-inputgroup ui-g-12 ui-md-6">
+					<span class="ui-inputgroup-addon">Tipo</span>
+					<p:selectOneMenu id="tipo-usuario" required="true"
+						value="#{usuarioBean.usuario.localTipoUsuario}"
+						title="Selecione o tipo do usuário."
+						requiredMessage="O tipo do usuário é obrigatório."
+						converter="omnifaces.SelectItemsConverter">
+						<f:selectItem noSelectionOption="true" 
+							itemLabel="Selecione um tipo de Usuário..." />
+						<f:selectItems value="#{tipoUsuarioBean.tiposUsuario}"
+							var="tipoUsuario" itemValue="#{tipoUsuario}"
+							itemLabel="#{tipoUsuario.descricao}" />
+						<f:ajax event="itemSelect" render="div-dadosfuncionais" />
+					</p:selectOneMenu>
+					<p:tooltip for="tipo-usuario" position="top" />
+				</div>
+				<div jsf:id="div-dadosfuncionais"
+					class="ui-g-12 ui-md-12 ui-g-nopad #{usuarioBean.isTipoFuncionario() ? '' : 'ui-invisible'}">
+					<div class="ui-inputgroup ui-g-12 ui-md-6">
+						<span class="ui-inputgroup-addon">Matrícula</span>
+						<p:inputText id="matricula"
+							value="#{usuarioBean.dadosFuncionais.matricula}"
+							placeholder="Informe o número da matrícula do usuário."
+							title="Informe o número da matrícula do usuário" maxlength="11"
+							required="#{usuarioBean.isTipoFuncionario()}" autocomplete="true"
+							requiredMessage="O número da matricula é obrigatório.">
+							<p:keyFilter mask="num" />
+						</p:inputText>
+						<p:tooltip for="matricula" position="top"
+							class="#{usuarioBean.isTipoFuncionario() ? '' : 'ui-invisible'}" />
+					</div>
+					<div class="ui-inputgroup ui-g-12 ui-md-6">
+						<span class="ui-inputgroup-addon">Departamento</span>
+						<p:selectOneMenu id="departamento"
+							required="#{usuarioBean.isTipoFuncionario()}"
+							value="#{usuarioBean.dadosFuncionais.departamento_ID}"
+							title="Selecione o departamento do usuário."
+							requiredMessage="O departamento do usuário é obrigatório."
+							converter="omnifaces.SelectItemsConverter">
+							<f:selectItem noSelectionOption="true"
+								itemLabel="Selecione um Departamento..." />
+							<f:selectItems value="#{departamentoBean.departamentos}"
+								var="departamento" itemValue="#{departamento._ID}"
+								itemLabel="#{departamento.descricao}" />
+						</p:selectOneMenu>
+						<p:tooltip for="departamento" position="top"
+							class="#{usuarioBean.isTipoFuncionario() ? '' : 'ui-invisible'}" />
+					</div>
+					<div class="ui-inputgroup ui-g-12 ui-md-6">
+						<span class="ui-inputgroup-addon">Cargo</span>
+						<p:inputText id="cargo"
+							value="#{usuarioBean.dadosFuncionais.cargo}"
+							placeholder="Informe o cargo do usuário."
+							title="Informe o cargo do usuário." maxlength="40"
+							required="#{usuarioBean.isTipoFuncionario()}" autocomplete="true"
+							requiredMessage="O cargo é obrigatório.">
+						</p:inputText>
+						<p:tooltip for="cargo" position="top"
+							class="#{usuarioBean.isTipoFuncionario() ? '' : 'ui-invisible'}" />
+					</div>
+				</div>
+				<div class="ui-inputgroup ui-g-12 ui-md-6">
+					<span class="ui-inputgroup-addon">Habilitado</span>
+					<p:inputText id="habilitado" readonly="true"
+						title="Marque ao lado se deseja habilitar o usuario."
+						value="#{usuarioBean.usuario.habilitado ? 'Sim' : 'Não'}" />
+					<span class="ui-inputgroup-addon-checkbox"> <p:selectBooleanCheckbox
+							value="#{usuarioBean.usuario.habilitado}">
+							<f:ajax event="change" render="habilitado" />
+						</p:selectBooleanCheckbox>
+					</span>
+					<p:tooltip for="habilitado" position="top" />
+				</div>
+				<div
+					class="ui-g-12 ui-md-12 ui-g-nopad #{usuarioBean.usuario._ID == null ? '' : 'ui-invisible'}">
+					<div class="ui-inputgroup ui-g-12 ui-md-6 centeredColumn">
+						<span class="ui-inputgroup-addon">Senha</span>
+						<p:password id="senha" value="#{usuarioBean.usuario.senha}"
+							placeholder="Informe a senha do usuário."
+							promptLabel="Segurança da senha." feedback="true"
+							autocomplete="true" weakLabel="Fraca" goodLabel="Boa"
+							strongLabel="Forte" title="Informe a Senha." maxlength="11"
+							required="#{usuarioBean.usuario._ID == null}"
+							match="#{usuarioBean.usuario._ID == null ? 'confirm' : ''}"
+							requiredMessage="A senha é obrigatória."
+							validatorMessage="As senhas do usuário não são iguais." />
+						<p:tooltip for="senha" position="top" />
+					</div>
+					<div class="ui-inputgroup ui-g-12 ui-md-6 centeredColumn">
+						<span class="ui-inputgroup-addon">Confirmação</span>
+						<p:password id="confirm" placeholder="Confirme a senha."
+							title="Confirme a Senha do usuário." maxlength="11"
+							required="#{usuarioBean.usuario._ID == null}"
+							validatorMessage="A senha precisa conter entre 6 e 11 caracteres."
+							requiredMessage="A confirmação da senha é obrigatória.">
+							<f:validateLength minimum="6" maximum="11"
+								disabled="#{usuarioBean.usuario._ID != null}" />
+						</p:password>
+						<p:tooltip for="confirm" position="top" />
+					</div>
+				</div>
+				<div class="ui-g-12">
+					<p:separator />
+					<p:messages styleClass="ui-g-12" skipDetailIfEqualsSummary="true"
+						showDetail="true" closable="true">
+						<p:autoUpdate />
+					</p:messages>
+				</div>
+
+				<div class="ui-g-12 ui-md-3 centeredColumn">
+					<p:commandButton id="btFechar" icon="pi pi-arrow-left"
+						iconPos="left" value="Voltar"
+						oncomplete="PF('dialogCadastro').hide();" update=":form-cadastro" />
+				</div>
+				<div class="ui-md-6" />
+				<div class="ui-g-12 ui-md-3 centeredColumn">
+					<p:commandButton id="btCadastrar" type="submit"
+						styleClass="ui-success-color" icon="pi pi-arrow-right"
+						iconPos="right" value="Salvar"
+						action="#{usuarioBean.salvarEditar()}"
+						onstart="PF('statusDialog').show();"
+						onerror="PF('statusDialog').hide();"
+						oncomplete="if(args.validationFailed){PF('statusDialog').hide();}"
+						update=":form-tabela:tabela-usuarios @form" />
+				</div>
+			</h:form>
+		</p:sidebar>
+		<p:sidebar widgetVar="dialogRedefinir" position="bottom">
+			<h:form id="form-redefinir" class="ui-g ui-fluid">
+				<div class="ui-g-12 centeredColumn">
+					<h2>Redefinição de Senha</h2>
+				</div>
+				<div class="ui-inputgroup ui-g-12 ui-md-12 centeredColumn">
+					<span class="ui-inputgroup-addon" style="width: 100% !important;">#{usuarioBean.usuario.email}</span>
+				</div>
+				<div class="ui-inputgroup ui-g-12 ui-md-6 centeredColumn">
+					<span class="ui-inputgroup-addon">Senha</span>
+					<p:password id="senha" value="#{usuarioBean.usuario.senha}"
+						styleClass="ui-g-6" placeholder="Informe a nova senha do usuário."
+						promptLabel="Segurança da senha." feedback="true"
+						autocomplete="true" weakLabel="Fraca" goodLabel="Boa"
+						strongLabel="Forte" title="Informe a nova senha do usuário."
+						maxlength="11" required="true" match="confirm"
+						validatorMessage="As senhas do usuário não são iguais."
+						requiredMessage="A senha é obrigatória." />
+					<p:tooltip for="senha" position="top" />
+				</div>
+				<div class="ui-inputgroup ui-g-12 ui-md-6 centeredColumn">
+					<span class="ui-inputgroup-addon">Confirmação</span>
+					<p:password id="confirm" styleClass="ui-g-6"
+						placeholder="Confirme a nova senha do usuário."
+						title="Confirme a nova senha do usuário." maxlength="11"
+						required="true"
+						requiredMessage="A confirmação da senha é obrigatória." />
+					<p:tooltip for="confirm" position="top" />
+				</div>
+				<div class="ui-g-12">
+					<p:separator />
+					<p:messages styleClass="ui-g-12" skipDetailIfEqualsSummary="true"
+						showDetail="true" closable="true">
+						<p:autoUpdate />
+					</p:messages>
+				</div>
+				<div class="ui-g-12 ui-md-3 centeredColumn">
+					<p:commandButton id="btFechar" icon="pi pi-arrow-left"
+						iconPos="left" value="Voltar"
+						oncomplete="PF('dialogCadastro').hide();" update=":form-cadastro" />
+				</div>
+				<div class="ui-md-6" />
+				<div class="ui-g-12 ui-md-3 centeredColumn">
+					<p:commandButton id="bt-redefinir" type="submit"
+						styleClass="ui-success-color" icon="pi pi-arrow-right"
+						iconPos="right" value="Redefinir"
+						action="#{usuarioBean.redefinirSenha()}"
+						onstart="PF('statusDialog').show();"
+						onerror="PF('statusDialog').hide();"
+						oncomplete="if(args.validationFailed){PF('statusDialog').hide();}"
+						update=":form-tabela:tabela-usuarios :form-cadastro :form-redefinir" />
+				</div>
+			</h:form>
+		</p:sidebar>
+	</ui:define>
+</ui:composition>

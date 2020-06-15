@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="templates/menulateral.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form-tabela">
+			<p:dataTable id="tabela-tipoUsuarios" var="tipoUsuario"
+				value="#{tipoUsuarioBean.listar()}" paginator="true"
+				emptyMessage="Nenhum Tipo de Usuario encontrado."
+				sortBy="#{tipoUsuario.descricao}" paginatorPosition="bottom"
+				rows="15" widgetVar="tabelatipoUsuarios">
+				<f:facet name="header">
+					<div class="ui-g">
+						<div class="ui-g-6 ui-g-nopad centeredColumn">
+							<p:inputText id="globalFilter" styleClass="ui-input-busca"
+								placeholder="Pesquise..."
+								onkeyup="PF('tabelatipoUsuarios').filter()" />
+						</div>
+						<div class="ui-g-1 ui-g-nopad centeredColumn">
+							<p:commandButton icon="pi pi-plus" title="Cadastrar"
+								styleClass="ui-success-color"
+								actionListener="#{tipoUsuarioBean.cadastrar()}"
+								oncomplete="PF('dialogCadastro').show()"
+								update=":mensagem :form-cadastro">
+								<f:actionListener
+									type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+							</p:commandButton>
+						</div>
+					</div>
+				</f:facet>
+				<p:column headerText="Tipo de Usuario"
+					sortBy="#{tipoUsuario.descricao}"
+					filterBy="#{tipoUsuario.descricao}" filterStyle="display:none">
+					<h:outputText value="#{tipoUsuario.descricao}" />
+				</p:column>
+				<p:column headerText="Funcionário" styleClass="centeredColumn"
+					filterBy="#{tipoUsuario.funcionario}"
+					sortBy="#{tipoUsuario.funcionario}" filterStyle="display:none">
+					<h:outputText value=" #{tipoUsuario.funcionario ? 'Sim' : 'Não' }" />
+				</p:column>
+				<p:column headerText="Personalizado" styleClass="centeredColumn"
+					filterBy="#{tipoUsuario.personalizado}"
+					sortBy="#{tipoUsuario.personalizado}" filterStyle="display:none">
+					<h:outputText
+						value=" #{tipoUsuario.personalizado ? 'Sim' : 'Não' }" />
+				</p:column>
+				<p:column headerText="Opções" styleClass="centeredColumn">
+					<p:commandButton icon="pi pi-pencil" title="Editar"
+						actionListener="#{tipoUsuarioBean.selecionar}"
+						oncomplete="PF('dialogCadastro').show()"
+						update=":mensagem :form-tabela :form-cadastro">
+						<f:attribute name="tipoUsuarioSelecionado" value="#{tipoUsuario}" />
+						<f:actionListener
+							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+					</p:commandButton>
+					<p:commandButton
+						rendered="#{tipoUsuario.personalizado ? 'true' : 'false'}"
+						icon="pi pi-trash" styleClass="ui-danger-color" title="Remover"
+						actionListener="#{tipoUsuarioBean.removerDesabilitar}"
+						update=":mensagem :form-tabela :form-cadastro">
+						<p:confirm header="Atenção!"
+							message="Tem certeza que deseja REMOVER o Tipo de Usuário: [#{tipoUsuario.descricao}]?" />
+						<f:attribute name="tipoUsuarioSelecionado" value="#{tipoUsuario}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+			<p:confirmDialog global="true">
+				<p:commandButton value="Não" type="button"
+					styleClass="ui-confirmdialog-no ui-danger-color"
+					icon="pi pi-arrow-left" iconPos="left" />
+				<p:commandButton value="Sim" type="button"
+					styleClass="ui-confirmdialog-yes ui-success-color"
+					icon="pi pi-check" onstart="PF('statusDialog').show();"
+					onerror="PF('statusDialog').hide();"
+					oncomplete="if(args.validationFailed)PF('statusDialog').hide();}"
+					iconPos="right" update=":mensagem :form-tabela :form-cadastro" />
+			</p:confirmDialog>
+		</h:form>
+		<p:sidebar widgetVar="dialogCadastro" position="bottom">
+			<h:form id="form-cadastro" class="ui-g ui-fluid">
+				<div class="ui-g-12 centeredColumn">
+					<h2>#{tipoUsuarioBean.tipoUsuario.descricao == null ?
+						'Cadastrar Tipo de Usuário' : 'Editar Tipo de Usuário'}</h2>
+				</div>
+				<div class="ui-inputgroup ui-g-12 ui-md-6 centeredColumn">
+					<span class="ui-inputgroup-addon ui-g-12 ui-md-3"
+						style="width: 100%;">Descrição</span>
+					<p:inputText id="descricao"
+						placeholder="Informe o nome do tipo de usuário."
+						value="#{tipoUsuarioBean.tipoUsuario.descricao}"
+						title="Informe o nome do tipo de usuário." required="true"
+						requiredMessage="Nome do tipo de usuário é obrigatório.">
+					</p:inputText>
+					<p:tooltip for="descricao" position="top" />
+				</div>
+				<div class="ui-inputgroup ui-g-12 ui-md-6">
+					<span class="ui-inputgroup-addon">Funcionário</span>
+					<p:inputText id="funcionario"
+						title="#{tipoUsuarioBean.tipoUsuario.personalizado ? 'Marque ao lado se o tipo de usuário é para funcionários da prefeitura.' : 'Você só pode alterar esta propriedade em tipos de usuário personalizados.'}"
+						value="#{tipoUsuarioBean.tipoUsuario.funcionario ? 'Sim' : 'Não'}"
+						readonly="true" />
+					<span class="ui-inputgroup-addon-checkbox"> <p:selectBooleanCheckbox
+							value="#{tipoUsuarioBean.tipoUsuario.funcionario}"
+							disabled="#{tipoUsuarioBean.tipoUsuario.personalizado ? 'false' : 'true'}">
+							<f:ajax event="change" render="funcionario" />
+						</p:selectBooleanCheckbox>
+					</span>
+					<p:tooltip for="funcionario" position="top" />
+				</div>
+				<div class="ui-g-12">
+					<p:separator />
+					<p:messages styleClass="ui-g-12" skipDetailIfEqualsSummary="true"
+						showDetail="true" closable="true">
+						<p:autoUpdate />
+					</p:messages>
+				</div>
+				<div class="ui-g-12 ui-md-3 centeredColumn">
+					<p:commandButton id="btFechar" icon="pi pi-arrow-left"
+						iconPos="left" value="Voltar"
+						oncomplete="PF('dialogCadastro').hide();"
+						update=":form-tabela:tabela-tipoUsuarios :form-cadastro" />
+				</div>
+				<div class="ui-md-6" />
+				<div class="ui-g-12 ui-md-3 centeredColumn">
+					<p:commandButton id="btCadastrar" type="submit"
+						styleClass="ui-success-color" icon="pi pi-arrow-right"
+						iconPos="right" value="Salvar"
+						action="#{tipoUsuarioBean.salvarEditar()}"
+						onstart="PF('statusDialog').show();"
+						onerror="PF('statusDialog').hide();"
+						oncomplete="if(args.validationFailed){PF('statusDialog').hide();}"
+						update=":form-tabela:tabela-tipoUsuarios :form-cadastro" />
+				</div>
+			</h:form>
+		</p:sidebar>
+	</ui:define>
+</ui:composition>

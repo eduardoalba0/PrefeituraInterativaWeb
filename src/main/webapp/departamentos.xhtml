@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="templates/menulateral.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form-tabela">
+			<p:dataTable id="tabela-departamentos" var="departamento"
+				value="#{departamentoBean.listar()}"
+				sortBy="#{departamento.descricao}" widgetVar="tabelaDepartamentos"
+				emptyMessage="Nenhum departamento encontrado." paginator="true"
+				paginatorPosition="bottom" rows="15">
+				<f:facet name="header">
+					<div class="ui-g">
+						<div class="ui-g-6 ui-g-nopad centeredColumn">
+							<p:inputText id="globalFilter" styleClass="ui-input-busca"
+								placeholder="Pesquise..."
+								onkeyup="PF('tabelaDepartamentos').filter()" />
+						</div>
+						<div class="ui-g-1 ui-g-nopad centeredColumn">
+							<p:commandButton icon="pi pi-plus" title="Cadastrar"
+								styleClass="ui-success-color"
+								actionListener="#{departamentoBean.cadastrar()}"
+								oncomplete="PF('dialogCadastro').show()"
+								update=":mensagem :form-cadastro">
+								<f:actionListener
+									type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+							</p:commandButton>
+						</div>
+					</div>
+				</f:facet>
+				<p:column headerText="Departamento"
+					sortBy="#{departamento.descricao}"
+					filterBy="#{departamento.descricao}" filterStyle="display:none">
+					<h:outputText value="#{departamento.descricao}" />
+				</p:column>
+				<p:column headerText="Categorias"
+					filterBy="#{departamento.localCategorias}"
+					styleClass="centeredColumn" filterStyle="display:none">
+					<p:chips inputStyleClass="ui-chips-onlyview"
+						styleClass="ui-chips-onlyview"
+						value="#{departamento.localCategorias}" />
+				</p:column>
+				<p:column headerText="Habilitado" styleClass="centeredColumn"
+					sortBy="#{departamento.habilitado}"
+					filterBy="#{departamento.habilitado}" filterStyle="display:none">
+					<h:outputText value=" #{departamento.habilitado ? 'Sim' : 'Não' }" />
+				</p:column>
+				<p:column headerText="Opções" styleClass="centeredColumn">
+					<p:commandButton icon="pi pi-pencil" title="Editar"
+						actionListener="#{departamentoBean.selecionar}"
+						oncomplete="PF('dialogCadastro').show()"
+						update=":mensagem :form-tabela :form-cadastro">
+						<f:attribute name="departamentoSelecionado"
+							value="#{departamento}" />
+						<f:actionListener
+							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+					</p:commandButton>
+					<p:commandButton
+						icon="#{departamento.habilitado ? 'pi pi-ban' : 'pi pi-check'}"
+						styleClass="#{departamento.habilitado ? 'ui-secondary-color' : 'ui-success-color'}"
+						title="#{departamento.habilitado ? 'Desativar' : 'Habilitar'}"
+						actionListener="#{departamentoBean.removerDesabilitar}"
+						update=":mensagem :form-tabela :form-cadastro">
+						<p:confirm header="Atenção!"
+							message="Tem certeza que deseja #{departamento.habilitado ? 'DESATIVAR' : 'HABILITAR'} o departamento: [#{departamento.descricao}]?" />
+						<f:attribute name="departamentoSelecionado"
+							value="#{departamento}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+			<p:confirmDialog global="true">
+				<p:commandButton value="Não" type="button"
+					styleClass="ui-confirmdialog-no ui-danger-color"
+					icon="pi pi-arrow-left" iconPos="left" />
+				<p:commandButton value="Sim" type="button"
+					styleClass="ui-confirmdialog-yes ui-success-color"
+					icon="pi pi-check" onstart="PF('statusDialog').show();"
+					onerror="PF('statusDialog').hide();"
+					oncomplete="if(args.validationFailed)PF('statusDialog').hide();}"
+					iconPos="right" update=":mensagem :form-tabela :form-cadastro" />
+			</p:confirmDialog>
+		</h:form>
+		<p:sidebar widgetVar="dialogCadastro" position="bottom">
+			<h:form id="form-cadastro" class="ui-g ui-fluid">
+				<div class="ui-g-12 centeredColumn">
+					<h2>#{departamentoBean.departamento.descricao == null ?
+						'Cadastrar Departamento' : 'Editar Departamento'}</h2>
+				</div>
+				<div class="ui-inputgroup ui-g-12 ui-md-6">
+					<span class="ui-inputgroup-addon" style="width: 30%;">Descrição</span>
+					<p:inputText id="descricao" required="true"
+						placeholder="Informe o nome do departamento."
+						value="#{departamentoBean.departamento.descricao}"
+						title="Informe o nome do departamento."
+						requiredMessage="Nome do departamento é obrigatório.">
+					</p:inputText>
+					<p:tooltip for="descricao" position="top" />
+				</div>
+				<div class="ui-inputgroup ui-g-12 ui-md-6">
+					<span class="ui-inputgroup-addon" style="width: 30%;">Superior</span>
+					<p:selectOneMenu id="departamento" required="false"
+						style="margin-right:0 !important;"
+						value="#{departamentoBean.departamento.departamentoSuperior_ID}"
+						title="Selecione o departamento hierarquicamente superior (se houver)"
+						converter="omnifaces.SelectItemsConverter">
+						<f:selectItem noSelectionOption="true" itemLabel="Nenhum" />
+						<f:selectItems value="#{departamentoBean.departamentos}"
+							var="departamento" itemValue="#{departamento._ID}"
+							itemLabel="#{departamento.descricao}" />
+					</p:selectOneMenu>
+					<p:tooltip for="departamento" position="top" />
+				</div>
+				<div class="ui-inputgroup ui-g-12 ui-md-6">
+					<span class="ui-inputgroup-addon" style="width: 30%;">Habilitado</span>
+					<p:inputText id="habilitado" readonly="true"
+						title="Marque ao lado se deseja habilitar o departamento."
+						style="margin-right:0 !important;"
+						value="#{departamentoBean.departamento.habilitado ? 'Sim' : 'Não'}" />
+					<span class="ui-inputgroup-addon-checkbox ui-g-12 ui-md-4"
+						style="margin-left: 0 !important;"> <p:selectBooleanCheckbox
+							value="#{departamentoBean.departamento.habilitado}">
+							<f:ajax event="change" render="habilitado" />
+						</p:selectBooleanCheckbox>
+					</span>
+					<p:tooltip for="habilitado" position="top" />
+				</div>
+				<div class="ui-inputgroup ui-g-12 ui-md-12">
+					<span class="ui-inputgroup-addon" style="width: 30%;">Categorias</span>
+					<p:linkButton styleClass="ui-success-color" icon="pi pi-plus"
+						href="categorias.xhtml" />
+					<p:chips id="categorias" styleClass="ui-chips-onlyview"
+						placeholder="#{departamentoBean.departamento.localCategorias.isEmpty() ? 'Nenhuma Categoria associada.' : ''}"
+						title="Clique no botão ao lado para adicionar categorias."
+						value="#{departamentoBean.departamento.localCategorias}" />
+					<p:tooltip for="categorias" position="top" />
+				</div>
+				<div class="ui-g-12">
+					<p:separator />
+					<p:messages styleClass="ui-g-12" skipDetailIfEqualsSummary="true"
+						showDetail="true" closable="true">
+						<p:autoUpdate />
+					</p:messages>
+				</div>
+				<div class="ui-g-12 ui-md-3 centeredColumn">
+					<p:commandButton id="btFechar" type="submit"
+						icon="pi pi-arrow-left" iconPos="left" value="Voltar"
+						oncomplete="PF('dialogCadastro').hide();" update=":form-cadastro" />
+				</div>
+				<div class="ui-md-6" />
+				<div class="ui-g-12 ui-md-3 centeredColumn">
+					<p:commandButton id="btCadastrar" styleClass="ui-success-color"
+						icon="pi pi-arrow-right" iconPos="right" value="Salvar"
+						action="#{departamentoBean.salvarEditar()}"
+						onstart="PF('statusDialog').show();"
+						onerror="PF('statusDialog').hide();"
+						oncomplete="if(args.validationFailed){PF('statusDialog').hide();}"
+						update=":form-tabela:tabela-departamentos :form-cadastro" />
+				</div>
+			</h:form>
+		</p:sidebar>
+	</ui:define>
+</ui:composition>

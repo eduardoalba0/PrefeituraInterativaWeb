@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Prefeitura Interativa</title>
+	<link rel="shortcut icon"
+		href="#{request.contextPath}/images/icone_prefeitura_interativa.svg" />
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-app.js" />
+	<script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-auth.js" />
+	<script type="text/javascript"
+		src="#{request.contextPath}/js/firebase.js" />
+	<link type="text/css" rel="stylesheet"
+		href="#{request.contextPath}/css/style.css" />
+</h:head>
+<h:body>
+	<p:growl id="mensagem" widgetVar="growl"
+		skipDetailIfEqualsSummary="true" showDetail="true" />
+	<h:outputStylesheet name="primeicons/primeicons.css"
+		library="primefaces" />
+	<div class="ui-g">
+		<h:form id="form-menu" class="ui-g-12 ui-md-2 ui-g-nopad"
+			rendered="#{funcionarioLogado != null}" >
+			<p:menu style="width:100%;">
+				<p:submenu label="Gestão">
+					<p:menuitem value="Avaliações" url="avaliacoes.xhtml" />
+					<p:menuitem value="Indicadores" url="indicadores.xhtml" />
+					<p:menuitem value="Distribuição Geográfica" url="geodistribuicao.xhtml" />
+				</p:submenu>
+				<p:submenu label="Administrativo">
+					<p:menuitem value="Categorias" url="categorias.xhtml" />
+					<p:menuitem value="Departamentos" url="departamentos.xhtml" />
+					<p:menuitem value="Tipos de Usuários" url="tiposusuarios.xhtml" />
+					<p:menuitem value="Funcionários" url="funcionarios.xhtml" />
+					<p:menuitem value="Usuários" url="usuarios.xhtml" />
+				</p:submenu>
+				<p:submenu label="Gerenciamento">
+					<p:menuitem value="Atendimentos" url="atendimentos.xhtml" />
+					<p:menuitem value="Solicitacoes" url="solicitacoes.xhtml" />
+					<p:menuitem value="Mapeamento" url="mapeamento.xhtml" />
+				</p:submenu>
+				<p:submenu label="Opções">
+					<p:menuitem value="Perfil" url="meusdados.xhtml" />
+					<p:menuitem value="Sair" onstart="PF('statusDialog').show();"
+						onerror="PF('statusDialog').hide();"
+						actionListener="#{usuarioBean.deslogar()}"
+						update=":mensagem :form-menu" />
+				</p:submenu>
+			</p:menu>
+		</h:form>
+		<div class="ui-g-12 ui-md-10 ui-g-nopad">
+			<div class="ui-g-12 ui-g-nopad">
+				<ui:insert name="conteudo" />
+			</div>
+		</div>
+		<div class="ui-g-12 centeredColumn ui-texto">
+			<!-- Footer -->
+			<div class="ui-g-12">
+				<h:outputText value="Elaborado por Eduardo Luiz Alba e Pâmela Cristina Zini &copy; (2020) "
+					rendered="#{funcionarioLogado != null}" />
+			</div>
+			<div class="ui-g-12">
+				<h:outputText value="Todos os Direitos Reservados."
+					rendered="#{funcionarioLogado != null}" />
+			</div>
+		</div>
+	</div>
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+		closable="false" resizable="false" showHeader="true"
+		header="Aguarde um momento...">
+		<br />
+		<div class="centeredColumn">
+			<i class="pi pi-spin pi-spinner" style="font-size: 5em"></i>
+		</div>
+		<br />
+	</p:dialog>
+	<h:form>
+	</h:form>
+</h:body>
+</html>
