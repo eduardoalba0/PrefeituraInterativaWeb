@@ -36,9 +36,9 @@
 * Gerenciamento 
  > - [x] Cidadãos
  > - [x] Funcionários 
- > - [x] Atendimentos
+ > - [ ] Atendimentos
  > - [x] Categorias
- > - [x] Solicitações
+ > - [ ] Solicitações
  > - [x] Departamentos
 
 * Gestão
