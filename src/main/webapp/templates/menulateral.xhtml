@@ -10,7 +10,6 @@
 	<title>Prefeitura Interativa</title>
 	<link rel="shortcut icon"
 		href="#{request.contextPath}/images/icone_prefeitura_interativa.svg" />
-	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-app.js" />
 	<script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-auth.js" />
 	<script type="text/javascript"
@@ -25,12 +24,13 @@
 		library="primefaces" />
 	<div class="ui-g">
 		<h:form id="form-menu" class="ui-g-12 ui-md-2 ui-g-nopad"
-			rendered="#{funcionarioLogado != null}" >
+			rendered="#{funcionarioLogado != null}">
 			<p:menu style="width:100%;">
 				<p:submenu label="Gestão">
 					<p:menuitem value="Avaliações" url="avaliacoes.xhtml" />
 					<p:menuitem value="Indicadores" url="indicadores.xhtml" />
-					<p:menuitem value="Distribuição Geográfica" url="geodistribuicao.xhtml" />
+					<p:menuitem value="Distribuição Geográfica"
+						url="geodistribuicao.xhtml" />
 				</p:submenu>
 				<p:submenu label="Administrativo">
 					<p:menuitem value="Categorias" url="categorias.xhtml" />
@@ -61,7 +61,8 @@
 		<div class="ui-g-12 centeredColumn ui-texto">
 			<!-- Footer -->
 			<div class="ui-g-12">
-				<h:outputText value="Elaborado por Eduardo Luiz Alba e Pâmela Cristina Zini &copy; (2020) "
+				<h:outputText
+					value="Elaborado por Eduardo Luiz Alba e Pâmela Cristina Zini &copy; (2020) "
 					rendered="#{funcionarioLogado != null}" />
 			</div>
 			<div class="ui-g-12">

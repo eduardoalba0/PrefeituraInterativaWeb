@@ -1,3 +1,5 @@
 .settings/org.eclipse.wst.common.component
 target/*
 mvn
+!.gitignore
+!target/classes

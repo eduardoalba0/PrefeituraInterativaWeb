@@ -10,6 +10,12 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.PrimeFaces;
+import org.primefaces.event.map.OverlaySelectEvent;
+import org.primefaces.event.map.ReverseGeocodeEvent;
+import org.primefaces.model.map.DefaultMapModel;
+import org.primefaces.model.map.MapModel;
+import org.primefaces.model.map.Marker;
 
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.SolicitacaoDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Atendimento;
@@ -25,6 +31,10 @@ public class SolicitacaoBean extends AbstractBean {
 	private Atendimento atendimento;
 	private Solicitacao solicitacao;
 	private List<Solicitacao> solicitacoes;
+
+	private MapModel mapModel;
+	private String center;
+	private Marker marker;
 
 	@Inject
 	@Named("funcionarioLogado")
@@ -43,6 +53,9 @@ public class SolicitacaoBean extends AbstractBean {
 	public void init() {
 		if (solicitacao == null)
 			solicitacao = new Solicitacao();
+
+		if (mapModel == null)
+			mapModel = new DefaultMapModel();
 
 		solicitacoes = SolicitacaoDAO.getAll();
 		if (solicitacoes == null) {
@@ -78,6 +91,9 @@ public class SolicitacaoBean extends AbstractBean {
 	@Override
 	public void selecionar(ActionEvent evento) {
 		solicitacao = (Solicitacao) evento.getComponent().getAttributes().get("solicitacaoSelecionada");
+		double lat = solicitacao.getLocalizacao().getLatitude();
+		double lon = solicitacao.getLocalizacao().getLongitude();
+		PrimeFaces.current().executeScript("PF('map').reverseGeocode('" + lat + "','" + lon + "');");
 	}
 
 	@Override
@@ -95,6 +111,26 @@ public class SolicitacaoBean extends AbstractBean {
 	@Override
 	public void removerDesabilitar(ActionEvent evento) {
 
+	}
+
+	public void onReverseGeocode(ReverseGeocodeEvent event) {
+		List<String> addresses = event.getAddresses();
+		center = event.getLatlng().getLat() + ", " + event.getLatlng().getLng();
+		if (center != null) {
+			marker = new Marker(event.getLatlng());
+			if (addresses != null && !addresses.isEmpty()) {
+				marker.setData(event.getAddresses().get(0));
+				marker.setTitle(event.getAddresses().get(0));
+				marker.setClickable(true);
+			}
+			mapModel.addOverlay(marker);
+		}
+
+	}
+
+	public void onMarkerSelect(OverlaySelectEvent event) {
+		marker = (Marker) event.getOverlay();
+		center = marker.getLatlng().getLat()+", "+ marker.getLatlng().getLng();
 	}
 
 	public Usuario getFuncionarioLogado() {
@@ -121,6 +157,14 @@ public class SolicitacaoBean extends AbstractBean {
 		return solicitacoes;
 	}
 
+	public void setCategorias(List<Categoria> categorias) {
+		this.categorias = categorias;
+	}
+
+	public List<Categoria> getCategorias() {
+		return categorias;
+	}
+
 	public void setSolicitacoes(List<Solicitacao> solicitacoes) {
 		this.solicitacoes = solicitacoes;
 	}
@@ -133,4 +177,29 @@ public class SolicitacaoBean extends AbstractBean {
 		this.atendimento = atendimento;
 	}
 
+	public MapModel getMapModel() {
+		return mapModel;
+	}
+
+	public void setMapModel(MapModel mapModel) {
+		this.mapModel = mapModel;
+	}
+
+	public String getCenter() {
+		if (center == null || center.isEmpty())
+			center = "-26.484335, -51.991754";
+		return center;
+	}
+
+	public void setCenter(String center) {
+		this.center = center;
+	}
+
+	public Marker getMarker() {
+		return marker;
+	}
+
+	public void setMarker(Marker marker) {
+		this.marker = marker;
+	}
 }

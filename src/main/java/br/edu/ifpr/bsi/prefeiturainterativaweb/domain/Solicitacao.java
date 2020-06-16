@@ -187,7 +187,7 @@ public class Solicitacao implements Serializable {
 	@Exclude
 	public Usuario getLocalCidadao() {
 		if (this.anonima && localCidadao != null)
-			localCidadao.setNome("Anônimo");
+			localCidadao.setNome("Cidadão anônimo");
 		return localCidadao;
 	}
 

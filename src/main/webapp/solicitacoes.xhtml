@@ -10,6 +10,8 @@
 	template="templates/menulateral.xhtml">
 
 	<ui:define name="conteudo">
+		<script type="text/javascript"
+			src="http://maps.google.com/maps/api/js?key=AIzaSyDdbMgttlDqaG1dkYwqCXGVw4ugRqEJzRc" />
 		<h:form id="form-tabela">
 			<p:dataTable id="tabela-solicitacoes" var="solicitacao" rows="15"
 				value="#{solicitacaoBean.listar()}"
@@ -118,11 +120,12 @@
 				<p:tabView styleClass="centeredColumn ui-g-12">
 					<p:tab id="dados" title="Informações">
 						<div class="ui-inputgroup ui-g-12 ui-md-12">
-							<span class="ui-inputgroup-addon" style="width: 30%;">Categorias</span>
+							<span class="ui-inputgroup-addon">Categorias</span>
 							<p:chips id="categorias"
 								title="#{solicitacaoBean.solicitacao.localCategorias.isEmpty() ? 'Nenhuma Categoria Inserida.' : ''}"
 								placeholder="#{solicitacaoBean.solicitacao.localCategorias.isEmpty() ? 'Nenhuma Categoria Inserida.' : ''}"
 								value="#{solicitacaoBean.solicitacao.localCategorias}" />
+							<p:commandButton styleClass="ui-success-color" icon="pi pi-plus" />
 							<p:tooltip for="categorias" position="top" />
 						</div>
 						<div class="ui-inputgroup ui-g-12 ui-md-12">
@@ -134,18 +137,39 @@
 							</p:inputTextarea>
 							<p:tooltip for="descricao" position="top" />
 						</div>
-						<p:fieldset legend="Imagens" toggleable="true" collapsed="true" toggleSpeed="500">
+						<p:fieldset legend="Imagens" toggleable="true" collapsed="true"
+							toggleSpeed="500">
 							<p:lightBox id="lightbox" styleClass="imagebox">
 								<ui:repeat var="imagem"
 									value="#{solicitacaoBean.solicitacao.urlImagens}">
 									<h:outputLink value="#{imagem}">
-										<p:graphicImage url="#{imagem}" styleClass="ui-image"/>
+										<p:graphicImage url="#{imagem}" styleClass="ui-image" />
 									</h:outputLink>
 								</ui:repeat>
 							</p:lightBox>
 						</p:fieldset>
 					</p:tab>
 					<p:tab id="localizacao" title="Localização">
+						<div class="ui-inputgroup ui-g-12 ui-md-12">
+							<span class="ui-inputgroup-addon">Endereço</span>
+							<p:inputTextarea id="endereco" rows="2" readonly="true"
+								title="#{solicitacaoBean.marker == null ? 'Endereço não encontrado.' : solicitacaoBean.marker.getTitle()}"
+								value="#{solicitacaoBean.marker == null ? 'Endereço não encontrado.' : solicitacaoBean.marker.getTitle()}">
+								<p:autoUpdate />
+							</p:inputTextarea>
+							<p:tooltip for="endereco" position="top" />
+						</div>
+						<div class="ui-g-12 ui-md-12">
+							<p:gmap id="map" widgetVar="map" zoom="16" type="HYBRID"
+								mapTypeControl="false" scrollWheel="false"
+								model="#{solicitacaoBean.mapModel}"
+								center="#{solicitacaoBean.center}" style="height: 450px;">
+								<p:ajax event="reverseGeocode"
+									listener="#{solicitacaoBean.onReverseGeocode}" update="@this endereco" />
+								<p:ajax event="overlaySelect"
+									listener="#{solicitacaoBean.onMarkerSelect}" update="endereco" />
+							</p:gmap>
+						</div>
 					</p:tab>
 					<p:tab id="tramitacao" title="Tramitação">
 					</p:tab>

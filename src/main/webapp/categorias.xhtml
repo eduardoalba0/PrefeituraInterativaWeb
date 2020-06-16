@@ -136,14 +136,8 @@
 					</p:messages>
 				</div>
 				<div class="ui-g-12 ui-md-3 centeredColumn">
-					<p:commandButton id="btFechar" icon="pi pi-arrow-left"
-						iconPos="left" value="Voltar"
-						oncomplete="PF('dialogCadastro').hide();" update=":form-cadastro" />
-				</div>
-				<div class="ui-md-6" />
-				<div class="ui-g-12 ui-md-3 centeredColumn">
 					<p:commandButton id="btCadastrar" type="submit"
-						styleClass="ui-success-color" icon="pi pi-arrow-right"
+						styleClass="ui-success-color" icon="pi pi-save"
 						iconPos="right" value="Salvar"
 						action="#{categoriaBean.salvarEditar()}"
 						onstart="PF('statusDialog').show();"

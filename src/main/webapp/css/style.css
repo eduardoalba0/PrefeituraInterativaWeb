@@ -58,7 +58,6 @@ html, body {
 .ui-tabs-selected, .ui-accordion-header.ui-state-active, .ui-paginator-page, .ui-chips .ui-chips-container .ui-chips-token, .ui-button:not(.ui-success-color):not(.ui-danger-color):not(.ui-warning-color):not(.ui-secondary-color):not(.ui-tertiary-color):not(.ui-quartiary-color) {
 	background-color: var(--color-orange) !important;
 	border: var(--color-orange) !important;
-	margin: 3px !important;
 	color: white !important;
 }
 
@@ -99,20 +98,27 @@ html, body {
 .ui-messages-fatal, .ui.growl-fatal {
 	background: black !important;
 }
+.ui-fieldset{
+	background: #585858 !important;
+}
 
 /* Sombras e Bordas*/
 
+.ui-fieldset, .ui-fieldset-legend,
 .ui-separator {
 	border: 1px solid var(--color-orange) !important;
-	box-shadow: 1px 1px 1px black;
+	box-shadow: 1px 2px 2px black;
+}
+
+.ui-fieldset-legend,
+.ui-fieldset{
+	border-radius: 50px !important;
 }
 
 .ui-image {
-	height: 100px;
-	width: 150px;
-	border-radius: 20px;
-	margin: 10px;
-	border: 2px solid white;
+	border-radius: 20px !important;
+	border: 2px solid white !important;
+	box-shadow: 1px 2px 2px black !important;
 }
 
 .ui-inputgroup .ui-state-error:not(.ui-selectonemenu-trigger) {
@@ -167,6 +173,14 @@ html, body {
 
 /* Posicionamento e tamanho*/
 
+.ui-image {
+	height: 100px !important;
+	width: 150px !important;
+	margin: 10px !important;
+}
+.ui-tabs-selected, .ui-accordion-header.ui-state-active, .ui-paginator-page, .ui-chips .ui-chips-container .ui-chips-token, .ui-button {
+	margin: 3px !important;
+}
 .ui-dialog.ui-confirm-dialog .ui-dialog-content>span, .ui-dialog-footer, .centeredColumn {
 	text-align: center !important;
 	margin-right: auto !important;
@@ -282,7 +296,7 @@ h1, h2, h3, .ui-fieldset-legend, .ui-tabs-header, .ui-tabs-header.ui-state-activ
 .ui-messages-error, .ui-messages-info, .ui-messages-warn, .ui-messages-fatal, .ui-growl-item-container {
 	color: white !important;
 }
-
+.ui-widget,
 .ui-growl-message, .ui-button, .ui-menu, .ui-chips {
 	font-size: 13pt !important;
 	font-family: fredoka !important;

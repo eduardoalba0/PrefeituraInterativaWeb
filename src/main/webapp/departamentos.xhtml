@@ -117,12 +117,12 @@
 					<p:tooltip for="departamento" position="top" />
 				</div>
 				<div class="ui-inputgroup ui-g-12 ui-md-6">
-					<span class="ui-inputgroup-addon" style="width: 30%;">Habilitado</span>
+					<span class="ui-inputgroup-addon">Habilitado</span>
 					<p:inputText id="habilitado" readonly="true"
 						title="Marque ao lado se deseja habilitar o departamento."
 						style="margin-right:0 !important;"
 						value="#{departamentoBean.departamento.habilitado ? 'Sim' : 'Não'}" />
-					<span class="ui-inputgroup-addon-checkbox ui-g-12 ui-md-4"
+					<span class="ui-inputgroup-addon-checkbox"
 						style="margin-left: 0 !important;"> <p:selectBooleanCheckbox
 							value="#{departamentoBean.departamento.habilitado}">
 							<f:ajax event="change" render="habilitado" />
@@ -131,13 +131,13 @@
 					<p:tooltip for="habilitado" position="top" />
 				</div>
 				<div class="ui-inputgroup ui-g-12 ui-md-12">
-					<span class="ui-inputgroup-addon" style="width: 30%;">Categorias</span>
-					<p:linkButton styleClass="ui-success-color" icon="pi pi-plus"
-						href="categorias.xhtml" />
+					<span class="ui-inputgroup-addon">Categorias</span>
 					<p:chips id="categorias" styleClass="ui-chips-onlyview"
 						placeholder="#{departamentoBean.departamento.localCategorias.isEmpty() ? 'Nenhuma Categoria associada.' : ''}"
 						title="Clique no botão ao lado para adicionar categorias."
 						value="#{departamentoBean.departamento.localCategorias}" />
+					<p:linkButton styleClass="ui-success-color" icon="pi pi-plus"
+						href="categorias.xhtml" />
 					<p:tooltip for="categorias" position="top" />
 				</div>
 				<div class="ui-g-12">
@@ -148,14 +148,8 @@
 					</p:messages>
 				</div>
 				<div class="ui-g-12 ui-md-3 centeredColumn">
-					<p:commandButton id="btFechar" type="submit"
-						icon="pi pi-arrow-left" iconPos="left" value="Voltar"
-						oncomplete="PF('dialogCadastro').hide();" update=":form-cadastro" />
-				</div>
-				<div class="ui-md-6" />
-				<div class="ui-g-12 ui-md-3 centeredColumn">
 					<p:commandButton id="btCadastrar" styleClass="ui-success-color"
-						icon="pi pi-arrow-right" iconPos="right" value="Salvar"
+						icon="pi pi-save" iconPos="right" value="Salvar"
 						action="#{departamentoBean.salvarEditar()}"
 						onstart="PF('statusDialog').show();"
 						onerror="PF('statusDialog').hide();"
