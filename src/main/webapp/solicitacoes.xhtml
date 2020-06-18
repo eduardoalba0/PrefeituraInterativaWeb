@@ -44,12 +44,11 @@
 					filterStyle="display:none">
 					<h:outputText value="#{solicitacao.localCidadao.nome}" />
 				</p:column>
-				<p:column headerText="Data"
-					sortBy="#{solicitacao.getDataTempoString()}" priority="1"
-					styleClass="centeredColumn"
-					filterBy="#{solicitacao.getDataTempoString()}"
+				<p:column headerText="Data" sortBy="#{solicitacao.dataTempoString}"
+					priority="1" styleClass="centeredColumn"
+					filterBy="#{solicitacao.dataTempoString}"
 					filterStyle="display:none">
-					<h:outputText value="#{solicitacao.getDataTempoString()}" />
+					<h:outputText value="#{solicitacao.dataTempoString}" />
 				</p:column>
 				<p:column headerText="Categorias"
 					filterBy="#{solicitacao.localCategorias}"
@@ -75,17 +74,17 @@
 					</p:commandButton>
 					<p:commandButton icon="pi pi-comment" title="Responder"
 						styleClass="ui-tertiary-color"
-						actionListener="#{atendimentoBean.selecionar}"
-						onsuccess="PF('dialogCadastro').show()"
-						update=":mensagem :form-tabela :form-cadastro">
+						actionListener="#{solicitacaoBean.responder}"
+						onsuccess="PF('dialogResposta').show()"
+						update=":mensagem :form-tabela :form-resposta">
 						<f:attribute name="solicitacaoSelecionada" value="#{solicitacao}" />
 						<f:actionListener
 							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
 					</p:commandButton>
 					<p:commandButton icon="pi pi-reply" title="Encaminhar"
 						actionListener="#{solicitacaoBean.selecionar}"
-						onsuccess="PF('dialogCadastro').show()"
-						update=":mensagem :form-tabela :form-cadastro">
+						onsuccess="PF('dialogEncaminhamento').show()"
+						update=":mensagem :form-tabela :form-encaminhamento">
 						<f:attribute name="solicitacaoSelecionada" value="#{solicitacao}" />
 						<f:actionListener
 							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
@@ -117,8 +116,65 @@
 		</h:form>
 		<p:sidebar widgetVar="dialogCadastro" position="bottom">
 			<h:form id="form-cadastro" styleClass="ui-g ui-fluid centeredColumn">
-				<p:tabView styleClass="centeredColumn ui-g-12">
+				<p:tabView styleClass="centeredColumn ui-g-12 ui-g-nopad">
 					<p:tab id="dados" title="Informações">
+						<p:fieldset styleClass="ui-g-12 ui-md-12" legend="Imagens"
+							toggleable="true" collapsed="true" toggleSpeed="500">
+							<p:lightBox id="lightbox" styleClass="imagebox">
+								<ui:repeat var="imagem"
+									value="#{solicitacaoBean.solicitacao.urlImagens}">
+									<h:outputLink value="#{imagem}">
+										<p:graphicImage url="#{imagem}" styleClass="ui-image" />
+									</h:outputLink>
+								</ui:repeat>
+							</p:lightBox>
+						</p:fieldset>
+						<div class="ui-inputgroup ui-g-12 ui-md-6">
+							<span class="ui-inputgroup-addon">Cidadão</span>
+							<p:inputText id="cidadao"
+								value="#{solicitacaoBean.solicitacao.localCidadao}"
+								title="#{solicitacaoBean.solicitacao.localCidadao}">
+							</p:inputText>
+							<p:tooltip for="cidadao" position="top" />
+						</div>
+						<div class="ui-inputgroup ui-g-12 ui-md-6">
+							<span class="ui-inputgroup-addon">Departamento</span>
+							<p:selectOneMenu id="departamento"
+								value="#{solicitacaoBean.solicitacao.departamento_ID}"
+								title="Selecione o departamento" required="true"
+								converter="omnifaces.SelectItemsConverter"
+								requiredMessage="Departamento é obrigatório.">
+								<f:selectItem noSelectionOption="true"
+									itemLabel="Selecione um Departamento" />
+								<f:selectItems value="#{departamentoBean.departamentos}"
+									var="departamento" itemValue="#{departamento._ID}"
+									itemLabel="#{departamento.descricao}" />
+							</p:selectOneMenu>
+							<p:linkButton styleClass="ui-success-color" icon="pi pi-plus"
+								href="departamentos.xhtml" />
+							<p:tooltip for="departamento" position="top" />
+						</div>
+						<div class="ui-inputgroup ui-g-12 ui-md-6">
+							<span class="ui-inputgroup-addon">Data</span>
+							<p:datePicker id="data" readonly="true" showTime="true"
+								readonlyInput="true" value="#{solicitacaoBean.solicitacao.data}"
+								showIcon="true" />
+							<p:tooltip for="data" position="top" />
+						</div>
+						<div class="ui-inputgroup ui-g-12 ui-md-6">
+							<span class="ui-inputgroup-addon">Concluida</span>
+							<p:inputText id="concluida"
+								title="Marque ao lado se deseja concluir a categoria."
+								value="#{solicitacaoBean.solicitacao.concluida ? 'Sim' : 'Não'}"
+								readonly="true" />
+							<span class="ui-inputgroup-addon-checkbox"> <p:selectBooleanCheckbox
+									value="#{solicitacaoBean.solicitacao.concluida}"
+									disabled="true">
+									<f:ajax event="change" render="concluida" />
+								</p:selectBooleanCheckbox>
+							</span>
+							<p:tooltip for="concluida" position="top" />
+						</div>
 						<div class="ui-inputgroup ui-g-12 ui-md-12">
 							<span class="ui-inputgroup-addon">Categorias</span>
 							<p:chips id="categorias"
@@ -130,52 +186,170 @@
 						</div>
 						<div class="ui-inputgroup ui-g-12 ui-md-12">
 							<span class="ui-inputgroup-addon">Descrição</span>
-							<p:inputTextarea id="descricao" rows="4" readonly="true"
+							<p:inputTextarea id="descricao" rows="2" readonly="true"
 								title="#{solicitacaoBean.solicitacao.descricao == null ? 'Nenhuma descrição inserida.' : ''}"
 								placeholder="#{solicitacaoBean.solicitacao.descricao == null ? 'Nenhuma descrição inserida.' : ''}"
 								value="#{solicitacaoBean.solicitacao.descricao}">
 							</p:inputTextarea>
 							<p:tooltip for="descricao" position="top" />
 						</div>
-						<p:fieldset legend="Imagens" toggleable="true" collapsed="true"
-							toggleSpeed="500">
-							<p:lightBox id="lightbox" styleClass="imagebox">
-								<ui:repeat var="imagem"
-									value="#{solicitacaoBean.solicitacao.urlImagens}">
-									<h:outputLink value="#{imagem}">
-										<p:graphicImage url="#{imagem}" styleClass="ui-image" />
-									</h:outputLink>
-								</ui:repeat>
-							</p:lightBox>
-						</p:fieldset>
 					</p:tab>
 					<p:tab id="localizacao" title="Localização">
-						<div class="ui-inputgroup ui-g-12 ui-md-12">
+						<div class="ui-inputgroup ui-g-12 ui-md-12 ui-g-nopad">
 							<span class="ui-inputgroup-addon">Endereço</span>
-							<p:inputTextarea id="endereco" rows="2" readonly="true"
+							<p:inputText id="endereco" rows="2" readonly="true"
 								title="#{solicitacaoBean.marker == null ? 'Endereço não encontrado.' : solicitacaoBean.marker.getTitle()}"
 								value="#{solicitacaoBean.marker == null ? 'Endereço não encontrado.' : solicitacaoBean.marker.getTitle()}">
 								<p:autoUpdate />
-							</p:inputTextarea>
+							</p:inputText>
 							<p:tooltip for="endereco" position="top" />
 						</div>
-						<div class="ui-g-12 ui-md-12">
+						<div class="ui-g-12 ui-md-12 ui-g-nopad">
 							<p:gmap id="map" widgetVar="map" zoom="16" type="HYBRID"
 								mapTypeControl="false" scrollWheel="false"
 								model="#{solicitacaoBean.mapModel}"
 								center="#{solicitacaoBean.center}" style="height: 450px;">
 								<p:ajax event="reverseGeocode"
-									listener="#{solicitacaoBean.onReverseGeocode}" update="@this endereco" />
+									listener="#{solicitacaoBean.onReverseGeocode}"
+									update="@this endereco" />
 								<p:ajax event="overlaySelect"
 									listener="#{solicitacaoBean.onMarkerSelect}" update="endereco" />
 							</p:gmap>
 						</div>
 					</p:tab>
 					<p:tab id="tramitacao" title="Tramitação">
+						<div class="ui-g-12 ui-md-12 div-tramitacao">
+							<div class="ui-g-12 ui-md-2">
+								<p:lightBox styleClass="imagebox"
+									rendered="#{solicitacaoBean.solicitacao.anonima != true}">
+									<h:outputLink
+										rendered="#{solicitacaoBean.solicitacao.anonima != true}"
+										value="#{solicitacaoBean.solicitacao.localCidadao.uriFoto}">
+										<p:graphicImage
+											rendered="#{solicitacaoBean.solicitacao.anonima != true}"
+											url="#{solicitacaoBean.solicitacao.localCidadao.uriFoto}"
+											styleClass="ui-image-profile" />
+									</h:outputLink>
+								</p:lightBox>
+								<h>#{solicitacaoBean.solicitacao.localCidadao.nome}</h>
+							</div>
+							<h3>Demanda cadastrada para o (a)
+								#{solicitacaoBean.solicitacao.localDepartamento.descricao}</h3>
+							<h>Em #{solicitacaoBean.solicitacao.dataTempoString}</h>
+						</div>
+						<ui:repeat var="atendimento"
+							value="#{solicitacaoBean.solicitacao.localAtendimentos}">
+							<div class="ui-g-12 ui-md-12 div-tramitacao">
+								<div class="ui-g-12 ui-md-2">
+									<p:lightBox styleClass="imagebox">
+										<h:outputLink value="#{atendimento.localFuncionario.uriFoto}">
+											<p:graphicImage url="#{atendimento.localFuncionario.uriFoto}"
+												styleClass="ui-image-profile" />
+										</h:outputLink>
+									</p:lightBox>
+									<h>#{atendimento.localFuncionario.nome}</h>
+								</div>
+								<h3>#{atendimento.resposta}</h3>
+								<h>em #{atendimento.dataTempoString}</h>
+							</div>
+							<h3 style="margin: 20px">#{atendimento.acao}</h3>
+						</ui:repeat>
 					</p:tab>
-					<p:tab id="avaliacao" title="Avaliação">
+					<p:tab id="avaliacao" title="Avaliação"
+						rendered="#{solicitacaoBean.solicitacao.avaliacao != null}">
+						<div class="ui-inputgroup ui-g-12 ui-md-6 ui-g-nopad">
+							<span class="ui-inputgroup-addon">Nota</span>
+							<p:rating id="nota" stars="5" readonly="true"
+								value="#{solicitacaoBean.solicitacao.avaliacao.nota}" />
+						</div>
+						<div class="ui-inputgroup ui-g-12 ui-md-6">
+							<span class="ui-inputgroup-addon">Solucionada</span>
+							<p:inputText id="solucionada"
+								value="#{solicitacaoBean.solicitacao.avaliacao.solucionada ? 'Sim' : 'Não'}"
+								readonly="true" />
+							<span class="ui-inputgroup-addon-checkbox"> <p:selectBooleanCheckbox
+									value="#{solicitacaoBean.solicitacao.avaliacao.solucionada}"
+									disabled="true">
+									<f:ajax event="change" render="solucionada" />
+								</p:selectBooleanCheckbox>
+							</span>
+						</div>
+						<div class="ui-inputgroup ui-g-12 ui-md-12">
+							<span class="ui-inputgroup-addon">Comentário</span>
+							<p:inputTextarea id="comentario" rows="2" readonly="true"
+								title="#{solicitacaoBean.solicitacao.avaliacao.comentario == null ? 'Nenhum comentário inserido.' : ''}"
+								placeholder="#{solicitacaoBean.solicitacao.avaliacao.comentario == null ? 'Nenhum comentário inserido.' : ''}"
+								value="#{solicitacaoBean.solicitacao.avaliacao.comentario}">
+							</p:inputTextarea>
+							<p:tooltip for="comentario" position="top" />
+						</div>
 					</p:tab>
 				</p:tabView>
+			</h:form>
+		</p:sidebar>
+		<p:sidebar widgetVar="dialogResposta" position="bottom">
+			<h:form id="form-resposta" styleClass="ui-g ui-fluid centeredColumn">
+				<div class="ui-inputgroup ui-g-12 ui-md-12">
+					<h2 class="centeredColumn">Responder Solicitação</h2>
+				</div>
+				<div class="ui-inputgroup ui-g-12 ui-md-12">
+					<span class="ui-inputgroup-addon">Resposta</span>
+					<p:inputTextarea id="comentario" rows="4"
+						title="Informe a resposta para a demanda do cidadão."
+						placeholder="Informe a resposta para a demanda do cidadão"
+						value="#{solicitacaoBean.atendimento.resposta}">
+					</p:inputTextarea>
+					<p:tooltip for="comentario" position="top" />
+				</div>
+				<div class="ui-inputgroup ui-g-12 ui-md-6">
+					<span class="ui-inputgroup-addon">Finalizar</span>
+					<p:inputText id="concluida"
+						value="#{solicitacaoBean.solicitacao.concluida ? 'Sim' : 'Não'}"
+						readonly="true" />
+					<span class="ui-inputgroup-addon-checkbox"> <p:selectBooleanCheckbox
+							value="#{solicitacaoBean.solicitacao.concluida}">
+							<f:ajax event="change" render="concluida" />
+						</p:selectBooleanCheckbox>
+					</span>
+				</div>
+				<div class="ui-g-12">
+					<p:separator />
+					<p:messages styleClass="ui-g-12" skipDetailIfEqualsSummary="true"
+						showDetail="true" closable="true">
+						<p:autoUpdate />
+					</p:messages>
+				</div>
+				<div class="ui-g-12 ui-md-3 centeredColumn">
+					<p:commandButton id="btCadastrar" type="submit"
+						styleClass="ui-success-color" icon="pi  pi-save" iconPos="right"
+						value="Salvar" action="#{solicitacaoBean.salvarEditar()}"
+						onstart="PF('statusDialog').show();"
+						onerror="PF('statusDialog').hide();"
+						oncomplete="if(args.validationFailed){PF('statusDialog').hide();}"
+						update=":form-tabela:tabela-solicitacoes :form-resposta" />
+				</div>
+			</h:form>
+		</p:sidebar>
+		<p:sidebar widgetVar="dialogEncaminhamento" position="bottom">
+			<h:form id="form-encaminhamento"
+				styleClass="ui-g ui-fluid centeredColumn">
+
+				<div class="ui-g-12">
+					<p:separator />
+					<p:messages styleClass="ui-g-12" skipDetailIfEqualsSummary="true"
+						showDetail="true" closable="true">
+						<p:autoUpdate />
+					</p:messages>
+				</div>
+				<div class="ui-g-12 ui-md-3 centeredColumn">
+					<p:commandButton id="btCadastrar" type="submit"
+						styleClass="ui-success-color" icon="pi  pi-save" iconPos="right"
+						value="Salvar" action="#{solicitacaoBean.salvarEditar()}"
+						onstart="PF('statusDialog').show();"
+						onerror="PF('statusDialog').hide();"
+						oncomplete="if(args.validationFailed){PF('statusDialog').hide();}"
+						update=":form-tabela:tabela-solicitacoes :form-resposta" />
+				</div>
 			</h:form>
 		</p:sidebar>
 	</ui:define>

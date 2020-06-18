@@ -1,7 +1,9 @@
 package br.edu.ifpr.bsi.prefeiturainterativaweb.bean;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Produces;
@@ -17,11 +19,16 @@ import org.primefaces.model.map.DefaultMapModel;
 import org.primefaces.model.map.MapModel;
 import org.primefaces.model.map.Marker;
 
+import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.AtendimentoDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.SolicitacaoDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Atendimento;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Avaliacao;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Aviso;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Categoria;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Departamento;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Solicitacao;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Usuario;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.FirebaseHelper;
 
 @Named("solicitacaoBean")
 @ViewScoped
@@ -29,6 +36,7 @@ import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Usuario;
 public class SolicitacaoBean extends AbstractBean {
 
 	private Atendimento atendimento;
+	private Aviso aviso;
 	private Solicitacao solicitacao;
 	private List<Solicitacao> solicitacoes;
 
@@ -47,6 +55,14 @@ public class SolicitacaoBean extends AbstractBean {
 	@Inject
 	@Named("usuarios")
 	private List<Usuario> usuarios;
+
+	@Inject
+	@Named("atendimentos")
+	private List<Atendimento> atendimentos;
+
+	@Inject
+	@Named("departamentos")
+	private List<Departamento> departamentos;
 
 	@Override
 	@PostConstruct
@@ -69,19 +85,29 @@ public class SolicitacaoBean extends AbstractBean {
 	@Override
 	public void cadastrar() {
 		solicitacao = new Solicitacao();
+		solicitacao.setAvaliacao(new Avaliacao());
 	}
 
 	@Override
 	public List<Solicitacao> listar() {
 		solicitacoes.forEach((aux) -> {
 			List<Categoria> localCategorias = new ArrayList<>();
+			List<Atendimento> localAtendimentos = new ArrayList<>();
 			aux.getCategorias().forEach((string) -> {
 				if (categorias != null && categorias.contains(new Categoria(string)))
 					localCategorias.add(categorias.get(categorias.indexOf(new Categoria(string))));
 			});
-			aux.setLocalCidadao(usuarios.get(usuarios.indexOf(new Usuario(aux.getUsuario_ID()))));
+			if (aux.getAtendimentos() != null)
+				aux.getAtendimentos().forEach((string) -> {
+					if (atendimentos != null && atendimentos.contains(new Atendimento(string)))
+						localAtendimentos.add(atendimentos.get(atendimentos.indexOf(new Atendimento(string))));
+				});
 			localCategorias.sort((Categoria o1, Categoria o2) -> o1.getDescricao().compareTo(o2.getDescricao()));
+			localAtendimentos.sort((Atendimento o1, Atendimento o2) -> o1.getData().compareTo(o2.getData()));
 			aux.setLocalCategorias(localCategorias);
+			aux.setLocalCidadao(usuarios.get(usuarios.indexOf(new Usuario(aux.getUsuario_ID()))));
+			aux.setLocalDepartamento(
+					departamentos.get(departamentos.indexOf(new Departamento(aux.getDepartamento_ID()))));
 		});
 
 		hideStatusDialog();
@@ -96,11 +122,52 @@ public class SolicitacaoBean extends AbstractBean {
 		PrimeFaces.current().executeScript("PF('map').reverseGeocode('" + lat + "','" + lon + "');");
 	}
 
+	public void responder(ActionEvent evento) {
+		solicitacao = (Solicitacao) evento.getComponent().getAttributes().get("solicitacaoSelecionada");
+		atendimento = new Atendimento();
+		aviso = new Aviso();
+		atendimento.set_ID(UUID.randomUUID().toString());
+		atendimento.setLocalSolicitacao(solicitacao);
+		aviso.setTitulo("Sua demanda foi respondida!");
+		aviso.setCategoria(Aviso.CATEGORIA_TRAMITACAO);
+	}
+
 	@Override
 	public void salvarEditar() {
-		if (SolicitacaoDAO.merge(solicitacao)) {
-			hideStatusDialog();
+		boolean tasksSuccess = false;
+		if (atendimento != null && atendimento.get_ID() != null) {
+			List<String> stringList;
+			List<Atendimento> objList;
+			if (solicitacao.getAtendimentos() == null)
+				stringList = new ArrayList<String>();
+			else
+				stringList = solicitacao.getAtendimentos();
+
+			if (solicitacao.getLocalAtendimentos() == null)
+				objList = new ArrayList<Atendimento>();
+			else
+				objList = solicitacao.getLocalAtendimentos();
+
+			stringList.add(atendimento.get_ID());
+			objList.add(atendimento);
+			solicitacao.setAtendimentos(stringList);
+			solicitacao.setLocalAtendimentos(objList);
+			atendimento.setFuncionario_ID(funcionarioLogado.get_ID());
+			atendimento.setLocalFuncionario(funcionarioLogado);
+			atendimento.setDepartamento_ID(funcionarioLogado.getDadosFuncionais().getDepartamento_ID());
+			atendimento.setLocalDepartamento(funcionarioLogado.getDadosFuncionais().getLocalDepartamento());
+			tasksSuccess = AtendimentoDAO.merge(atendimento) && SolicitacaoDAO.merge(solicitacao);
+		} else
+			tasksSuccess = SolicitacaoDAO.merge(solicitacao);
+		if (tasksSuccess) {
+			aviso.setCorpo(atendimento.getResposta());
+			aviso.setSolicitacao_ID(solicitacao.get_ID());
+			aviso.setData(new Date());
+			aviso.setToken(solicitacao.getLocalCidadao().getToken());
+			FirebaseHelper.enviarNotificacao(aviso);
 			solicitacao = new Solicitacao();
+			listar();
+			hideStatusDialog();
 			showSuccessMessage("Dados gravados na nuvem.");
 		} else {
 			hideStatusDialog();
@@ -130,7 +197,7 @@ public class SolicitacaoBean extends AbstractBean {
 
 	public void onMarkerSelect(OverlaySelectEvent event) {
 		marker = (Marker) event.getOverlay();
-		center = marker.getLatlng().getLat()+", "+ marker.getLatlng().getLng();
+		center = marker.getLatlng().getLat() + ", " + marker.getLatlng().getLng();
 	}
 
 	public Usuario getFuncionarioLogado() {
@@ -169,12 +236,36 @@ public class SolicitacaoBean extends AbstractBean {
 		this.solicitacoes = solicitacoes;
 	}
 
+	public List<Atendimento> getAtendimentos() {
+		return atendimentos;
+	}
+
+	public void setAtendimentos(List<Atendimento> atendimentos) {
+		this.atendimentos = atendimentos;
+	}
+
+	public List<Departamento> getDepartamentos() {
+		return departamentos;
+	}
+
+	public void setDepartamentos(List<Departamento> departamentos) {
+		this.departamentos = departamentos;
+	}
+
 	public Atendimento getAtendimento() {
 		return atendimento;
 	}
 
 	public void setAtendimento(Atendimento atendimento) {
 		this.atendimento = atendimento;
+	}
+
+	public Aviso getAviso() {
+		return aviso;
+	}
+
+	public void setAviso(Aviso aviso) {
+		this.aviso = aviso;
 	}
 
 	public MapModel getMapModel() {

@@ -107,7 +107,7 @@
 						requiredMessage="Departamento é obrigatório.">
 						<f:selectItem noSelectionOption="true"
 							itemLabel="Selecione um Departamento" />
-						<f:selectItems value="#{categoriaBean.departamentos}"
+						<f:selectItems value="#{departamentoBean.departamentos}"
 							var="departamento" itemValue="#{departamento._ID}"
 							itemLabel="#{departamento.descricao}" />
 					</p:selectOneMenu>

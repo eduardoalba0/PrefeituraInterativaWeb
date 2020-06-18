@@ -35,7 +35,6 @@ public class Usuario implements Serializable {
 
 	private String token;
 	private String uriFoto;
-	private String motivoDesabilitacao;
 	private boolean habilitado;
 	private DadosFuncionais dadosFuncionais;
 
@@ -125,14 +124,6 @@ public class Usuario implements Serializable {
 		this.localTipoUsuario = tipoUsuario;
 	}
 
-	public String getMotivoDesabilitacao() {
-		return motivoDesabilitacao;
-	}
-
-	public void setMotivoDesabilitacao(String motivoDesabilitacao) {
-		this.motivoDesabilitacao = motivoDesabilitacao;
-	}
-
 	public boolean isHabilitado() {
 		return habilitado;
 	}
@@ -175,6 +166,6 @@ public class Usuario implements Serializable {
 	@Nonnull
 	@Override
 	public String toString() {
-		return this._ID;
+		return this.nome;
 	}
 }

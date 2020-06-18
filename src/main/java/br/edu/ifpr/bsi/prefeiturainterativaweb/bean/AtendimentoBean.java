@@ -3,6 +3,7 @@ package br.edu.ifpr.bsi.prefeiturainterativaweb.bean;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Produces;
@@ -13,8 +14,10 @@ import javax.inject.Named;
 import org.omnifaces.cdi.ViewScoped;
 
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.AtendimentoDAO;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.SolicitacaoDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Atendimento;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Aviso;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Departamento;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Solicitacao;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Usuario;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.FirebaseHelper;
@@ -25,12 +28,19 @@ import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.FirebaseHelper;
 public class AtendimentoBean extends AbstractBean {
 
 	private Atendimento atendimento;
+	private Aviso aviso;
 	private Solicitacao solicitacao;
 	private List<Atendimento> atendimentos;
 
 	@Inject
 	@Named("funcionarioLogado")
 	private Usuario funcionarioLogado;
+	@Inject
+	@Named("departamentos")
+	private List<Departamento> departamentos;
+	@Inject
+	@Named("usuarios")
+	private List<Usuario> usuarios;
 
 	@Override
 	@PostConstruct
@@ -52,30 +62,58 @@ public class AtendimentoBean extends AbstractBean {
 	@Override
 	public void cadastrar() {
 		atendimento = new Atendimento();
-		atendimento.setFuncionario(funcionarioLogado);
+		atendimento.setLocalFuncionario(funcionarioLogado);
 	}
 
 	@Override
 	public List<Atendimento> listar() {
+		atendimentos.forEach((aux) -> {
+			if (usuarios != null && !usuarios.isEmpty() && usuarios.contains(new Usuario(aux.getFuncionario_ID())))
+				aux.setLocalFuncionario(usuarios.get(usuarios.indexOf(new Usuario(aux.getFuncionario_ID()))));
+			if (departamentos != null && !departamentos.isEmpty()
+					&& departamentos.contains(new Departamento(aux.getDepartamento_ID())))
+				aux.setLocalDepartamento(
+						departamentos.get(departamentos.indexOf(new Departamento(aux.getDepartamento_ID()))));
+		});
+		hideStatusDialog();
 		return atendimentos;
 	}
 
 	@Override
 	public void selecionar(ActionEvent evento) {
-		atendimento = (Atendimento) evento.getComponent().getAttributes().get("atendimentoSelecionada");
+		atendimento = (Atendimento) evento.getComponent().getAttributes().get("atendimentoSelecionado");
+	}
+
+	public void responder(ActionEvent evento) {
+		solicitacao = (Solicitacao) evento.getComponent().getAttributes().get("solicitacaoSelecionada");
+		atendimento = new Atendimento();
+		aviso = new Aviso();
+		atendimento.setLocalSolicitacao(solicitacao);
+		aviso.setTitulo("Sua demanda foi respondida!");
+		aviso.setCategoria(Aviso.CATEGORIA_TRAMITACAO);
 	}
 
 	@Override
 	public void salvarEditar() {
-		showStatusDialog();
-		if (AtendimentoDAO.merge(atendimento)) {
-			atendimento = new Atendimento();
-			Aviso aviso = new Aviso();
-			aviso.setCategoria(Aviso.CATEGORIA_TRAMITACAO);
-			aviso.setTitulo(atendimento.getAcao());
+		boolean tasksSuccess = false;
+		if (atendimento.get_ID() == null) {
+			atendimento.set_ID(UUID.randomUUID().toString());
+			List<String> stringList;
+			if (solicitacao.getAtendimentos() == null)
+				stringList = new ArrayList<String>();
+			else
+				stringList = solicitacao.getAtendimentos();
+			stringList.add(atendimento.get_ID());
+			solicitacao.setAtendimentos(stringList);
+			atendimento.setFuncionario_ID(funcionarioLogado.get_ID());
+			atendimento.setDepartamento_ID(funcionarioLogado.getDadosFuncionais().getDepartamento_ID());
+			tasksSuccess = AtendimentoDAO.merge(atendimento) && SolicitacaoDAO.merge(solicitacao);
+		} else
+			tasksSuccess = AtendimentoDAO.merge(atendimento);
+		if (tasksSuccess) {
 			aviso.setCorpo(atendimento.getResposta());
-			aviso.setData(new Date());
 			aviso.setSolicitacao_ID(solicitacao.get_ID());
+			aviso.setData(new Date());
 			aviso.setToken(solicitacao.getLocalCidadao().getToken());
 			FirebaseHelper.enviarNotificacao(aviso);
 			hideStatusDialog();
@@ -119,11 +157,35 @@ public class AtendimentoBean extends AbstractBean {
 		this.atendimentos = atendimentos;
 	}
 
+	public List<Departamento> getDepartamentos() {
+		return departamentos;
+	}
+
+	public void setDepartamentos(List<Departamento> departamentos) {
+		this.departamentos = departamentos;
+	}
+
+	public List<Usuario> getUsuarios() {
+		return usuarios;
+	}
+
+	public void setUsuarios(List<Usuario> usuarios) {
+		this.usuarios = usuarios;
+	}
+
 	public Solicitacao getSolicitacao() {
 		return solicitacao;
 	}
 
 	public void setSolicitacao(Solicitacao solicitacao) {
 		this.solicitacao = solicitacao;
+	}
+
+	public Aviso getAviso() {
+		return aviso;
+	}
+
+	public void setAviso(Aviso aviso) {
+		this.aviso = aviso;
 	}
 }

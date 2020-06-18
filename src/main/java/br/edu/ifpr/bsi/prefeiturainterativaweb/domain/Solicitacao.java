@@ -35,6 +35,8 @@ public class Solicitacao implements Serializable {
 	@Exclude
 	private Usuario localCidadao;
 	@Exclude
+	private String dataTempoString;
+	@Exclude
 	private List<Categoria> localCategorias;
 	@Exclude
 	private List<String> localCaminhoImagens;
@@ -116,21 +118,22 @@ public class Solicitacao implements Serializable {
 	public Date getData() {
 		return data;
 	}
-	
-	public String getDataString() {
-        DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, new Locale("pt", "BR"));
-		return df.format(data);
-	}
-	
-	public String getDataTempoString() {
-		DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, new Locale("pt", "BR"));
-		return df.format(data);
-	}
-	
-	
-	
+
 	public void setData(Date data) {
+		if (dataTempoString == null || dataTempoString.isEmpty()) {
+			DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, new Locale("pt", "BR"));
+			dataTempoString = df.format(data);
+		}
 		this.data = data;
+	}
+
+	@Exclude
+	public String getDataTempoString() {
+		return dataTempoString;
+	}
+
+	public void setDataTempoString(String dataTempoString) {
+		this.dataTempoString = dataTempoString;
 	}
 
 	public String getDepartamento_ID() {

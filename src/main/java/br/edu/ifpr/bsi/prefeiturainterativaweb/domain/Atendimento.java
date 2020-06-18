@@ -1,7 +1,9 @@
 package br.edu.ifpr.bsi.prefeiturainterativaweb.domain;
 
 import java.io.Serializable;
+import java.text.DateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
 import com.google.cloud.firestore.annotation.Exclude;
@@ -9,6 +11,13 @@ import com.google.cloud.firestore.annotation.ServerTimestamp;
 
 @SuppressWarnings("serial")
 public class Atendimento implements Serializable {
+
+	public Atendimento() {
+	}
+
+	public Atendimento(String _ID) {
+		this._ID = _ID;
+	}
 
 	private String _ID;
 	private String resposta;
@@ -20,7 +29,13 @@ public class Atendimento implements Serializable {
 	@ServerTimestamp
 	private Date data;
 	@Exclude
-	private Usuario funcionario;
+	private String dataTempoString;
+	@Exclude
+	private Usuario localFuncionario;
+	@Exclude
+	private Departamento localDepartamento;
+	@Exclude
+	private Solicitacao localSolicitacao;
 
 //---------------------- Encapsulamento ----------------------
 
@@ -69,18 +84,39 @@ public class Atendimento implements Serializable {
 	}
 
 	public void setData(Date data) {
+		if (dataTempoString == null || dataTempoString.isEmpty()) {
+			DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, new Locale("pt", "BR"));
+			dataTempoString = df.format(data);
+		}
 		this.data = data;
+	}
+	@Exclude
+	public String getDataTempoString() {
+		return dataTempoString;
+	}
+
+	public void setDataTempoString(String dataTempoString) {
+		this.dataTempoString = dataTempoString;
 	}
 
 	@Exclude
-	public Usuario getFuncionario() {
-		return funcionario;
+	public Usuario getLocalFuncionario() {
+		return localFuncionario;
 	}
 
-	public void setFuncionario(Usuario funcionario) {
+	public void setLocalFuncionario(Usuario funcionario) {
 		if (funcionario != null && funcionario.get_ID() != null)
 			this.setFuncionario_ID(funcionario.get_ID());
-		this.funcionario = funcionario;
+		this.localFuncionario = funcionario;
+	}
+
+	@Exclude
+	public Departamento getLocalDepartamento() {
+		return localDepartamento;
+	}
+
+	public void setLocalDepartamento(Departamento localDepartamento) {
+		this.localDepartamento = localDepartamento;
 	}
 
 	public String getDepartamento_ID() {
@@ -89,6 +125,16 @@ public class Atendimento implements Serializable {
 
 	public void setDepartamento_ID(String departamento_ID) {
 		this.departamento_ID = departamento_ID;
+	}
+	@Exclude
+	public Solicitacao getLocalSolicitacao() {
+		return localSolicitacao;
+	}
+
+	public void setLocalSolicitacao(Solicitacao localSolicitacao) {
+		if (localSolicitacao != null)
+			this.solicitacao_ID = localSolicitacao.get_ID();
+		this.localSolicitacao = localSolicitacao;
 	}
 
 	@Override
