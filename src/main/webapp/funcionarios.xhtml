@@ -142,6 +142,8 @@
 						value="#{usuarioBean.usuario.localTipoUsuario}"
 						title="Selecione o tipo do usuário."
 						requiredMessage="O tipo do usuário é obrigatório."
+						filterMatchMode="contains" filter="true"
+						filterPlaceholder="Pesquise..."
 						converter="omnifaces.SelectItemsConverter">
 						<f:selectItem noSelectionOption="true"
 							itemLabel="Selecione um tipo de Usuário..." />
@@ -302,9 +304,8 @@
 
 				<div class="ui-g-12 ui-md-3 centeredColumn">
 					<p:commandButton id="bt-redefinir" type="submit"
-						styleClass="ui-success-color" icon="pi pi-save"
-						iconPos="right" value="Redefinir"
-						action="#{usuarioBean.redefinirSenha()}"
+						styleClass="ui-success-color" icon="pi pi-save" iconPos="right"
+						value="Redefinir" action="#{usuarioBean.redefinirSenha()}"
 						onstart="PF('statusDialog').show();"
 						onerror="PF('statusDialog').hide();"
 						oncomplete="if(args.validationFailed){PF('statusDialog').hide();}"

@@ -66,25 +66,31 @@
 					<p:commandButton icon="pi pi-external-link" title="Visualizar"
 						styleClass="ui-secondary-color"
 						actionListener="#{solicitacaoBean.selecionar}"
+						onstart="PF('statusDialog').show();"
+						onerror="PF('statusDialog').hide();"
 						onsuccess="PF('dialogCadastro').show()"
-						update=":mensagem :form-tabela :form-cadastro">
+						update=":mensagem :form-cadastro @form">
 						<f:attribute name="solicitacaoSelecionada" value="#{solicitacao}" />
 						<f:actionListener
 							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
 					</p:commandButton>
 					<p:commandButton icon="pi pi-comment" title="Responder"
 						styleClass="ui-tertiary-color"
-						actionListener="#{solicitacaoBean.responder}"
+						actionListener="#{solicitacaoBean.selecionar}"
 						onsuccess="PF('dialogResposta').show()"
-						update=":mensagem :form-tabela :form-resposta">
+						onstart="PF('statusDialog').show();"
+						onerror="PF('statusDialog').hide();"
+						update=":mensagem :form-resposta @form">
 						<f:attribute name="solicitacaoSelecionada" value="#{solicitacao}" />
 						<f:actionListener
 							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
 					</p:commandButton>
 					<p:commandButton icon="pi pi-reply" title="Encaminhar"
 						actionListener="#{solicitacaoBean.selecionar}"
+						onstart="PF('statusDialog').show();"
+						onerror="PF('statusDialog').hide();"
 						onsuccess="PF('dialogEncaminhamento').show()"
-						update=":mensagem :form-tabela :form-encaminhamento">
+						update=":mensagem :form-encaminhamento @form">
 						<f:attribute name="solicitacaoSelecionada" value="#{solicitacao}" />
 						<f:actionListener
 							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
@@ -93,8 +99,10 @@
 						icon="#{solicitacao.localCidadao.habilitado ? 'pi pi-ban' : 'pi pi-check'}"
 						styleClass="#{solicitacao.localCidadao.habilitado ? 'ui-danger-color' : 'ui-success-color'}"
 						title="#{solicitacao.localCidadao.habilitado ? 'Bloquear Cidadão' : 'Habilitar Usuário'}"
+						onstart="PF('statusDialog').show();"
+						onerror="PF('statusDialog').hide();"
 						actionListener="#{usuarioBean.removerDesabilitar}"
-						update=":mensagem :form-tabela :form-cadastro">
+						update=":mensagem @form">
 						<p:confirm header="Atenção!"
 							message="Tem certeza que deseja #{solicitacao.localCidadao.habilitado ? 'DESATIVAR' : 'HABILITAR'} o usuário [#{solicitacao.localCidadao.nome}]?" />
 						<f:attribute name="usuarioSelecionado"
@@ -111,12 +119,13 @@
 					icon="pi pi-check" onstart="PF('statusDialog').show();"
 					onerror="PF('statusDialog').hide();"
 					oncomplete="if(args.validationFailed){PF('statusDialog').hide();}"
-					iconPos="right" update=":mensagem :form-tabela :form-cadastro" />
+					iconPos="right" update=":mensagem :form-tabela" />
 			</p:confirmDialog>
 		</h:form>
 		<p:sidebar widgetVar="dialogCadastro" position="bottom">
 			<h:form id="form-cadastro" styleClass="ui-g ui-fluid centeredColumn">
-				<p:tabView styleClass="centeredColumn ui-g-12 ui-g-nopad">
+				<p:tabView id="tabView"
+					styleClass="centeredColumn ui-g-12 ui-g-nopad">
 					<p:tab id="dados" title="Informações">
 						<p:fieldset styleClass="ui-g-12 ui-md-12" legend="Imagens"
 							toggleable="true" collapsed="true" toggleSpeed="500">
@@ -131,23 +140,35 @@
 						</p:fieldset>
 						<div class="ui-inputgroup ui-g-12 ui-md-6">
 							<span class="ui-inputgroup-addon">Cidadão</span>
-							<p:inputText id="cidadao"
+							<p:selectOneMenu id="cidadao"
 								value="#{solicitacaoBean.solicitacao.localCidadao}"
-								title="#{solicitacaoBean.solicitacao.localCidadao}">
-							</p:inputText>
+								title="Selecione o departamento" required="true"
+								filterMatchMode="contains" filter="true"
+								filterPlaceholder="Pesquise..."
+								converter="omnifaces.SelectItemsConverter"
+								requiredMessage="Cidadão é obrigatório.">
+								<f:selectItem noSelectionOption="true"
+									itemLabel="Selecione um Cidadão" />
+								<f:selectItems value="#{usuarioBean.usuarios}" var="usuario"
+									itemValue="#{usuario}" itemLabel="#{usuario.nome}" />
+							</p:selectOneMenu>
+							<p:linkButton styleClass="ui-success-color" icon="pi pi-plus"
+								href="usuarios.xhtml" />
 							<p:tooltip for="cidadao" position="top" />
 						</div>
 						<div class="ui-inputgroup ui-g-12 ui-md-6">
 							<span class="ui-inputgroup-addon">Departamento</span>
 							<p:selectOneMenu id="departamento"
-								value="#{solicitacaoBean.solicitacao.departamento_ID}"
+								value="#{solicitacaoBean.solicitacao.localDepartamento}"
 								title="Selecione o departamento" required="true"
+								filterMatchMode="contains" filter="true"
+								filterPlaceholder="Pesquise..."
 								converter="omnifaces.SelectItemsConverter"
 								requiredMessage="Departamento é obrigatório.">
 								<f:selectItem noSelectionOption="true"
 									itemLabel="Selecione um Departamento" />
 								<f:selectItems value="#{departamentoBean.departamentos}"
-									var="departamento" itemValue="#{departamento._ID}"
+									var="departamento" itemValue="#{departamento}"
 									itemLabel="#{departamento.descricao}" />
 							</p:selectOneMenu>
 							<p:linkButton styleClass="ui-success-color" icon="pi pi-plus"
@@ -164,24 +185,32 @@
 						<div class="ui-inputgroup ui-g-12 ui-md-6">
 							<span class="ui-inputgroup-addon">Concluida</span>
 							<p:inputText id="concluida"
-								title="Marque ao lado se deseja concluir a categoria."
+								title="Marque ao lado se deseja concluir a solicitação."
 								value="#{solicitacaoBean.solicitacao.concluida ? 'Sim' : 'Não'}"
 								readonly="true" />
 							<span class="ui-inputgroup-addon-checkbox"> <p:selectBooleanCheckbox
-									value="#{solicitacaoBean.solicitacao.concluida}"
-									disabled="true">
+									value="#{solicitacaoBean.solicitacao.concluida}">
 									<f:ajax event="change" render="concluida" />
 								</p:selectBooleanCheckbox>
 							</span>
 							<p:tooltip for="concluida" position="top" />
 						</div>
 						<div class="ui-inputgroup ui-g-12 ui-md-12">
-							<span class="ui-inputgroup-addon">Categorias</span>
-							<p:chips id="categorias"
-								title="#{solicitacaoBean.solicitacao.localCategorias.isEmpty() ? 'Nenhuma Categoria Inserida.' : ''}"
-								placeholder="#{solicitacaoBean.solicitacao.localCategorias.isEmpty() ? 'Nenhuma Categoria Inserida.' : ''}"
-								value="#{solicitacaoBean.solicitacao.localCategorias}" />
-							<p:commandButton styleClass="ui-success-color" icon="pi pi-plus" />
+							<span class="ui-inputgroup-addon">Editar Categorias</span>
+							<div jsf:id="categorias"
+								style="width: 100% !important;"
+								class="ui-chips-container ui-inputfield ui-state-default">
+								<ui:repeat var="categoria"
+									value="#{solicitacaoBean.tempCategorias}">
+									<div class="ui-chips-token ui-state-active ui-corner-all">
+										<span class="ui-chips-token-label">#{categoria.descricao}</span>
+									</div>
+								</ui:repeat>
+							</div>
+							<p:commandButton id="bt-add-categorias"
+								styleClass="ui-success-color" icon="pi pi-plus"
+								oncomplete="PF('dialogCategorias').show()"
+								update=":form-categorias" />
 							<p:tooltip for="categorias" position="top" />
 						</div>
 						<div class="ui-inputgroup ui-g-12 ui-md-12">
@@ -233,13 +262,20 @@
 								</p:lightBox>
 								<h>#{solicitacaoBean.solicitacao.localCidadao.nome}</h>
 							</div>
-							<h3>Demanda cadastrada para o (a)
-								#{solicitacaoBean.solicitacao.localDepartamento.descricao}</h3>
-							<h>Em #{solicitacaoBean.solicitacao.dataTempoString}</h>
+							<div class="ui-g-12 ui-md-10">
+								<h3>Demanda cadastrada para o (a)
+									#{solicitacaoBean.solicitacao.localDepartamento.descricao}</h3>
+								<h>Em #{solicitacaoBean.solicitacao.dataTempoString}</h>
+							</div>
 						</div>
 						<ui:repeat var="atendimento"
 							value="#{solicitacaoBean.solicitacao.localAtendimentos}">
 							<div class="ui-g-12 ui-md-12 div-tramitacao">
+								<div class="ui-g-12 ui-md-10">
+									<h3>#{atendimento.resposta}</h3>
+									<h>#{atendimento.localDepartamento} -
+									#{atendimento.dataTempoString}</h>
+								</div>
 								<div class="ui-g-12 ui-md-2">
 									<p:lightBox styleClass="imagebox">
 										<h:outputLink value="#{atendimento.localFuncionario.uriFoto}">
@@ -249,10 +285,10 @@
 									</p:lightBox>
 									<h>#{atendimento.localFuncionario.nome}</h>
 								</div>
-								<h3>#{atendimento.resposta}</h3>
-								<h>em #{atendimento.dataTempoString}</h>
 							</div>
-							<h3 style="margin: 20px">#{atendimento.acao}</h3>
+							<h3 style="margin: 20px"
+								class="#{atendimento.acao == null || atendimento.acao.isEmpty() ? 'ui-invisible' : ''}">#{atendimento.acao}
+								em #{atendimento.dataTempoString}</h3>
 						</ui:repeat>
 					</p:tab>
 					<p:tab id="avaliacao" title="Avaliação"
@@ -268,8 +304,7 @@
 								value="#{solicitacaoBean.solicitacao.avaliacao.solucionada ? 'Sim' : 'Não'}"
 								readonly="true" />
 							<span class="ui-inputgroup-addon-checkbox"> <p:selectBooleanCheckbox
-									value="#{solicitacaoBean.solicitacao.avaliacao.solucionada}"
-									disabled="true">
+									value="#{solicitacaoBean.solicitacao.avaliacao.solucionada}">
 									<f:ajax event="change" render="solucionada" />
 								</p:selectBooleanCheckbox>
 							</span>
@@ -285,6 +320,21 @@
 						</div>
 					</p:tab>
 				</p:tabView>
+				<div class="ui-g-12 ui-md-3 centeredColumn">
+					<p:commandButton id="btFechar" styleClass="ui-danger-color"
+						icon="pi pi-times" iconPos="right" value="Fechar"
+						oncomplete="PF('dialogCadastro').hide();"
+						update=":form-tabela:tabela-solicitacoes" />
+				</div>
+				<div class="ui-g-12 ui-md-3 centeredColumn">
+					<p:commandButton id="btSalvar" type="submit"
+						styleClass="ui-success-color" icon="pi  pi-save" iconPos="right"
+						value="Salvar" action="#{solicitacaoBean.salvarEditar()}"
+						onstart="PF('statusDialog').show();"
+						onerror="PF('statusDialog').hide();"
+						oncomplete="if(args.validationFailed){PF('statusDialog').hide();}"
+						update=":mensagem :form-tabela:tabela-solicitacoes @form" />
+				</div>
 			</h:form>
 		</p:sidebar>
 		<p:sidebar widgetVar="dialogResposta" position="bottom">
@@ -301,54 +351,135 @@
 					</p:inputTextarea>
 					<p:tooltip for="comentario" position="top" />
 				</div>
-				<div class="ui-inputgroup ui-g-12 ui-md-6">
-					<span class="ui-inputgroup-addon">Finalizar</span>
-					<p:inputText id="concluida"
-						value="#{solicitacaoBean.solicitacao.concluida ? 'Sim' : 'Não'}"
-						readonly="true" />
-					<span class="ui-inputgroup-addon-checkbox"> <p:selectBooleanCheckbox
-							value="#{solicitacaoBean.solicitacao.concluida}">
-							<f:ajax event="change" render="concluida" />
-						</p:selectBooleanCheckbox>
-					</span>
-				</div>
-				<div class="ui-g-12">
-					<p:separator />
-					<p:messages styleClass="ui-g-12" skipDetailIfEqualsSummary="true"
-						showDetail="true" closable="true">
-						<p:autoUpdate />
-					</p:messages>
-				</div>
-				<div class="ui-g-12 ui-md-3 centeredColumn">
-					<p:commandButton id="btCadastrar" type="submit"
-						styleClass="ui-success-color" icon="pi  pi-save" iconPos="right"
-						value="Salvar" action="#{solicitacaoBean.salvarEditar()}"
-						onstart="PF('statusDialog').show();"
-						onerror="PF('statusDialog').hide();"
-						oncomplete="if(args.validationFailed){PF('statusDialog').hide();}"
-						update=":form-tabela:tabela-solicitacoes :form-resposta" />
-				</div>
-			</h:form>
-		</p:sidebar>
-		<p:sidebar widgetVar="dialogEncaminhamento" position="bottom">
-			<h:form id="form-encaminhamento"
-				styleClass="ui-g ui-fluid centeredColumn">
 
 				<div class="ui-g-12">
 					<p:separator />
-					<p:messages styleClass="ui-g-12" skipDetailIfEqualsSummary="true"
-						showDetail="true" closable="true">
+					<p:messages id="local-mensagem" styleClass="ui-g-12"
+						skipDetailIfEqualsSummary="true" showDetail="true" closable="true">
 						<p:autoUpdate />
 					</p:messages>
 				</div>
+
+				<div class="ui-g-12 ui-md-3 centeredColumn">
+					<p:commandButton id="btFechar" styleClass="ui-danger-color"
+						icon="pi pi-times" iconPos="right" value="Fechar"
+						oncomplete="PF('dialogEncaminhamento').hide();"
+						update=":form-tabela:tabela-solicitacoes" />
+				</div>
 				<div class="ui-g-12 ui-md-3 centeredColumn">
 					<p:commandButton id="btCadastrar" type="submit"
-						styleClass="ui-success-color" icon="pi  pi-save" iconPos="right"
-						value="Salvar" action="#{solicitacaoBean.salvarEditar()}"
+						styleClass="ui-success-color" icon="pi  pi-comment"
+						iconPos="right" value="Responder"
+						action="#{solicitacaoBean.salvarResposta()}"
 						onstart="PF('statusDialog').show();"
 						onerror="PF('statusDialog').hide();"
-						oncomplete="if(args.validationFailed){PF('statusDialog').hide();}"
-						update=":form-tabela:tabela-solicitacoes :form-resposta" />
+						oncomplete="if(args.validationFailed){PF('statusDialog').hide();}else{PF('dialogResposta').hide();}"
+						update="local-mensagem :form-tabela:tabela-solicitacoes @form" />
+				</div>
+				<div class="ui-g-12 ui-md-3 centeredColumn">
+					<p:commandButton id="btCadastrarEncerrar" type="submit"
+						styleClass="ui-success-color" icon="pi  pi-check" iconPos="right"
+						value="Responder e Encerrar"
+						action="#{solicitacaoBean.responderEncerrar()}"
+						onstart="PF('statusDialog').show();"
+						onerror="PF('statusDialog').hide();"
+						oncomplete="if(args.validationFailed){PF('statusDialog').hide();}else{PF('dialogResposta').hide();}"
+						update="local-mensagem :form-tabela:tabela-solicitacoes @form" />
+				</div>
+			</h:form>
+		</p:sidebar>
+		<p:sidebar widgetVar="dialogEncaminhamento" position="bottom"
+			onHide="#{solicitacaoBean.cadastrar()}">
+			<h:form id="form-encaminhamento"
+				styleClass="ui-g ui-fluid centeredColumn">
+				<div class="ui-inputgroup ui-g-12 ui-md-12">
+					<h2 class="centeredColumn">Encaminhar Solicitação</h2>
+				</div>
+				<div class="ui-inputgroup ui-g-12 ui-md-12">
+					<span class="ui-inputgroup-addon">Encaminhar para </span>
+					<p:selectOneMenu id="departamento"
+						value="#{solicitacaoBean.solicitacao.localDepartamento}"
+						title="Selecione o departamento" required="true"
+						filterMatchMode="contains" filter="true"
+						filterPlaceholder="Pesquise..."
+						converter="omnifaces.SelectItemsConverter"
+						requiredMessage="Departamento é obrigatório.">
+						<f:selectItem noSelectionOption="true"
+							itemLabel="Selecione um Departamento" />
+						<f:selectItems value="#{departamentoBean.listar()}"
+							var="departamento" itemValue="#{departamento}"
+							itemLabel="#{departamento.descricao}" />
+					</p:selectOneMenu>
+					<p:linkButton styleClass="ui-success-color" icon="pi pi-plus"
+						href="departamentos.xhtml" />
+					<p:tooltip for="departamento" position="top" />
+				</div>
+				<div class="ui-inputgroup ui-g-12 ui-md-12">
+					<span class="ui-inputgroup-addon">Motivo</span>
+					<p:inputTextarea id="motivo" rows="4"
+						title="Descreva para o cidadão, o motivo do encaminhamento da solicitação."
+						placeholder="Descreva para o cidadão, o motivo do encaminhamento da solicitação."
+						required="true"
+						requiredMessage="O Motivo do encaminhamento é um campo obrigatório."
+						value="#{solicitacaoBean.atendimento.resposta}" />
+					<p:tooltip for="motivo" position="top" />
+				</div>
+				<div class="ui-g-12">
+					<p:separator />
+					<p:messages id="local-mensagem" styleClass="ui-g-12"
+						skipDetailIfEqualsSummary="true" showDetail="true" closable="true">
+					</p:messages>
+				</div>
+				<div class="ui-g-12 ui-md-3 centeredColumn">
+					<p:commandButton id="btFechar" type="submit"
+						styleClass="ui-danger-color" icon="pi  pi-times" iconPos="right"
+						value="Fechar" oncomplete="PF('dialogEncaminhamento').hide();"
+						update=":form-tabela:tabela-solicitacoes @form" />
+				</div>
+
+				<div class="ui-g-12 ui-md-3 centeredColumn">
+					<p:commandButton id="btEncaminhar" type="submit"
+						styleClass="ui-success-color" icon="pi  pi-reply" iconPos="right"
+						value="Encaminhar" action="#{solicitacaoBean.encaminhar()}"
+						onstart="PF('statusDialog').show();"
+						onerror="PF('statusDialog').hide();"
+						oncomplete="if(args.validationFailed){PF('statusDialog').hide();}else{PF('dialogEncaminhamento').hide();}"
+						update=":form-tabela:tabela-solicitacoes @form" />
+				</div>
+			</h:form>
+		</p:sidebar>
+		<p:sidebar widgetVar="dialogCategorias" position="bottom">
+			<h:form id="form-categorias"
+				styleClass="ui-g ui-fluid centeredColumn">
+				<div class="ui-inputgroup ui-g-12 ui-md-12">
+					<h2 class="centeredColumn">Editar Categorias</h2>
+				</div>
+				<p:selectManyCheckbox styleClass="ui-g-12 ui-md-12 centeredColumn"
+					required="true" layout="responsive" columns="4"
+					converter="omnifaces.SelectItemsConverter"
+					requiredMessage="Você deve selecionar pelo menos uma categoria."
+					value="#{solicitacaoBean.tempCategorias}">
+					<f:selectItems var="categoria" value="#{categoriaBean.categorias}"
+						itemLabel="#{categoria.descricao}" itemValue="#{categoria}" />
+				</p:selectManyCheckbox>
+				<div class="ui-g-12">
+					<p:separator />
+					<p:messages id="local-mensagem" styleClass="ui-g-12"
+						skipDetailIfEqualsSummary="true" showDetail="true" closable="true">
+					</p:messages>
+				</div>
+				<div class="ui-g-12 ui-md-3 centeredColumn">
+					<p:commandButton id="btFechar" styleClass="ui-danger-color"
+						icon="pi pi-times" iconPos="right" value="Fechar"
+						oncomplete="PF('dialogCategorias').hide();"
+						update=":form-tabela:tabela-solicitacoes" />
+				</div>
+				<div class="ui-g-12 ui-md-3 centeredColumn">
+					<p:commandButton id="btSalvar" type="submit"
+						styleClass="ui-success-color" icon="pi pi-check" iconPos="right"
+						value="Concluido" action="#{solicitacaoBean.salvarCategorias()}"
+						oncomplete="if(!args.validationFailed){PF('dialogCategorias').hide();}"
+						update="local-mensagem :form-tabela:tabela-solicitacoes :form-cadastro:tabView:categorias" />
 				</div>
 			</h:form>
 		</p:sidebar>

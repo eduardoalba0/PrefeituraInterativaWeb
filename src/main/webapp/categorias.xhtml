@@ -103,6 +103,8 @@
 					<p:selectOneMenu id="departamento"
 						value="#{categoriaBean.categoria.departamento_ID}"
 						title="Selecione o departamento" required="true"
+						filterMatchMode="contains" filter="true"
+						filterPlaceholder="Pesquise..."
 						converter="omnifaces.SelectItemsConverter"
 						requiredMessage="Departamento é obrigatório.">
 						<f:selectItem noSelectionOption="true"
@@ -137,9 +139,8 @@
 				</div>
 				<div class="ui-g-12 ui-md-3 centeredColumn">
 					<p:commandButton id="btCadastrar" type="submit"
-						styleClass="ui-success-color" icon="pi pi-save"
-						iconPos="right" value="Salvar"
-						action="#{categoriaBean.salvarEditar()}"
+						styleClass="ui-success-color" icon="pi pi-save" iconPos="right"
+						value="Salvar" action="#{categoriaBean.salvarEditar()}"
 						onstart="PF('statusDialog').show();"
 						onerror="PF('statusDialog').hide();"
 						oncomplete="if(args.validationFailed){PF('statusDialog').hide();}"

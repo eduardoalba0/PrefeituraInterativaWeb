@@ -8,7 +8,7 @@ import java.util.Objects;
 public class Aviso implements Serializable {
 	
     public static final String CATEGORIA_PADRAO = "Avisos Gerais",
-            CATEGORIA_AVALIACAO = "Avaliação de Solicitações",
+            CATEGORIA_AVALIACAO = "Avaliação do Atendimento",
             CATEGORIA_TRAMITACAO = "Tramitação de Solicitações";
 
     private String titulo;

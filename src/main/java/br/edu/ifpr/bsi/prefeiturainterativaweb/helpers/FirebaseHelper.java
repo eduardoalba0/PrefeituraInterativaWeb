@@ -8,6 +8,8 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -24,6 +26,7 @@ import com.google.firebase.auth.UserRecord.CreateRequest;
 import com.google.firebase.auth.UserRecord.UpdateRequest;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.firebase.cloud.StorageClient;
+import com.google.firebase.messaging.BatchResponse;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
@@ -159,14 +162,19 @@ public class FirebaseHelper {
 
 	}
 
-	public static String enviarNotificacao(Aviso aviso) {
+	public static BatchResponse enviarNotificacao(List<Aviso> avisos) {
 		try {
 			init();
-			Notification notification = Notification.builder().setTitle(aviso.getTitulo()).setBody(aviso.getCorpo())
-					.build();
-			return messaging.send(Message.builder().putData("Categoria", aviso.getCategoria())
-					.putData("Solicitacao", aviso.getSolicitacao_ID()).setToken(aviso.getToken())
-					.setNotification(notification).build());
+			List<Message> mensagens = new ArrayList<Message>();
+			for (Aviso aviso : avisos) {
+				Notification notificacao = Notification.builder().setTitle(aviso.getTitulo()).setBody(aviso.getCorpo())
+						.build();
+				Message mensagem = Message.builder().putData("Categoria", aviso.getCategoria())
+						.putData("Solicitacao", aviso.getSolicitacao_ID()).setToken(aviso.getToken())
+						.setNotification(notificacao).build();
+				mensagens.add(mensagem);
+			}
+			return messaging.sendAll(mensagens);
 		} catch (Exception ex) {
 			return null;
 		}

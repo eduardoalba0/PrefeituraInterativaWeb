@@ -143,6 +143,8 @@
 						value="#{usuarioBean.usuario.localTipoUsuario}"
 						title="Selecione o tipo do usuário."
 						requiredMessage="O tipo do usuário é obrigatório."
+						filterMatchMode="contains" filter="true"
+						filterPlaceholder="Pesquise..."
 						converter="omnifaces.SelectItemsConverter">
 						<f:selectItem noSelectionOption="true"
 							itemLabel="Selecione um tipo de Usuário..." />
@@ -175,6 +177,8 @@
 							value="#{usuarioBean.dadosFuncionais.departamento_ID}"
 							title="Selecione o departamento do usuário."
 							requiredMessage="O departamento do usuário é obrigatório."
+							filterMatchMode="contains" filter="true"
+							filterPlaceholder="Pesquise..."
 							converter="omnifaces.SelectItemsConverter">
 							<f:selectItem noSelectionOption="true"
 								itemLabel="Selecione um Departamento..." />

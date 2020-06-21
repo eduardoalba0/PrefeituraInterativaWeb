@@ -166,11 +166,15 @@ public class Solicitacao implements Serializable {
 	}
 
 	public void setLocalDepartamento(Departamento departamento) {
+		if (departamento != null && departamento.get_ID() != null)
+			this.departamento_ID = departamento.get_ID();
 		this.localDepartamento = departamento;
 	}
 
 	@Exclude
 	public List<Categoria> getLocalCategorias() {
+		if (localCategorias != null)
+			localCategorias.sort((Categoria o1, Categoria o2) -> o1.getDescricao().compareTo(o2.getDescricao()));
 		return localCategorias;
 	}
 
@@ -195,11 +199,15 @@ public class Solicitacao implements Serializable {
 	}
 
 	public void setLocalCidadao(Usuario usuario) {
+		if (usuario != null && usuario.get_ID() != null)
+			this.usuario_ID = usuario.get_ID();
 		this.localCidadao = usuario;
 	}
 
 	@Exclude
 	public List<Atendimento> getLocalAtendimentos() {
+		if (localAtendimentos != null)
+			localAtendimentos.sort((Atendimento o1, Atendimento o2) -> o1.getData().compareTo(o2.getData()));
 		return localAtendimentos;
 	}
 

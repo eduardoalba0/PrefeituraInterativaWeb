@@ -68,8 +68,9 @@ public class AtendimentoBean extends AbstractBean {
 	@Override
 	public List<Atendimento> listar() {
 		atendimentos.forEach((aux) -> {
-			if (usuarios != null && !usuarios.isEmpty() && usuarios.contains(new Usuario(aux.getFuncionario_ID())))
+			if (usuarios != null && !usuarios.isEmpty() && usuarios.contains(new Usuario(aux.getFuncionario_ID()))) {
 				aux.setLocalFuncionario(usuarios.get(usuarios.indexOf(new Usuario(aux.getFuncionario_ID()))));
+			}
 			if (departamentos != null && !departamentos.isEmpty()
 					&& departamentos.contains(new Departamento(aux.getDepartamento_ID())))
 				aux.setLocalDepartamento(
@@ -115,7 +116,6 @@ public class AtendimentoBean extends AbstractBean {
 			aviso.setSolicitacao_ID(solicitacao.get_ID());
 			aviso.setData(new Date());
 			aviso.setToken(solicitacao.getLocalCidadao().getToken());
-			FirebaseHelper.enviarNotificacao(aviso);
 			hideStatusDialog();
 			showSuccessMessage("Dados gravados na nuvem.");
 		} else {

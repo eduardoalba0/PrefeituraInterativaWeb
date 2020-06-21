@@ -22,7 +22,6 @@ import org.primefaces.model.map.Marker;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.AtendimentoDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.SolicitacaoDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Atendimento;
-import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Avaliacao;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Aviso;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Categoria;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Departamento;
@@ -36,9 +35,10 @@ import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.FirebaseHelper;
 public class SolicitacaoBean extends AbstractBean {
 
 	private Atendimento atendimento;
-	private Aviso aviso;
 	private Solicitacao solicitacao;
+	private List<Aviso> avisos;
 	private List<Solicitacao> solicitacoes;
+	private List<Categoria> tempCategorias;
 
 	private MapModel mapModel;
 	private String center;
@@ -85,7 +85,9 @@ public class SolicitacaoBean extends AbstractBean {
 	@Override
 	public void cadastrar() {
 		solicitacao = new Solicitacao();
-		solicitacao.setAvaliacao(new Avaliacao());
+		atendimento = new Atendimento();
+		avisos = new ArrayList<Aviso>();
+		tempCategorias = new ArrayList<Categoria>();
 	}
 
 	@Override
@@ -99,12 +101,19 @@ public class SolicitacaoBean extends AbstractBean {
 			});
 			if (aux.getAtendimentos() != null)
 				aux.getAtendimentos().forEach((string) -> {
-					if (atendimentos != null && atendimentos.contains(new Atendimento(string)))
-						localAtendimentos.add(atendimentos.get(atendimentos.indexOf(new Atendimento(string))));
+					if (atendimentos != null && atendimentos.contains(new Atendimento(string))) {
+						Atendimento obj = atendimentos.get(atendimentos.indexOf(new Atendimento(string)));
+						if (obj != null) {
+							obj.setLocalDepartamento(departamentos
+									.get(departamentos.indexOf(new Departamento(obj.getDepartamento_ID()))));
+							obj.setLocalFuncionario(
+									usuarios.get(usuarios.indexOf(new Usuario(obj.getFuncionario_ID()))));
+							localAtendimentos.add(obj);
+						}
+					}
 				});
-			localCategorias.sort((Categoria o1, Categoria o2) -> o1.getDescricao().compareTo(o2.getDescricao()));
-			localAtendimentos.sort((Atendimento o1, Atendimento o2) -> o1.getData().compareTo(o2.getData()));
 			aux.setLocalCategorias(localCategorias);
+			aux.setLocalAtendimentos(localAtendimentos);
 			aux.setLocalCidadao(usuarios.get(usuarios.indexOf(new Usuario(aux.getUsuario_ID()))));
 			aux.setLocalDepartamento(
 					departamentos.get(departamentos.indexOf(new Departamento(aux.getDepartamento_ID()))));
@@ -117,55 +126,37 @@ public class SolicitacaoBean extends AbstractBean {
 	@Override
 	public void selecionar(ActionEvent evento) {
 		solicitacao = (Solicitacao) evento.getComponent().getAttributes().get("solicitacaoSelecionada");
+		atendimento = new Atendimento();
+		tempCategorias = solicitacao.getLocalCategorias();
 		double lat = solicitacao.getLocalizacao().getLatitude();
 		double lon = solicitacao.getLocalizacao().getLongitude();
 		PrimeFaces.current().executeScript("PF('map').reverseGeocode('" + lat + "','" + lon + "');");
-	}
-
-	public void responder(ActionEvent evento) {
-		solicitacao = (Solicitacao) evento.getComponent().getAttributes().get("solicitacaoSelecionada");
-		atendimento = new Atendimento();
-		aviso = new Aviso();
-		atendimento.set_ID(UUID.randomUUID().toString());
-		atendimento.setLocalSolicitacao(solicitacao);
-		aviso.setTitulo("Sua demanda foi respondida!");
-		aviso.setCategoria(Aviso.CATEGORIA_TRAMITACAO);
+		hideStatusDialog();
 	}
 
 	@Override
 	public void salvarEditar() {
 		boolean tasksSuccess = false;
-		if (atendimento != null && atendimento.get_ID() != null) {
-			List<String> stringList;
-			List<Atendimento> objList;
-			if (solicitacao.getAtendimentos() == null)
-				stringList = new ArrayList<String>();
-			else
-				stringList = solicitacao.getAtendimentos();
+		if (tempCategorias != null && !tempCategorias.isEmpty()
+				&& !tempCategorias.equals(solicitacao.getLocalCategorias())) {
+			List<String> ids = new ArrayList<String>();
+			tempCategorias.forEach(categoria -> {
+				ids.add(categoria.get_ID());
+			});
+			solicitacao.setCategorias(ids);
+		}
 
-			if (solicitacao.getLocalAtendimentos() == null)
-				objList = new ArrayList<Atendimento>();
-			else
-				objList = solicitacao.getLocalAtendimentos();
-
-			stringList.add(atendimento.get_ID());
-			objList.add(atendimento);
-			solicitacao.setAtendimentos(stringList);
-			solicitacao.setLocalAtendimentos(objList);
-			atendimento.setFuncionario_ID(funcionarioLogado.get_ID());
-			atendimento.setLocalFuncionario(funcionarioLogado);
-			atendimento.setDepartamento_ID(funcionarioLogado.getDadosFuncionais().getDepartamento_ID());
-			atendimento.setLocalDepartamento(funcionarioLogado.getDadosFuncionais().getLocalDepartamento());
+		if (atendimento != null && atendimento.get_ID() != null)
 			tasksSuccess = AtendimentoDAO.merge(atendimento) && SolicitacaoDAO.merge(solicitacao);
-		} else
+		else
 			tasksSuccess = SolicitacaoDAO.merge(solicitacao);
+
 		if (tasksSuccess) {
-			aviso.setCorpo(atendimento.getResposta());
-			aviso.setSolicitacao_ID(solicitacao.get_ID());
-			aviso.setData(new Date());
-			aviso.setToken(solicitacao.getLocalCidadao().getToken());
-			FirebaseHelper.enviarNotificacao(aviso);
+			if (avisos != null && !avisos.isEmpty())
+				FirebaseHelper.enviarNotificacao(avisos);
 			solicitacao = new Solicitacao();
+			atendimento = new Atendimento();
+			avisos = new ArrayList<Aviso>();
 			listar();
 			hideStatusDialog();
 			showSuccessMessage("Dados gravados na nuvem.");
@@ -178,6 +169,152 @@ public class SolicitacaoBean extends AbstractBean {
 	@Override
 	public void removerDesabilitar(ActionEvent evento) {
 
+	}
+
+	public void salvarCategorias() {
+		List<String> ids = new ArrayList<String>();
+		tempCategorias.forEach(categoria -> {
+			ids.add(categoria.get_ID());
+		});
+	}
+
+	public void salvarResposta() {
+		avisos = new ArrayList<Aviso>();
+		atendimento.set_ID(UUID.randomUUID().toString());
+		atendimento.setLocalSolicitacao(solicitacao);
+		List<String> stringList;
+		List<Atendimento> objList;
+		if (solicitacao.getAtendimentos() == null)
+			stringList = new ArrayList<String>();
+		else
+			stringList = solicitacao.getAtendimentos();
+
+		stringList.add(atendimento.get_ID());
+		solicitacao.setAtendimentos(stringList);
+		atendimento.setData(new Date());
+		atendimento.setFuncionario_ID(funcionarioLogado.get_ID());
+		atendimento.setLocalFuncionario(funcionarioLogado);
+		atendimento.setDepartamento_ID(funcionarioLogado.getDadosFuncionais().getDepartamento_ID());
+		atendimento.setLocalDepartamento(funcionarioLogado.getDadosFuncionais().getLocalDepartamento());
+		if (solicitacao.getLocalAtendimentos() == null)
+			objList = new ArrayList<Atendimento>();
+		else
+			objList = solicitacao.getLocalAtendimentos();
+		objList.add(atendimento);
+		solicitacao.setLocalAtendimentos(objList);
+
+		Aviso aviso = new Aviso();
+		aviso.setTitulo("Sua demanda foi respondida!");
+		aviso.setCategoria(Aviso.CATEGORIA_TRAMITACAO);
+		aviso.setCorpo(atendimento.getResposta());
+		aviso.setSolicitacao_ID(solicitacao.get_ID());
+		aviso.setData(new Date());
+		aviso.setToken(solicitacao.getLocalCidadao().getToken());
+		avisos.add(aviso);
+		salvarEditar();
+	}
+
+	public void responderEncerrar() {
+		avisos = new ArrayList<Aviso>();
+		solicitacao.setConcluida(true);
+		atendimento.set_ID(UUID.randomUUID().toString());
+		atendimento.setAcao("A demanda foi encerrada.");
+		atendimento.setLocalSolicitacao(solicitacao);
+		atendimento.setData(new Date());
+		atendimento.setFuncionario_ID(funcionarioLogado.get_ID());
+		atendimento.setLocalFuncionario(funcionarioLogado);
+		atendimento.setDepartamento_ID(funcionarioLogado.getDadosFuncionais().getDepartamento_ID());
+		atendimento.setLocalDepartamento(funcionarioLogado.getDadosFuncionais().getLocalDepartamento());
+
+		List<String> stringList;
+		List<Atendimento> objList;
+		if (solicitacao.getAtendimentos() == null)
+			stringList = new ArrayList<String>();
+		else
+			stringList = solicitacao.getAtendimentos();
+		stringList.add(atendimento.get_ID());
+		solicitacao.setAtendimentos(stringList);
+		if (solicitacao.getLocalAtendimentos() == null)
+			objList = new ArrayList<Atendimento>();
+		else
+			objList = solicitacao.getLocalAtendimentos();
+		objList.add(atendimento);
+		solicitacao.setLocalAtendimentos(objList);
+
+		Aviso aviso = new Aviso();
+		aviso.setTitulo("Sua demanda foi respondida!");
+		aviso.setCategoria(Aviso.CATEGORIA_TRAMITACAO);
+		aviso.setCorpo(atendimento.getResposta());
+		aviso.setSolicitacao_ID(solicitacao.get_ID());
+		aviso.setData(new Date());
+		aviso.setToken(solicitacao.getLocalCidadao().getToken());
+		avisos.add(aviso);
+
+		aviso = new Aviso();
+		aviso.setTitulo("Sua demanda foi encerrada!");
+		aviso.setCategoria(Aviso.CATEGORIA_AVALIACAO);
+		aviso.setSolicitacao_ID(solicitacao.get_ID());
+		aviso.setData(new Date());
+		aviso.setToken(solicitacao.getLocalCidadao().getToken());
+		aviso.setCorpo(
+				"Sua demanda foi concluida com sucesso! Por favor, avalie nosso atendimento e a solução apresentada no aplicativo.");
+		avisos.add(aviso);
+
+		salvarEditar();
+	}
+
+	public void encaminhar() {
+		avisos = new ArrayList<Aviso>();
+		atendimento.set_ID(UUID.randomUUID().toString());
+		atendimento
+				.setAcao("A demanda foi encaminhada para o (a) " + solicitacao.getLocalDepartamento().getDescricao());
+		atendimento.setLocalSolicitacao(solicitacao);
+		atendimento.setData(new Date());
+		atendimento.setFuncionario_ID(funcionarioLogado.get_ID());
+		atendimento.setLocalFuncionario(funcionarioLogado);
+		atendimento.setDepartamento_ID(funcionarioLogado.getDadosFuncionais().getDepartamento_ID());
+		atendimento.setLocalDepartamento(funcionarioLogado.getDadosFuncionais().getLocalDepartamento());
+
+		List<String> stringList;
+		List<Atendimento> objList;
+		if (solicitacao.getAtendimentos() == null)
+			stringList = new ArrayList<String>();
+		else
+			stringList = solicitacao.getAtendimentos();
+		stringList.add(atendimento.get_ID());
+		solicitacao.setAtendimentos(stringList);
+		if (solicitacao.getLocalAtendimentos() == null)
+			objList = new ArrayList<Atendimento>();
+		else
+			objList = solicitacao.getLocalAtendimentos();
+		objList.add(atendimento);
+		solicitacao.setLocalAtendimentos(objList);
+
+		Aviso aviso = new Aviso();
+		aviso.setTitulo("Sua demanda foi respondida!");
+		aviso.setCategoria(Aviso.CATEGORIA_TRAMITACAO);
+		aviso.setCorpo(atendimento.getResposta());
+		aviso.setSolicitacao_ID(solicitacao.get_ID());
+		aviso.setData(new Date());
+		aviso.setToken(solicitacao.getLocalCidadao().getToken());
+		avisos.add(aviso);
+
+		aviso = new Aviso();
+		aviso.setTitulo("Sua demanda foi encaminhada!");
+		aviso.setCategoria(Aviso.CATEGORIA_TRAMITACAO);
+		aviso.setSolicitacao_ID(solicitacao.get_ID());
+		aviso.setData(new Date());
+		aviso.setToken(solicitacao.getLocalCidadao().getToken());
+		aviso.setCorpo("Sua demanda foi encaminhada para o (a) " + solicitacao.getLocalDepartamento().getDescricao()
+				+ ". Por favor, aguarde um retorno do referido setor.");
+		avisos.add(aviso);
+
+		salvarEditar();
+	}
+
+	public void onMarkerSelect(OverlaySelectEvent event) {
+		marker = (Marker) event.getOverlay();
+		center = marker.getLatlng().getLat() + ", " + marker.getLatlng().getLng();
 	}
 
 	public void onReverseGeocode(ReverseGeocodeEvent event) {
@@ -193,11 +330,6 @@ public class SolicitacaoBean extends AbstractBean {
 			mapModel.addOverlay(marker);
 		}
 
-	}
-
-	public void onMarkerSelect(OverlaySelectEvent event) {
-		marker = (Marker) event.getOverlay();
-		center = marker.getLatlng().getLat() + ", " + marker.getLatlng().getLng();
 	}
 
 	public Usuario getFuncionarioLogado() {
@@ -244,6 +376,14 @@ public class SolicitacaoBean extends AbstractBean {
 		this.atendimentos = atendimentos;
 	}
 
+	public List<Categoria> getTempCategorias() {
+		return tempCategorias;
+	}
+
+	public void setTempCategorias(List<Categoria> tempCategorias) {
+		this.tempCategorias = tempCategorias;
+	}
+
 	public List<Departamento> getDepartamentos() {
 		return departamentos;
 	}
@@ -258,14 +398,6 @@ public class SolicitacaoBean extends AbstractBean {
 
 	public void setAtendimento(Atendimento atendimento) {
 		this.atendimento = atendimento;
-	}
-
-	public Aviso getAviso() {
-		return aviso;
-	}
-
-	public void setAviso(Aviso aviso) {
-		this.aviso = aviso;
 	}
 
 	public MapModel getMapModel() {

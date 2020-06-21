@@ -60,7 +60,7 @@ body,.div-tramitacao
 .ui-tabs-selected,
 .ui-accordion-header.ui-state-active,
 .ui-paginator-page,
-.ui-chips .ui-chips-container .ui-chips-token,
+.ui-chips-token,
 .ui-button:not(.ui-success-color):not(.ui-danger-color):not(.ui-warning-color):not(.ui-secondary-color):not(.ui-tertiary-color):not(.ui-quartiary-color) {
     background-color: var(--color-orange) !important;
     border: var(--color-orange) !important;
@@ -129,7 +129,7 @@ body,.div-tramitacao
 
 .ui-fieldset,
 .ui-fieldset-legend,
-.ui-separator:not(.ui-timepicker>.ui-separator) {
+hr.ui-separator {
     border: 1px solid var(--color-orange) !important;
     box-shadow: 1px 2px 2px black !important;
 }
@@ -381,6 +381,7 @@ h,
 h1,
 h2,
 h3,
+.ui-selectmanycheckbox,
 .ui-calendar>.ui-inputfield,
 .ui-inputtextarea,
 .ui-fieldset-legend,

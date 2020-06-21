@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.SessionScoped;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
@@ -20,7 +20,7 @@ import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Usuario;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.FirebaseHelper;
 
 @Named("usuarioBean")
-@SessionScoped
+@ApplicationScoped
 @SuppressWarnings("serial")
 public class UsuarioBean extends AbstractBean {
 

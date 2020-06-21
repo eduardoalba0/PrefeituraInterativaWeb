@@ -108,6 +108,8 @@
 						style="margin-right:0 !important;"
 						value="#{departamentoBean.departamento.departamentoSuperior_ID}"
 						title="Selecione o departamento hierarquicamente superior (se houver)"
+						filterMatchMode="contains" filter="true"
+						filterPlaceholder="Pesquise..."
 						converter="omnifaces.SelectItemsConverter">
 						<f:selectItem noSelectionOption="true" itemLabel="Nenhum" />
 						<f:selectItems value="#{departamentoBean.departamentos}"
