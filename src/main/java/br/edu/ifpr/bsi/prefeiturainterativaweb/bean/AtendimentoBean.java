@@ -20,7 +20,6 @@ import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Aviso;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Departamento;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Solicitacao;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Usuario;
-import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.FirebaseHelper;
 
 @Named("atendimentoBean")
 @ViewScoped
@@ -126,7 +125,6 @@ public class AtendimentoBean extends AbstractBean {
 
 	@Override
 	public void removerDesabilitar(ActionEvent evento) {
-		// TODO Auto-generated method stub
 	}
 
 	public Usuario getFuncionarioLogado() {
