@@ -12,8 +12,29 @@
 </p>
 
 ## Screenshots
+<p float="left" align="center">
 
-* A adicionar
+<img src="https://github.com/eduardoalba0/PrefeituraInterativaWeb/blob/master/Screenshots/Login.PNG" width="900" height="500">
+<img src="https://github.com/eduardoalba0/PrefeituraInterativaWeb/blob/master/Screenshots/Redefinir%20Senha.PNG" width="900" height="500">
+<img src="https://github.com/eduardoalba0/PrefeituraInterativaWeb/blob/master/Screenshots/Solicita%C3%A7%C3%B5es.PNG" width="900" height="500">
+<img src="https://github.com/eduardoalba0/PrefeituraInterativaWeb/blob/master/Screenshots/Solicita%C3%A7%C3%B5es%20-%20Visualizar%20Informa%C3%A7%C3%B5es.PNG" width="900" height="500">
+<img src="https://github.com/eduardoalba0/PrefeituraInterativaWeb/blob/master/Screenshots/Solicita%C3%A7%C3%B5es%20-%20Visualizar%20localiza%C3%A7%C3%A3o.PNG" width="900" height="500">
+<img src="https://github.com/eduardoalba0/PrefeituraInterativaWeb/blob/master/Screenshots/Solicita%C3%A7%C3%B5es%20-%20Visualizar%20tramita%C3%A7%C3%A3o.PNG" width="900" height="500">
+<img src="https://github.com/eduardoalba0/PrefeituraInterativaWeb/blob/master/Screenshots/Solicita%C3%A7%C3%B5es%20-%20Responder.PNG" width="900" height="500">
+<img src="https://github.com/eduardoalba0/PrefeituraInterativaWeb/blob/master/Screenshots/Solicita%C3%A7%C3%B5es%20-%20Encaminhar.PNG" width="900" height="500">
+<img src="https://github.com/eduardoalba0/PrefeituraInterativaWeb/blob/master/Screenshots/Categorias.PNG" width="900" height="500">
+<img src="https://github.com/eduardoalba0/PrefeituraInterativaWeb/blob/master/Screenshots/Categorias%20editar.PNG" width="900" height="500">
+<img src="https://github.com/eduardoalba0/PrefeituraInterativaWeb/blob/master/Screenshots/Departamentos.PNG" width="900" height="500">
+<img src="https://github.com/eduardoalba0/PrefeituraInterativaWeb/blob/master/Screenshots/Funcionarios.PNG" width="900" height="500">
+<img src="https://github.com/eduardoalba0/PrefeituraInterativaWeb/blob/master/Screenshots/Funcionarios%20Editar.PNG" width="900" height="500">
+<img src="https://github.com/eduardoalba0/PrefeituraInterativaWeb/blob/master/Screenshots/Tipos%20de%20Usuario.PNG" width="900" height="500">
+<img src="https://github.com/eduardoalba0/PrefeituraInterativaWeb/blob/master/Screenshots/Tipos%20de%20Usuario%20Editar.PNG" width="900" height="500">
+<img src="https://github.com/eduardoalba0/PrefeituraInterativaWeb/blob/master/Screenshots/Usuarios.PNG" width="900" height="500">
+<img src="https://github.com/eduardoalba0/PrefeituraInterativaWeb/blob/master/Screenshots/Usuarios%20Cadastrar.PNG" width="900" height="500">
+<img src="https://github.com/eduardoalba0/PrefeituraInterativaWeb/blob/master/Screenshots/Usuarios%20Editar.PNG" width="900" height="500">
+<img src="https://github.com/eduardoalba0/PrefeituraInterativaWeb/blob/master/Screenshots/Usuarios%20redefinir%20Senha.PNG" width="900" height="500">
+
+</p>
 
 ## Lista de Funcionalidades
 
