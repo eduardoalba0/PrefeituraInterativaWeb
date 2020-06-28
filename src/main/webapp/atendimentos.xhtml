@@ -10,23 +10,25 @@
 	template="templates/menulateral.xhtml">
 
 	<ui:define name="conteudo">
-		<h:form id="form-tabela">
-			<p:dataTable id="tabela-atendimentos" var="atendimento" rows="15"
+		<h:form id="form-atendimentos">
+			<p:dataTable id="tabela-atendimentos" var="atendimento" rows="10"
 				value="#{atendimentoBean.listar()}"
 				sortBy="#{atendimento.getDataTempoString()}"
-				widgetVar="tabelaatendimentos"
+				widgetVar="tabelaAtendimentos"
 				emptyMessage="Nenhum atendimento encontrado." paginator="true"
 				paginatorPosition="bottom">
+				<p:autoUpdate />
 				<f:facet name="header">
-					<div class="ui-g ui-fluid">
-						<div class="ui-g-12 ui-md-6 ui-nopad">
+					<div class="ui-g ui-fluid ui-nopad">
+						<div class="ui-g-12 ui-md-3">
 							<h2>Atendimentos</h2>
 						</div>
 						<div class="ui-g-12 ui-md-6 centeredColumn">
 							<p:inputText id="globalFilter" styleClass="ui-input-busca"
 								placeholder="Pesquise..."
-								onkeyup="PF('tabelaatendimentos').filter()" />
+								onkeyup="PF('tabelaAtendimentos').filter()" />
 						</div>
+						<div class="ui-g-12 ui-md-3"></div>
 					</div>
 				</f:facet>
 				<p:column headerText="Código" sortBy="#{atendimento._ID}"
@@ -70,8 +72,8 @@
 						actionListener="#{atendimentoBean.selecionar}"
 						onstart="PF('statusDialog').show();"
 						onerror="PF('statusDialog').hide();"
-						onsuccess="PF('dialogCadastro').show()"
-						update=":mensagem :form-cadastro @form">
+						onsuccess="PF('dialogCadastroAtendimento').show()"
+						update=":mensagem :form-cadastro-atendimento @form">
 						<f:attribute name="atendimentoSelecionado" value="#{atendimento}" />
 						<f:actionListener
 							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
@@ -100,11 +102,12 @@
 					icon="pi pi-check" onstart="PF('statusDialog').show();"
 					onerror="PF('statusDialog').hide();"
 					oncomplete="if(args.validationFailed){PF('statusDialog').hide();}"
-					iconPos="right" update=":mensagem :form-tabela" />
+					iconPos="right" update=":mensagem @form" />
 			</p:confirmDialog>
 		</h:form>
-		<p:sidebar widgetVar="dialogCadastro" position="bottom">
-			<h:form id="form-cadastro" styleClass="ui-g ui-fluid centeredColumn">
+		<p:sidebar widgetVar="dialogCadastroAtendimento" position="bottom">
+			<h:form id="form-cadastro-atendimento"
+				styleClass="ui-g ui-fluid centeredColumn">
 				<div class="ui-g-12 ui-md-6 centeredColumn">
 					<h2>Dados do atendimento</h2>
 					<p>COD: #{atendimentoBean.atendimento._ID}</p>
@@ -155,11 +158,20 @@
 				<div class="ui-inputgroup ui-g-12 ui-md-6">
 					<span class="ui-inputgroup-addon">Solicitação</span>
 					<p:inputText id="solicitacao"
-						value="#{atendimentoBean.atendimento.solicitacao_ID}"
+						value="#{atendimentoBean.atendimento.localSolicitacao._ID}"
 						title="Código da Solicitação" readonly="true" />
-					<p:linkButton styleClass="ui-success-color"
-						icon="pi pi-external-link" title="Visualizar"
-						href="solicitacoes.xhtml" />
+					<p:commandButton icon="pi pi-external-link" title="Visualizar"
+						styleClass="ui-secondary-color"
+						actionListener="#{solicitacaoBean.selecionar}"
+						onstart="PF('statusDialog').show();"
+						onerror="PF('statusDialog').hide();"
+						onsuccess="PF('dialogCadastroSolicitacao').show()"
+						update=":mensagem :form-cadastro-solicitacao @form">
+						<f:attribute name="solicitacaoSelecionada"
+							value="#{atendimentoBean.atendimento.localSolicitacao}" />
+						<f:actionListener
+							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+					</p:commandButton>
 					<p:tooltip for="solicitacao" position="top" />
 				</div>
 				<div class="ui-inputgroup ui-g-12 ui-md-6">
@@ -190,19 +202,19 @@
 				<div class="ui-g-12 ui-md-3 centeredColumn">
 					<p:commandButton id="btFechar" styleClass="ui-danger-color"
 						icon="pi pi-times" iconPos="right" value="Fechar"
-						oncomplete="PF('dialogCadastro').hide();"
-						update=":form-tabela:tabela-atendimentos" />
+						oncomplete="PF('dialogCadastroAtendimento').hide();" />
 				</div>
 				<div class="ui-g-12 ui-md-3 centeredColumn">
-					<p:commandButton id="btSalvar" type="submit"
-						styleClass="ui-success-color" icon="pi  pi-save" iconPos="right"
-						value="Salvar" action="#{atendimentoBean.salvarEditar()}"
+					<p:commandButton id="btSalvar" styleClass="ui-success-color"
+						icon="pi  pi-save" iconPos="right" value="Salvar"
+						action="#{atendimentoBean.salvarEditar()}"
 						onstart="PF('statusDialog').show();"
 						onerror="PF('statusDialog').hide();"
 						oncomplete="if(args.validationFailed){PF('statusDialog').hide();}"
-						update=":form-tabela:tabela-atendimentos @form" />
+						update="@form" />
 				</div>
 			</h:form>
 		</p:sidebar>
+		<ui:include src="templates/dialog_cadastro_solicitacao.xhtml" />
 	</ui:define>
 </ui:composition>

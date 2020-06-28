@@ -128,6 +128,10 @@ public class SolicitacaoBean extends AbstractBean {
 	public void selecionar(ActionEvent evento) {
 		solicitacao = (Solicitacao) evento.getComponent().getAttributes().get("solicitacaoSelecionada");
 		atendimento = new Atendimento();
+		if (solicitacao.getLocalCategorias() == null) {
+			listar();
+			solicitacao = solicitacoes.get(solicitacoes.indexOf(new Solicitacao(solicitacao.get_ID())));
+		}
 		tempCategorias = solicitacao.getLocalCategorias();
 		double lat = solicitacao.getLocalizacao().getLatitude();
 		double lon = solicitacao.getLocalizacao().getLongitude();
@@ -267,8 +271,7 @@ public class SolicitacaoBean extends AbstractBean {
 	public void encaminhar() {
 		avisos = new ArrayList<Aviso>();
 		atendimento.set_ID(UUID.randomUUID().toString());
-		atendimento
-				.setAcao("Demanda encaminhada para o (a) " + solicitacao.getLocalDepartamento().getDescricao());
+		atendimento.setAcao("Demanda encaminhada para o (a) " + solicitacao.getLocalDepartamento().getDescricao());
 		atendimento.setLocalSolicitacao(solicitacao);
 		atendimento.setData(new Date());
 		atendimento.setFuncionario_ID(funcionarioLogado.get_ID());

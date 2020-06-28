@@ -10,59 +10,70 @@
 	template="templates/menulateral.xhtml">
 
 	<ui:define name="conteudo">
-		<h:form id="form-tabela">
-			<p:dataTable id="tabela-usuarios" var="usuario" rows="15"
+		<h:form id="form-usuarios">
+			<p:dataTable id="tabela-usuarios" var="usuario" rows="10"
 				value="#{usuarioBean.usuarios}" sortBy="#{usuario.nome}"
 				widgetVar="tabelausuarios" emptyMessage="Nenhum usuario encontrado."
 				paginator="true" paginatorPosition="bottom">
+				<p:autoUpdate />
 				<f:facet name="header">
-					<div class="ui-g">
-						<div class="ui-g-6 ui-g-nopad centeredColumn">
+					<div class="ui-g ui-fluid ui-nopad">
+						<div class="ui-g-12 ui-md-3">
+							<h2>Usuários</h2>
+						</div>
+						<div class="ui-g-12 ui-md-6 centeredColumn">
 							<p:inputText id="globalFilter" styleClass="ui-input-busca"
 								placeholder="Pesquise..."
-								onkeyup="PF('tabelausuarios').filter()" />
+								onkeyup="PF('tabelaUsuarios').filter()" />
 						</div>
-						<div class="ui-g-1 ui-g-nopad centeredColumn">
+						<div class="ui-g-12 ui-md-3 centeredColumn">
 							<p:commandButton icon="pi pi-plus" title="Cadastrar"
 								styleClass="ui-success-color"
 								actionListener="#{usuarioBean.cadastrar()}"
-								oncomplete="PF('dialogCadastro').show()"
-								update=":mensagem :form-cadastro">
+								oncomplete="PF('dialogCadastroUsuario').show()"
+								update=":mensagem :form-cadastro-usuario">
 								<f:actionListener
 									type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
 							</p:commandButton>
 						</div>
 					</div>
 				</f:facet>
-				<p:column headerText="Usuario" sortBy="#{usuario.nome}"
-					filterBy="#{usuario.nome}" filterStyle="display:none">
+				<p:column headerText="Código" sortBy="#{usuario._ID}"
+					filterBy="#{usuario._ID}" styleClass="centeredColumn"
+					filterStyle="display:none" priority="5">
+					<h:outputText value="#{usuario._ID}" />
+				</p:column>
+				<p:column headerText="Nome" sortBy="#{usuario.nome}" priority="1"
+					styleClass="centeredColumn" filterBy="#{usuario.nome}"
+					filterStyle="display:none">
 					<h:outputText value="#{usuario.nome}" />
 				</p:column>
-				<p:column headerText="CPF" sortBy="#{usuario.cpf}" priority="1"
+				<p:column headerText="CPF" sortBy="#{usuario.cpf}" priority="3"
 					styleClass="centeredColumn" filterBy="#{usuario.cpf}"
 					filterStyle="display:none">
 					<h:outputText value="#{usuario.cpf}" />
 				</p:column>
-				<p:column headerText="E-mail" sortBy="#{usuario.email}" priority="5"
+				<p:column headerText="E-mail" sortBy="#{usuario.email}" priority="2"
 					styleClass="centeredColumn" filterBy="#{usuario.email}"
 					filterStyle="display:none">
 					<h:outputText value="#{usuario.email}" />
 				</p:column>
 				<p:column headerText="Tipo" sortBy="#{usuario.localTipoUsuario}"
-					styleClass="centeredColumn" priority="4"
+					styleClass="centeredColumn" priority="3"
 					filterBy="#{usuario.localTipoUsuario}" filterStyle="display:none">
 					<h:outputText value="#{usuario.localTipoUsuario}" />
 				</p:column>
 				<p:column headerText="Habilitado" styleClass="centeredColumn"
-					sortBy="#{usuario.habilitado}" priority="3"
+					sortBy="#{usuario.habilitado}" priority="4"
 					filterBy="#{usuario.habilitado}" filterStyle="display:none">
 					<h:outputText value=" #{usuario.habilitado ? 'Sim' : 'Não' }" />
 				</p:column>
-				<p:column headerText="Opções" styleClass="centeredColumn">
+				<p:column headerText="Opções" styleClass="centeredColumn"
+					priority="1">
 					<p:commandButton icon="pi pi-pencil" title="Editar"
 						actionListener="#{usuarioBean.selecionar}"
-						oncomplete="PF('dialogCadastro').show()"
-						update=":mensagem :form-tabela :form-cadastro">
+						oncomplete="PF('dialogCadastroUsuario').show()"
+						update=":mensagem :form-usuarios :form-cadastro-usuario">
 						<f:attribute name="usuarioSelecionado" value="#{usuario}" />
 						<f:actionListener
 							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
@@ -71,7 +82,7 @@
 						actionListener="#{usuarioBean.selecionar}"
 						styleClass="ui-warning-color"
 						oncomplete="PF('dialogRedefinir').show()"
-						update=":mensagem :form-tabela :form-cadastro :form-redefinir">
+						update=":mensagem :form-usuarios :form-cadastro-usuario :form-redefinir">
 						<f:attribute name="usuarioSelecionado" value="#{usuario}" />
 						<f:actionListener
 							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
@@ -81,7 +92,7 @@
 						styleClass="#{usuario.habilitado ? 'ui-secondary-color' : 'ui-success-color'}"
 						title="#{usuario.habilitado ? 'Desativar' : 'Habilitar'}"
 						actionListener="#{usuarioBean.removerDesabilitar}"
-						update=":mensagem :form-tabela :form-cadastro">
+						update=":mensagem :form-usuarios :form-cadastro-usuario">
 						<p:confirm header="Atenção!"
 							message="Tem certeza que deseja #{usuario.habilitado ? 'DESATIVAR' : 'HABILITAR'} o usuario: [#{usuario.nome}]?" />
 						<f:attribute name="usuarioSelecionado" value="#{usuario}" />
@@ -97,14 +108,20 @@
 					icon="pi pi-check" onstart="PF('statusDialog').show();"
 					onerror="PF('statusDialog').hide();"
 					oncomplete="if(args.validationFailed)PF('statusDialog').hide();}"
-					iconPos="right" update=":mensagem :form-tabela :form-cadastro" />
+					iconPos="right"
+					update=":mensagem :form-usuarios :form-cadastro-usuario" />
 			</p:confirmDialog>
 		</h:form>
-		<p:sidebar widgetVar="dialogCadastro" position="bottom">
-			<h:form id="form-cadastro" class="ui-g ui-fluid">
-				<div class="ui-g-12 centeredColumn">
-					<h2>#{usuarioBean.usuario._ID == null ? 'Cadastrar usuario' :
-						'Editar usuario'}</h2>
+		<p:sidebar widgetVar="dialogCadastroUsuario" position="bottom">
+			<h:form id="form-cadastro-usuario" class="ui-g ui-fluid">
+				<div class="ui-g-12 ui-md-6 centeredColumn">
+					<h2>#{usuarioBean.usuario._ID == null ? 'Cadastrar usuário' :
+						'Editar usuário'}</h2>
+					<p>COD: #{usuarioBean.uid}</p>
+				</div>
+				<div class="ui-g-12 ui-md-6 centeredColumn">
+					<p:barcode value="#{usuarioBean.uid}" type="qr" format="png"
+						title="#{usuarioBean.uid}" alt="#{usuarioBean.uid}" />
 				</div>
 				<div class="ui-inputgroup ui-g-12 ui-md-6">
 					<span class="ui-inputgroup-addon">Nome</span>
@@ -250,20 +267,30 @@
 					</p:messages>
 				</div>
 				<div class="ui-g-12 ui-md-3 centeredColumn">
-					<p:commandButton id="btCadastrar" type="submit"
-						styleClass="ui-success-color" icon="pi pi-save" iconPos="right"
-						value="Salvar" action="#{usuarioBean.salvarEditar()}"
+					<p:commandButton id="btFechar" styleClass="ui-danger-color"
+						icon="pi pi-times" iconPos="right" value="Fechar"
+						oncomplete="PF('dialogCadastroUsuario').hide();" />
+				</div>
+				<div class="ui-g-12 ui-md-3 centeredColumn">
+					<p:commandButton id="btCadastrar" styleClass="ui-success-color"
+						icon="pi pi-save" iconPos="right" value="Salvar"
+						action="#{usuarioBean.salvarEditar()}"
 						onstart="PF('statusDialog').show();"
 						onerror="PF('statusDialog').hide();"
 						oncomplete="if(args.validationFailed){PF('statusDialog').hide();}"
-						update=":form-tabela:tabela-usuarios @form" />
+						update="@form" />
 				</div>
 			</h:form>
 		</p:sidebar>
 		<p:sidebar widgetVar="dialogRedefinir" position="bottom">
 			<h:form id="form-redefinir" class="ui-g ui-fluid">
-				<div class="ui-g-12 centeredColumn">
+				<div class="ui-g-12 ui-md-6 centeredColumn">
 					<h2>Redefinição de Senha</h2>
+					<p>COD: #{usuarioBean.uid}</p>
+				</div>
+				<div class="ui-g-12 ui-md-6 centeredColumn">
+					<p:barcode value="#{usuarioBean.uid}" type="qr" format="png"
+						title="#{usuarioBean.uid}" alt="#{usuarioBean.uid}" />
 				</div>
 				<div class="ui-inputgroup ui-g-12 ui-md-12 centeredColumn">
 					<span class="ui-inputgroup-addon" style="width: 100% !important;">#{usuarioBean.usuario.email}</span>
@@ -297,14 +324,18 @@
 					</p:messages>
 				</div>
 				<div class="ui-g-12 ui-md-3 centeredColumn">
-					<p:commandButton id="bt-redefinir" type="submit"
-						styleClass="ui-success-color" icon="pi pi-arrow-right"
-						iconPos="right" value="Redefinir"
+					<p:commandButton id="btFechar" styleClass="ui-danger-color"
+						icon="pi pi-times" iconPos="right" value="Fechar"
+						oncomplete="PF('dialogRedefinir').hide();" />
+				</div>
+				<div class="ui-g-12 ui-md-3 centeredColumn">
+					<p:commandButton id="bt-redefinir" styleClass="ui-success-color"
+						icon="pi pi-arrow-right" iconPos="right" value="Redefinir"
 						action="#{usuarioBean.redefinirSenha()}"
 						onstart="PF('statusDialog').show();"
 						onerror="PF('statusDialog').hide();"
 						oncomplete="if(args.validationFailed){PF('statusDialog').hide();}"
-						update=":form-tabela:tabela-usuarios :form-cadastro :form-redefinir" />
+						update="@form" />
 				</div>
 			</h:form>
 		</p:sidebar>

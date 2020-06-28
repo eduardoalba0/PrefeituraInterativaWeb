@@ -9,37 +9,46 @@
 	template="templates/menulateral.xhtml">
 
 	<ui:define name="conteudo">
-		<h:form id="form-tabela">
+		<h:form id="form-departamentos">
 			<p:dataTable id="tabela-departamentos" var="departamento"
 				value="#{departamentoBean.listar()}"
 				sortBy="#{departamento.descricao}" widgetVar="tabelaDepartamentos"
 				emptyMessage="Nenhum departamento encontrado." paginator="true"
-				paginatorPosition="bottom" rows="15">
+				paginatorPosition="bottom" rows="10">
+				<p:autoUpdate />
 				<f:facet name="header">
-					<div class="ui-g">
-						<div class="ui-g-6 ui-g-nopad centeredColumn">
+					<div class="ui-g ui-fluid ui-nopad">
+						<div class="ui-g-12 ui-md-3">
+							<h2>Departamentos</h2>
+						</div>
+						<div class="ui-g-12 ui-md-6 centeredColumn">
 							<p:inputText id="globalFilter" styleClass="ui-input-busca"
 								placeholder="Pesquise..."
 								onkeyup="PF('tabelaDepartamentos').filter()" />
 						</div>
-						<div class="ui-g-1 ui-g-nopad centeredColumn">
+						<div class="ui-g-12 ui-md-3 centeredColumn">
 							<p:commandButton icon="pi pi-plus" title="Cadastrar"
 								styleClass="ui-success-color"
 								actionListener="#{departamentoBean.cadastrar()}"
-								oncomplete="PF('dialogCadastro').show()"
-								update=":mensagem :form-cadastro">
+								oncomplete="PF('dialogCadastroDepartamento').show()"
+								update=":mensagem :form-cadastro-departamento">
 								<f:actionListener
 									type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
 							</p:commandButton>
 						</div>
 					</div>
 				</f:facet>
-				<p:column headerText="Departamento"
-					sortBy="#{departamento.descricao}"
+				<p:column headerText="Código" sortBy="#{departamento._ID}"
+					filterBy="#{departamento._ID}" styleClass="centeredColumn"
+					filterStyle="display:none" priority="5">
+					<h:outputText value="#{departamento._ID}" />
+				</p:column>
+				<p:column headerText="Descrição" sortBy="#{departamento.descricao}"
+					priority="1" styleClass="centeredColumn"
 					filterBy="#{departamento.descricao}" filterStyle="display:none">
 					<h:outputText value="#{departamento.descricao}" />
 				</p:column>
-				<p:column headerText="Categorias"
+				<p:column headerText="Categorias" priority="2"
 					filterBy="#{departamento.localCategorias}"
 					styleClass="centeredColumn" filterStyle="display:none">
 					<p:chips inputStyleClass="ui-chips-onlyview"
@@ -47,15 +56,16 @@
 						value="#{departamento.localCategorias}" />
 				</p:column>
 				<p:column headerText="Habilitado" styleClass="centeredColumn"
-					sortBy="#{departamento.habilitado}"
+					sortBy="#{departamento.habilitado}" priority="3"
 					filterBy="#{departamento.habilitado}" filterStyle="display:none">
 					<h:outputText value=" #{departamento.habilitado ? 'Sim' : 'Não' }" />
 				</p:column>
-				<p:column headerText="Opções" styleClass="centeredColumn">
+				<p:column headerText="Opções" styleClass="centeredColumn"
+					priority="1">
 					<p:commandButton icon="pi pi-pencil" title="Editar"
 						actionListener="#{departamentoBean.selecionar}"
-						oncomplete="PF('dialogCadastro').show()"
-						update=":mensagem :form-tabela :form-cadastro">
+						oncomplete="PF('dialogCadastroDepartamento').show()"
+						update=":mensagem :form-departamentos :form-cadastro-departamento">
 						<f:attribute name="departamentoSelecionado"
 							value="#{departamento}" />
 						<f:actionListener
@@ -66,7 +76,7 @@
 						styleClass="#{departamento.habilitado ? 'ui-secondary-color' : 'ui-success-color'}"
 						title="#{departamento.habilitado ? 'Desativar' : 'Habilitar'}"
 						actionListener="#{departamentoBean.removerDesabilitar}"
-						update=":mensagem :form-tabela :form-cadastro">
+						update=":mensagem :form-departamentos :form-cadastro-departamento">
 						<p:confirm header="Atenção!"
 							message="Tem certeza que deseja #{departamento.habilitado ? 'DESATIVAR' : 'HABILITAR'} o departamento: [#{departamento.descricao}]?" />
 						<f:attribute name="departamentoSelecionado"
@@ -83,14 +93,21 @@
 					icon="pi pi-check" onstart="PF('statusDialog').show();"
 					onerror="PF('statusDialog').hide();"
 					oncomplete="if(args.validationFailed)PF('statusDialog').hide();}"
-					iconPos="right" update=":mensagem :form-tabela :form-cadastro" />
+					iconPos="right"
+					update=":mensagem :form-departamentos :form-cadastro-departamento" />
 			</p:confirmDialog>
 		</h:form>
-		<p:sidebar widgetVar="dialogCadastro" position="bottom">
-			<h:form id="form-cadastro" class="ui-g ui-fluid">
-				<div class="ui-g-12 centeredColumn">
+		<p:sidebar widgetVar="dialogCadastroDepartamento" position="bottom">
+			<h:form id="form-cadastro-departamento" class="ui-g ui-fluid">
+				<div class="ui-g-12 ui-md-6 centeredColumn">
 					<h2>#{departamentoBean.departamento.descricao == null ?
 						'Cadastrar Departamento' : 'Editar Departamento'}</h2>
+					<p>COD: #{departamentoBean.departamento._ID}</p>
+				</div>
+				<div class="ui-g-12 ui-md-6 centeredColumn">
+					<p:barcode value="#{departamentoBean.departamento._ID}" type="qr"
+						format="png" title="#{departamentoBean.departamento._ID}"
+						alt="#{departamentoBean.departamento._ID}" />
 				</div>
 				<div class="ui-inputgroup ui-g-12 ui-md-6">
 					<span class="ui-inputgroup-addon" style="width: 30%;">Descrição</span>
@@ -150,13 +167,18 @@
 					</p:messages>
 				</div>
 				<div class="ui-g-12 ui-md-3 centeredColumn">
+					<p:commandButton id="btFechar" styleClass="ui-danger-color"
+						icon="pi pi-times" iconPos="right" value="Fechar"
+						oncomplete="PF('dialogCadastroDepartamento').hide();" />
+				</div>
+				<div class="ui-g-12 ui-md-3 centeredColumn">
 					<p:commandButton id="btCadastrar" styleClass="ui-success-color"
 						icon="pi pi-save" iconPos="right" value="Salvar"
 						action="#{departamentoBean.salvarEditar()}"
 						onstart="PF('statusDialog').show();"
 						onerror="PF('statusDialog').hide();"
 						oncomplete="if(args.validationFailed){PF('statusDialog').hide();}"
-						update=":form-tabela:tabela-departamentos :form-cadastro" />
+						update="@form" />
 				</div>
 			</h:form>
 		</p:sidebar>

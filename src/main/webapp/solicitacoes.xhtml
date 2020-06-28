@@ -12,33 +12,42 @@
 	<ui:define name="conteudo">
 		<script type="text/javascript"
 			src="http://maps.google.com/maps/api/js?key=AIzaSyDdbMgttlDqaG1dkYwqCXGVw4ugRqEJzRc" />
-		<h:form id="form-tabela">
-			<p:dataTable id="tabela-solicitacoes" var="solicitacao" rows="15"
+		<h:form id="form-solicitacoes">
+			<p:dataTable id="tabela-solicitacoes" var="solicitacao" rows="10"
 				value="#{solicitacaoBean.listar()}"
 				sortBy="#{solicitacao.getDataTempoString()}"
 				widgetVar="tabelasolicitacoes"
 				emptyMessage="Nenhum solicitacao encontrado." paginator="true"
 				paginatorPosition="bottom">
+				<p:autoUpdate />
 				<f:facet name="header">
-					<div class="ui-g">
-						<div class="ui-g-6 ui-g-nopad centeredColumn">
+					<div class="ui-g ui-fluid ui-nopad">
+						<div class="ui-g-12 ui-md-3">
+							<h2>Solicitações</h2>
+						</div>
+						<div class="ui-g-12 ui-md-6 centeredColumn">
 							<p:inputText id="globalFilter" styleClass="ui-input-busca"
 								placeholder="Pesquise..."
-								onkeyup="PF('tabelasolicitacoes').filter()" />
+								onkeyup="PF('tabelaSolicitacoes').filter()" />
 						</div>
-						<div class="ui-g-1 ui-g-nopad centeredColumn">
+						<div class="ui-g-12 ui-md-3 centeredColumn">
 							<p:commandButton icon="pi pi-plus" title="Cadastrar"
 								styleClass="ui-success-color"
 								actionListener="#{solicitacaoBean.cadastrar()}"
-								oncomplete="PF('dialogCadastro').show()"
-								update=":mensagem :form-cadastro">
+								oncomplete="PF('dialogCadastroSolicitacao').show()"
+								update=":mensagem :form-cadastro-solicitacao">
 								<f:actionListener
 									type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
 							</p:commandButton>
 						</div>
 					</div>
 				</f:facet>
-				<p:column headerText="Cidadão"
+				<p:column headerText="Código" sortBy="#{solicitacao._ID}"
+					filterBy="#{solicitacao._ID}" styleClass="centeredColumn"
+					filterStyle="display:none" priority="5">
+					<h:outputText value="#{solicitacao._ID}" />
+				</p:column>
+				<p:column headerText="Cidadão" priority="4" styleClass="centeredColumn"
 					sortBy="#{solicitacao.localCidadao.nome}"
 					filterBy="#{solicitacao.localCidadao.nome}"
 					filterStyle="display:none">
@@ -50,7 +59,7 @@
 					filterStyle="display:none">
 					<h:outputText value="#{solicitacao.dataTempoString}" />
 				</p:column>
-				<p:column headerText="Categorias"
+				<p:column headerText="Categorias" priority="2"
 					filterBy="#{solicitacao.localCategorias}"
 					styleClass="centeredColumn" filterStyle="display:none">
 					<p:chips inputStyleClass="ui-chips-onlyview"
@@ -58,18 +67,18 @@
 						value="#{solicitacao.localCategorias}" />
 				</p:column>
 				<p:column headerText="Concluída" styleClass="centeredColumn"
-					sortBy="#{solicitacao.concluida}" priority="3"
+					sortBy="#{solicitacao.concluida}" priority="4"
 					filterBy="#{solicitacao.concluida}" filterStyle="display:none">
 					<h:outputText value=" #{solicitacao.concluida ? 'Sim' : 'Não' }" />
 				</p:column>
-				<p:column headerText="Opções" styleClass="centeredColumn">
+				<p:column headerText="Opções" styleClass="centeredColumn" priority="1">
 					<p:commandButton icon="pi pi-external-link" title="Visualizar"
 						styleClass="ui-secondary-color"
 						actionListener="#{solicitacaoBean.selecionar}"
 						onstart="PF('statusDialog').show();"
 						onerror="PF('statusDialog').hide();"
-						onsuccess="PF('dialogCadastro').show()"
-						update=":mensagem :form-cadastro @form">
+						onsuccess="PF('dialogCadastroSolicitacao').show()"
+						update=":mensagem :form-cadastro-solicitacao @form">
 						<f:attribute name="solicitacaoSelecionada" value="#{solicitacao}" />
 						<f:actionListener
 							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
@@ -119,10 +128,10 @@
 					icon="pi pi-check" onstart="PF('statusDialog').show();"
 					onerror="PF('statusDialog').hide();"
 					oncomplete="if(args.validationFailed){PF('statusDialog').hide();}"
-					iconPos="right" update=":mensagem :form-tabela" />
+					iconPos="right" update=":mensagem" />
 			</p:confirmDialog>
 		</h:form>
-		<ui:include src="templates/dialog_solicitacao.xhtml"/>
+		<ui:include src="templates/dialog_cadastro_solicitacao.xhtml" />
 		<p:sidebar widgetVar="dialogResposta" position="bottom">
 			<h:form id="form-resposta" styleClass="ui-g ui-fluid centeredColumn">
 				<div class="ui-inputgroup ui-g-12 ui-md-12">
@@ -149,8 +158,7 @@
 				<div class="ui-g-12 ui-md-3 centeredColumn">
 					<p:commandButton id="btFechar" styleClass="ui-danger-color"
 						icon="pi pi-times" iconPos="right" value="Fechar"
-						oncomplete="PF('dialogEncaminhamento').hide();"
-						update=":form-tabela:tabela-solicitacoes" />
+						oncomplete="PF('dialogEncaminhamento').hide();" />
 				</div>
 				<div class="ui-g-12 ui-md-3 centeredColumn">
 					<p:commandButton id="btCadastrar" type="submit"
@@ -160,7 +168,7 @@
 						onstart="PF('statusDialog').show();"
 						onerror="PF('statusDialog').hide();"
 						oncomplete="if(args.validationFailed){PF('statusDialog').hide();}else{PF('dialogResposta').hide();}"
-						update="local-mensagem :form-tabela:tabela-solicitacoes @form" />
+						update="@form" />
 				</div>
 				<div class="ui-g-12 ui-md-3 centeredColumn">
 					<p:commandButton id="btCadastrarEncerrar" type="submit"
@@ -170,7 +178,7 @@
 						onstart="PF('statusDialog').show();"
 						onerror="PF('statusDialog').hide();"
 						oncomplete="if(args.validationFailed){PF('statusDialog').hide();}else{PF('dialogResposta').hide();}"
-						update="local-mensagem :form-tabela:tabela-solicitacoes @form" />
+						update="@form" />
 				</div>
 			</h:form>
 		</p:sidebar>
@@ -217,20 +225,19 @@
 					</p:messages>
 				</div>
 				<div class="ui-g-12 ui-md-3 centeredColumn">
-					<p:commandButton id="btFechar" type="submit"
-						styleClass="ui-danger-color" icon="pi  pi-times" iconPos="right"
-						value="Fechar" oncomplete="PF('dialogEncaminhamento').hide();"
-						update=":form-tabela:tabela-solicitacoes @form" />
+					<p:commandButton id="btFechar" styleClass="ui-danger-color"
+						icon="pi  pi-times" iconPos="right" value="Fechar"
+						oncomplete="PF('dialogEncaminhamento').hide();" />
 				</div>
 
 				<div class="ui-g-12 ui-md-3 centeredColumn">
-					<p:commandButton id="btEncaminhar" type="submit"
-						styleClass="ui-success-color" icon="pi  pi-reply" iconPos="right"
-						value="Encaminhar" action="#{solicitacaoBean.encaminhar()}"
+					<p:commandButton id="btEncaminhar" styleClass="ui-success-color"
+						icon="pi  pi-reply" iconPos="right" value="Encaminhar"
+						action="#{solicitacaoBean.encaminhar()}"
 						onstart="PF('statusDialog').show();"
 						onerror="PF('statusDialog').hide();"
 						oncomplete="if(args.validationFailed){PF('statusDialog').hide();}else{PF('dialogEncaminhamento').hide();}"
-						update=":form-tabela:tabela-solicitacoes @form" />
+						update="@form" />
 				</div>
 			</h:form>
 		</p:sidebar>

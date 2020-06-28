@@ -9,36 +9,46 @@
 	template="templates/menulateral.xhtml">
 
 	<ui:define name="conteudo">
-		<h:form id="form-tabela">
+		<h:form id="form-categorias">
 			<p:dataTable id="tabela-categorias" var="categoria"
 				value="#{categoriaBean.listar()}" paginator="true"
 				emptyMessage="Nenhuma categoria encontrada."
-				sortBy="#{categoria.descricao}" paginatorPosition="bottom" rows="15"
+				sortBy="#{categoria.descricao}" paginatorPosition="bottom" rows="10"
 				widgetVar="tabelaCategorias">
+				<p:autoUpdate />
 				<f:facet name="header">
-					<div class="ui-g">
-						<div class="ui-g-6 ui-g-nopad centeredColumn">
+					<div class="ui-g ui-fluid ui-nopad">
+						<div class="ui-g-12 ui-md-3">
+							<h2>Categorias</h2>
+						</div>
+						<div class="ui-g-12 ui-md-6 centeredColumn">
 							<p:inputText id="globalFilter" styleClass="ui-input-busca"
 								placeholder="Pesquise..."
 								onkeyup="PF('tabelaCategorias').filter()" />
 						</div>
-						<div class="ui-g-1 ui-g-nopad centeredColumn">
+						<div class="ui-g-12 ui-md-3 centeredColumn">
 							<p:commandButton icon="pi pi-plus" title="Cadastrar"
 								styleClass="ui-success-color"
 								actionListener="#{categoriaBean.cadastrar()}"
-								oncomplete="PF('dialogCadastro').show()"
-								update=":mensagem :form-cadastro">
+								oncomplete="PF('dialogCadastroCategoria').show()"
+								update=":mensagem :form-cadastro-categoria">
 								<f:actionListener
 									type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
 							</p:commandButton>
 						</div>
 					</div>
 				</f:facet>
-				<p:column headerText="Categoria" sortBy="#{categoria.descricao}"
-					filterBy="#{categoria.descricao}" filterStyle="display:none">
+				<p:column headerText="Código" sortBy="#{categoria._ID}"
+					filterBy="#{categoria._ID}" styleClass="centeredColumn"
+					filterStyle="display:none" priority="5">
+					<h:outputText value="#{categoria._ID}" />
+				</p:column>
+				<p:column headerText="Descrição" sortBy="#{categoria.descricao}"
+					priority="1" filterBy="#{categoria.descricao}"
+					styleClass="centeredColumn" filterStyle="display:none">
 					<h:outputText value="#{categoria.descricao}" />
 				</p:column>
-				<p:column headerText="Departamento"
+				<p:column headerText="Departamento" styleClass="centeredColumn"
 					sortBy="#{categoria.loacalDepartamento}"
 					filterBy="#{categoria.localDepartamento}"
 					filterStyle="display:none">
@@ -46,14 +56,15 @@
 				</p:column>
 				<p:column headerText="Habilitada" styleClass="centeredColumn"
 					sortBy="#{categoria.habilitada}" filterBy="#{categoria.habilitada}"
-					filterStyle="display:none">
+					filterStyle="display:none" priority="2">
 					<h:outputText value=" #{categoria.habilitada ? 'Sim' : 'Não' }" />
 				</p:column>
-				<p:column headerText="Opções" styleClass="centeredColumn">
+				<p:column headerText="Opções" styleClass="centeredColumn"
+					priority="1">
 					<p:commandButton icon="pi pi-pencil" title="Editar"
 						actionListener="#{categoriaBean.selecionar}"
-						oncomplete="PF('dialogCadastro').show()"
-						update=":mensagem :form-tabela :form-cadastro">
+						oncomplete="PF('dialogCadastroCategoria').show()"
+						update=":mensagem :form-categorias :form-cadastro-categoria">
 						<f:attribute name="categoriaSelecionada" value="#{categoria}" />
 						<f:actionListener
 							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
@@ -63,7 +74,7 @@
 						styleClass="#{categoria.habilitada ? 'ui-secondary-color' : 'ui-success-color'}"
 						title="#{categoria.habilitada ? 'Desativar' : 'Habilitar'}"
 						actionListener="#{categoriaBean.removerDesabilitar}"
-						update=":mensagem :form-tabela :form-cadastro">
+						update=":mensagem :form-categorias :form-cadastro-categoria">
 						<p:confirm header="Atenção!"
 							message="Tem certeza que deseja #{categoria.habilitada ? 'DESATIVAR' : 'HABILITAR'} a categoria: [#{categoria.descricao}]?" />
 						<f:attribute name="categoriaSelecionada" value="#{categoria}" />
@@ -79,14 +90,21 @@
 					icon="pi pi-check" onstart="PF('statusDialog').show();"
 					onerror="PF('statusDialog').hide();"
 					oncomplete="if(args.validationFailed)PF('statusDialog').hide();}"
-					iconPos="right" update=":mensagem :form-tabela :form-cadastro" />
+					iconPos="right"
+					update=":mensagem :form-categorias :form-cadastro-categoria" />
 			</p:confirmDialog>
 		</h:form>
-		<p:sidebar widgetVar="dialogCadastro" position="bottom">
-			<h:form id="form-cadastro" class="ui-g ui-fluid">
-				<div class="ui-g-12 centeredColumn">
+		<p:sidebar widgetVar="dialogCadastroCategoria" position="bottom">
+			<h:form id="form-cadastro-categoria" class="ui-g ui-fluid">
+				<div class="ui-g-12 ui-md-6 centeredColumn">
 					<h2>#{categoriaBean.categoria.descricao == null ? 'Cadastrar
 						Categoria' : 'Editar Categoria'}</h2>
+					<p>COD: #{categoriaBean.categoria._ID}</p>
+				</div>
+				<div class="ui-g-12 ui-md-6 centeredColumn">
+					<p:barcode value="#{categoriaBean.categoria._ID}" type="qr"
+						format="png" title="#{categoriaBean.categoria._ID}"
+						alt="#{categoriaBean.categoria._ID}" />
 				</div>
 				<div class="ui-inputgroup ui-g-12 ui-md-6">
 					<span class="ui-inputgroup-addon">Descrição</span>
@@ -138,13 +156,18 @@
 					</p:messages>
 				</div>
 				<div class="ui-g-12 ui-md-3 centeredColumn">
-					<p:commandButton id="btCadastrar" type="submit"
-						styleClass="ui-success-color" icon="pi pi-save" iconPos="right"
-						value="Salvar" action="#{categoriaBean.salvarEditar()}"
+					<p:commandButton id="btFechar" styleClass="ui-danger-color"
+						icon="pi pi-times" iconPos="right" value="Fechar"
+						oncomplete="PF('dialogCadastroCategoria').hide();" />
+				</div>
+				<div class="ui-g-12 ui-md-3 centeredColumn">
+					<p:commandButton id="btCadastrar" styleClass="ui-success-color"
+						icon="pi pi-save" iconPos="right" value="Salvar"
+						action="#{categoriaBean.salvarEditar()}"
 						onstart="PF('statusDialog').show();"
 						onerror="PF('statusDialog').hide();"
 						oncomplete="if(args.validationFailed){PF('statusDialog').hide();}"
-						update="form-tabela:tabela-categorias :form-cadastro" />
+						update="@form" />
 				</div>
 			</h:form>
 		</p:sidebar>

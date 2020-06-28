@@ -117,7 +117,7 @@ public class FirebaseHelper {
 
 	public static UserRecord cadastrarUsuario(Usuario usuario) throws Exception {
 		init();
-		CreateRequest request = new CreateRequest().setEmail(usuario.getEmail()).setPassword(usuario.getSenha())
+		CreateRequest request = new CreateRequest().setUid(usuario.get_ID()).setEmail(usuario.getEmail()).setPassword(usuario.getSenha())
 				.setDisplayName(usuario.getNome()).setEmailVerified(false).setDisabled(!usuario.isHabilitado());
 		if (usuario.getLocalUriFoto() != null)
 			request.setPhotoUrl(carregarImagemUsuario(usuario).getMediaLink());

@@ -2,6 +2,7 @@ package br.edu.ifpr.bsi.prefeiturainterativaweb.bean;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -28,6 +29,7 @@ public class UsuarioBean extends AbstractBean {
 	private DadosFuncionais dadosFuncionais;
 	private List<Usuario> usuarios;
 	private List<Usuario> funcionarios;
+	private String uid;
 
 	@Produces
 	@Named("funcionarioLogado")
@@ -65,6 +67,7 @@ public class UsuarioBean extends AbstractBean {
 		usuario = new Usuario();
 		dadosFuncionais = new DadosFuncionais();
 		usuario.setHabilitado(true);
+		uid = UUID.randomUUID().toString();
 	}
 
 	@Override
@@ -88,6 +91,7 @@ public class UsuarioBean extends AbstractBean {
 	@Override
 	public void selecionar(ActionEvent evento) {
 		usuario = (Usuario) evento.getComponent().getAttributes().get("usuarioSelecionado");
+		uid = usuario.get_ID();
 		dadosFuncionais = usuario.getDadosFuncionais();
 		if (dadosFuncionais == null)
 			dadosFuncionais = new DadosFuncionais();
@@ -102,6 +106,7 @@ public class UsuarioBean extends AbstractBean {
 				usuario.setDadosFuncionais(null);
 
 			if (usuario.get_ID() == null || usuario.get_ID().trim().equals("")) {
+				usuario.set_ID(uid);
 				usuario.set_ID(FirebaseHelper.cadastrarUsuario(usuario).getUid());
 			} else {
 				usuario.set_ID(FirebaseHelper.alterarUsuario(usuario).getUid());
@@ -266,7 +271,7 @@ public class UsuarioBean extends AbstractBean {
 	public void setUsuarios(List<Usuario> usuarios) {
 		this.usuarios = usuarios;
 	}
-	
+
 	@Produces
 	@Named("usuarios")
 	public List<Usuario> getUsuarios() {
@@ -278,7 +283,7 @@ public class UsuarioBean extends AbstractBean {
 	public void setFuncionarios(List<Usuario> funcionarios) {
 		this.funcionarios = funcionarios;
 	}
-	
+
 	@Produces
 	@Named("funcionarios")
 	public List<Usuario> getFuncionarios() {
@@ -301,5 +306,13 @@ public class UsuarioBean extends AbstractBean {
 
 	public void setDepartamentos(List<Departamento> departamentos) {
 		this.departamentos = departamentos;
+	}
+
+	public String getUid() {
+		return uid;
+	}
+
+	public void setUid(String uid) {
+		this.uid = uid;
 	}
 }

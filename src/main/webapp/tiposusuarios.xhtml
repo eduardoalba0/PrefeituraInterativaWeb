@@ -9,52 +9,60 @@
 	template="templates/menulateral.xhtml">
 
 	<ui:define name="conteudo">
-		<h:form id="form-tabela">
+		<h:form id="form-tiposusuarios">
 			<p:dataTable id="tabela-tipoUsuarios" var="tipoUsuario"
 				value="#{tipoUsuarioBean.listar()}" paginator="true"
 				emptyMessage="Nenhum Tipo de Usuario encontrado."
 				sortBy="#{tipoUsuario.descricao}" paginatorPosition="bottom"
-				rows="15" widgetVar="tabelatipoUsuarios">
+				rows="10" widgetVar="tabelaTipoUsuarios">
+				<p:autoUpdate />
 				<f:facet name="header">
-					<div class="ui-g">
-						<div class="ui-g-6 ui-g-nopad centeredColumn">
+					<div class="ui-g ui-fluid ui-nopad">
+						<div class="ui-g-12 ui-md-3">
+							<h2>Tipos de Usuário</h2>
+						</div>
+						<div class="ui-g-12 ui-md-6 centeredColumn">
 							<p:inputText id="globalFilter" styleClass="ui-input-busca"
 								placeholder="Pesquise..."
-								onkeyup="PF('tabelatipoUsuarios').filter()" />
+								onkeyup="PF('tabelaTipoUsuarios').filter()" />
 						</div>
-						<div class="ui-g-1 ui-g-nopad centeredColumn">
+						<div class="ui-g-12 ui-md-3 centeredColumn">
 							<p:commandButton icon="pi pi-plus" title="Cadastrar"
 								styleClass="ui-success-color"
 								actionListener="#{tipoUsuarioBean.cadastrar()}"
-								oncomplete="PF('dialogCadastro').show()"
-								update=":mensagem :form-cadastro">
+								oncomplete="PF('dialogCadastroTipoUsuario').show()"
+								update=":mensagem :form-cadastro-tipousuario">
 								<f:actionListener
 									type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
 							</p:commandButton>
 						</div>
 					</div>
 				</f:facet>
-				<p:column headerText="Tipo de Usuario"
-					sortBy="#{tipoUsuario.descricao}"
-					filterBy="#{tipoUsuario.descricao}" filterStyle="display:none">
+				<p:column headerText="Código" sortBy="#{tipoUsuario._ID}"
+					filterBy="#{tipoUsuario._ID}" styleClass="centeredColumn"
+					filterStyle="display:none" priority="5">
+					<h:outputText value="#{tipoUsuario._ID}" />
+				</p:column>
+				<p:column headerText="Descrição" sortBy="#{tipoUsuario.descricao}" styleClass="centeredColumn"
+					filterBy="#{tipoUsuario.descricao}" filterStyle="display:none" priority="1">
 					<h:outputText value="#{tipoUsuario.descricao}" />
 				</p:column>
 				<p:column headerText="Funcionário" styleClass="centeredColumn"
-					filterBy="#{tipoUsuario.funcionario}"
+					filterBy="#{tipoUsuario.funcionario}" priority="2"
 					sortBy="#{tipoUsuario.funcionario}" filterStyle="display:none">
 					<h:outputText value=" #{tipoUsuario.funcionario ? 'Sim' : 'Não' }" />
 				</p:column>
 				<p:column headerText="Personalizado" styleClass="centeredColumn"
-					filterBy="#{tipoUsuario.personalizado}"
+					filterBy="#{tipoUsuario.personalizado}" priority="3"
 					sortBy="#{tipoUsuario.personalizado}" filterStyle="display:none">
 					<h:outputText
 						value=" #{tipoUsuario.personalizado ? 'Sim' : 'Não' }" />
 				</p:column>
-				<p:column headerText="Opções" styleClass="centeredColumn">
+				<p:column headerText="Opções" styleClass="centeredColumn" priority="1">
 					<p:commandButton icon="pi pi-pencil" title="Editar"
 						actionListener="#{tipoUsuarioBean.selecionar}"
-						oncomplete="PF('dialogCadastro').show()"
-						update=":mensagem :form-tabela :form-cadastro">
+						oncomplete="PF('dialogCadastroTipoUsuario').show()"
+						update=":mensagem :form-tiposusuarios :form-cadastro-tipousuario">
 						<f:attribute name="tipoUsuarioSelecionado" value="#{tipoUsuario}" />
 						<f:actionListener
 							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
@@ -63,7 +71,7 @@
 						rendered="#{tipoUsuario.personalizado ? 'true' : 'false'}"
 						icon="pi pi-trash" styleClass="ui-danger-color" title="Remover"
 						actionListener="#{tipoUsuarioBean.removerDesabilitar}"
-						update=":mensagem :form-tabela :form-cadastro">
+						update=":mensagem :form-tiposusuarios :form-cadastro-tipousuario">
 						<p:confirm header="Atenção!"
 							message="Tem certeza que deseja REMOVER o Tipo de Usuário: [#{tipoUsuario.descricao}]?" />
 						<f:attribute name="tipoUsuarioSelecionado" value="#{tipoUsuario}" />
@@ -79,14 +87,21 @@
 					icon="pi pi-check" onstart="PF('statusDialog').show();"
 					onerror="PF('statusDialog').hide();"
 					oncomplete="if(args.validationFailed)PF('statusDialog').hide();}"
-					iconPos="right" update=":mensagem :form-tabela :form-cadastro" />
+					iconPos="right"
+					update=":mensagem :form-tiposusuarios :form-cadastro-tipousuario" />
 			</p:confirmDialog>
 		</h:form>
-		<p:sidebar widgetVar="dialogCadastro" position="bottom">
-			<h:form id="form-cadastro" class="ui-g ui-fluid">
-				<div class="ui-g-12 centeredColumn">
+		<p:sidebar widgetVar="dialogCadastroTipoUsuario" position="bottom">
+			<h:form id="form-cadastro-tipousuario" class="ui-g ui-fluid">
+				<div class="ui-g-12 ui-md-6 centeredColumn">
 					<h2>#{tipoUsuarioBean.tipoUsuario.descricao == null ?
 						'Cadastrar Tipo de Usuário' : 'Editar Tipo de Usuário'}</h2>
+					<p>COD: #{tipoUsuarioBean.tipoUsuario._ID}</p>
+				</div>
+				<div class="ui-g-12 ui-md-6 centeredColumn">
+					<p:barcode value="#{tipoUsuarioBean.tipoUsuario._ID}" type="qr"
+						format="png" title="#{tipoUsuarioBean.tipoUsuario._ID}"
+						alt="#{tipoUsuarioBean.tipoUsuario._ID}" />
 				</div>
 				<div class="ui-inputgroup ui-g-12 ui-md-6 centeredColumn">
 					<span class="ui-inputgroup-addon ui-g-12 ui-md-3"
@@ -121,14 +136,18 @@
 					</p:messages>
 				</div>
 				<div class="ui-g-12 ui-md-3 centeredColumn">
-					<p:commandButton id="btCadastrar" type="submit"
-						styleClass="ui-success-color" icon="pi  pi-save"
-						iconPos="right" value="Salvar"
+					<p:commandButton id="btFechar" styleClass="ui-danger-color"
+						icon="pi pi-times" iconPos="right" value="Fechar"
+						oncomplete="PF('dialogCadastroTipoUsuario').hide();" />
+				</div>
+				<div class="ui-g-12 ui-md-3 centeredColumn">
+					<p:commandButton id="btCadastrar" styleClass="ui-success-color"
+						icon="pi  pi-save" iconPos="right" value="Salvar"
 						action="#{tipoUsuarioBean.salvarEditar()}"
 						onstart="PF('statusDialog').show();"
 						onerror="PF('statusDialog').hide();"
 						oncomplete="if(args.validationFailed){PF('statusDialog').hide();}"
-						update=":form-tabela:tabela-tipoUsuarios :form-cadastro" />
+						update=":form-tiposusuarios:tabela-tipoUsuarios :form-cadastro-tipousuario" />
 				</div>
 			</h:form>
 		</p:sidebar>

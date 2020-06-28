@@ -10,8 +10,18 @@
 
 	<script type="text/javascript"
 		src="http://maps.google.com/maps/api/js?key=AIzaSyDdbMgttlDqaG1dkYwqCXGVw4ugRqEJzRc" />
-	<p:sidebar widgetVar="dialogCadastro" position="bottom">
-		<h:form id="form-cadastro" styleClass="ui-g ui-fluid centeredColumn">
+	<p:sidebar widgetVar="dialogCadastroSolicitacao" position="bottom">
+		<h:form id="form-cadastro-solicitacao"
+			styleClass="ui-g ui-fluid centeredColumn">
+			<div class="ui-g-12 ui-md-6 centeredColumn">
+				<h2>Dados da Solicitação</h2>
+				<p>COD: #{solicitacaoBean.solicitacao._ID}</p>
+			</div>
+			<div class="ui-g-12 ui-md-6 centeredColumn">
+				<p:barcode value="#{solicitacaoBean.solicitacao._ID}" type="qr"
+					format="png" title="#{solicitacaoBean.solicitacao._ID}"
+					alt="#{solicitacaoBean.solicitacao._ID}" />
+			</div>
 			<p:tabView id="tabView"
 				styleClass="centeredColumn ui-g-12 ui-g-nopad">
 				<p:tab id="dados" title="Informações">
@@ -87,6 +97,7 @@
 						<span class="ui-inputgroup-addon">Editar Categorias</span>
 						<div jsf:id="categorias" style="width: 100% !important;"
 							class="ui-chips-container ui-inputfield ui-state-default">
+							<p:autoUpdate />
 							<ui:repeat var="categoria"
 								value="#{solicitacaoBean.tempCategorias}">
 								<div class="ui-chips-token ui-state-active ui-corner-all">
@@ -96,8 +107,8 @@
 						</div>
 						<p:commandButton id="bt-add-categorias"
 							styleClass="ui-success-color" icon="pi pi-plus"
-							oncomplete="PF('dialogCategorias').show()"
-							update=":form-categorias" />
+							oncomplete="PF('dialogEditarCategorias').show()"
+							update=":form-editar-categorias" />
 						<p:tooltip for="categorias" position="top" />
 					</div>
 					<div class="ui-inputgroup ui-g-12 ui-md-12">
@@ -126,10 +137,9 @@
 							model="#{solicitacaoBean.mapModel}"
 							center="#{solicitacaoBean.center}" style="height: 450px;">
 							<p:ajax event="reverseGeocode"
-								listener="#{solicitacaoBean.onReverseGeocode}"
-								update="@this endereco" />
+								listener="#{solicitacaoBean.onReverseGeocode}" update="@this" />
 							<p:ajax event="overlaySelect"
-								listener="#{solicitacaoBean.onMarkerSelect}" update="endereco" />
+								listener="#{solicitacaoBean.onMarkerSelect}" update="@this" />
 						</p:gmap>
 					</div>
 				</p:tab>
@@ -150,7 +160,7 @@
 							<h>#{solicitacaoBean.solicitacao.localCidadao.nome}</h>
 						</div>
 						<div class="ui-g-12 ui-md-10">
-							<h3>Demanda cadastrada para o (a)
+							<h3>Solicitação cadastrada para o (a)
 								#{solicitacaoBean.solicitacao.localDepartamento.descricao}</h3>
 							<h>Em #{solicitacaoBean.solicitacao.dataTempoString}</h>
 						</div>
@@ -219,8 +229,7 @@
 			<div class="ui-g-12 ui-md-3 centeredColumn">
 				<p:commandButton id="btFechar" styleClass="ui-danger-color"
 					icon="pi pi-times" iconPos="right" value="Fechar"
-					oncomplete="PF('dialogCadastro').hide();"
-					update=":form-tabela:tabela-solicitacoes" />
+					oncomplete="PF('dialogCadastroSolicitacao').hide();" />
 			</div>
 			<div class="ui-g-12 ui-md-3 centeredColumn">
 				<p:commandButton id="btSalvar" type="submit"
@@ -229,7 +238,7 @@
 					onstart="PF('statusDialog').show();"
 					onerror="PF('statusDialog').hide();"
 					oncomplete="if(args.validationFailed){PF('statusDialog').hide();}"
-					update=":form-tabela:tabela-solicitacoes @form" />
+					update="@form" />
 			</div>
 		</h:form>
 	</p:sidebar>

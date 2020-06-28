@@ -79,22 +79,17 @@
 					</p:messages>
 				</div>
 				<div class="ui-g-12 ui-md-3 centeredColumn">
-					<p:commandButton id="btFechar" icon="pi pi-arrow-left"
-						iconPos="left" value="Voltar"
-						oncomplete="PF('dialogRedefinir').hide();"
-						update=":form-redefinir">
-						<f:actionListener
-							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
-					</p:commandButton>
+					<p:commandButton id="btFechar" styleClass="ui-danger-color"
+						icon="pi pi-times" iconPos="right" value="Fechar"
+						oncomplete="PF('dialogRedefinir').hide();" />
 				</div>
-				<div class="ui-md-6" />
 				<div class="ui-g-12 ui-md-3 centeredColumn">
 					<p:commandButton id="btRedefinir" styleClass="ui-success-color"
 						icon="pi pi-arrow-right" iconPos="right" value="Redefinir Senha"
 						onstart="PF('statusDialog').show();"
 						onerror="PF('statusDialog').hide();"
 						oncomplete="if(args.validationFailed){PF('statusDialog').hide();}else{redefinirSenha();}"
-						update=":form-redefinir :form-login:painel-login" />
+						update="@form" />
 				</div>
 			</h:form>
 		</p:sidebar>

@@ -8,8 +8,8 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-	<p:sidebar widgetVar="dialogCategorias" position="bottom">
-		<h:form id="form-categorias" styleClass="ui-g ui-fluid centeredColumn">
+	<p:sidebar widgetVar="dialogEditarCategorias" position="bottom">
+		<h:form id="form-editar-categorias" styleClass="ui-g ui-fluid centeredColumn">
 			<div class="ui-inputgroup ui-g-12 ui-md-12">
 				<h2 class="centeredColumn">Editar Categorias</h2>
 			</div>
@@ -30,15 +30,14 @@
 			<div class="ui-g-12 ui-md-3 centeredColumn">
 				<p:commandButton id="btFechar" styleClass="ui-danger-color"
 					icon="pi pi-times" iconPos="right" value="Fechar"
-					oncomplete="PF('dialogCategorias').hide();"
-					update=":form-tabela:tabela-solicitacoes" />
+					oncomplete="PF('dialogEditarCategorias').hide();" />
 			</div>
 			<div class="ui-g-12 ui-md-3 centeredColumn">
 				<p:commandButton id="btSalvar" type="submit"
 					styleClass="ui-success-color" icon="pi pi-check" iconPos="right"
 					value="Concluido" action="#{solicitacaoBean.salvarCategorias()}"
-					oncomplete="if(!args.validationFailed){PF('dialogCategorias').hide();}"
-					update="local-mensagem :form-tabela:tabela-solicitacoes :form-cadastro:tabView:categorias" />
+					oncomplete="if(!args.validationFailed){PF('dialogEditarCategorias').hide();}"
+					update="@form" />
 			</div>
 		</h:form>
 	</p:sidebar>
