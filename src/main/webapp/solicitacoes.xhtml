@@ -47,7 +47,8 @@
 					filterStyle="display:none" priority="5">
 					<h:outputText value="#{solicitacao._ID}" />
 				</p:column>
-				<p:column headerText="Cidadão" priority="4" styleClass="centeredColumn"
+				<p:column headerText="Cidadão" priority="4"
+					styleClass="centeredColumn"
 					sortBy="#{solicitacao.localCidadao.nome}"
 					filterBy="#{solicitacao.localCidadao.nome}"
 					filterStyle="display:none">
@@ -71,7 +72,8 @@
 					filterBy="#{solicitacao.concluida}" filterStyle="display:none">
 					<h:outputText value=" #{solicitacao.concluida ? 'Sim' : 'Não' }" />
 				</p:column>
-				<p:column headerText="Opções" styleClass="centeredColumn" priority="1">
+				<p:column headerText="Opções" styleClass="centeredColumn"
+					priority="1">
 					<p:commandButton icon="pi pi-external-link" title="Visualizar"
 						styleClass="ui-secondary-color"
 						actionListener="#{solicitacaoBean.selecionar}"
@@ -119,127 +121,10 @@
 					</p:commandButton>
 				</p:column>
 			</p:dataTable>
-			<p:confirmDialog global="true">
-				<p:commandButton value="Não" type="button"
-					styleClass="ui-confirmdialog-no ui-danger-color"
-					icon="pi pi-arrow-left" iconPos="left" />
-				<p:commandButton value="Sim" type="button"
-					styleClass="ui-confirmdialog-yes ui-success-color"
-					icon="pi pi-check" onstart="PF('statusDialog').show();"
-					onerror="PF('statusDialog').hide();"
-					oncomplete="if(args.validationFailed){PF('statusDialog').hide();}"
-					iconPos="right" update=":mensagem" />
-			</p:confirmDialog>
+			<ui:include src="templates/dialog_confirm.xhtml" />
 		</h:form>
 		<ui:include src="templates/dialog_cadastro_solicitacao.xhtml" />
-		<p:sidebar widgetVar="dialogResposta" position="bottom">
-			<h:form id="form-resposta" styleClass="ui-g ui-fluid centeredColumn">
-				<div class="ui-inputgroup ui-g-12 ui-md-12">
-					<h2 class="centeredColumn">Responder Solicitação</h2>
-				</div>
-				<div class="ui-inputgroup ui-g-12 ui-md-12">
-					<span class="ui-inputgroup-addon">Resposta</span>
-					<p:inputTextarea id="comentario" rows="4"
-						title="Informe a resposta para a demanda do cidadão."
-						placeholder="Informe a resposta para a demanda do cidadão"
-						value="#{solicitacaoBean.atendimento.resposta}">
-					</p:inputTextarea>
-					<p:tooltip for="comentario" position="top" />
-				</div>
-
-				<div class="ui-g-12">
-					<p:separator />
-					<p:messages id="local-mensagem" styleClass="ui-g-12"
-						skipDetailIfEqualsSummary="true" showDetail="true" closable="true">
-						<p:autoUpdate />
-					</p:messages>
-				</div>
-
-				<div class="ui-g-12 ui-md-3 centeredColumn">
-					<p:commandButton id="btFechar" styleClass="ui-danger-color"
-						icon="pi pi-times" iconPos="right" value="Fechar"
-						oncomplete="PF('dialogEncaminhamento').hide();" />
-				</div>
-				<div class="ui-g-12 ui-md-3 centeredColumn">
-					<p:commandButton id="btCadastrar" type="submit"
-						styleClass="ui-success-color" icon="pi  pi-comment"
-						iconPos="right" value="Responder"
-						action="#{solicitacaoBean.salvarResposta()}"
-						onstart="PF('statusDialog').show();"
-						onerror="PF('statusDialog').hide();"
-						oncomplete="if(args.validationFailed){PF('statusDialog').hide();}else{PF('dialogResposta').hide();}"
-						update="@form" />
-				</div>
-				<div class="ui-g-12 ui-md-3 centeredColumn">
-					<p:commandButton id="btCadastrarEncerrar" type="submit"
-						styleClass="ui-success-color" icon="pi  pi-check" iconPos="right"
-						value="Responder e Encerrar"
-						action="#{solicitacaoBean.responderEncerrar()}"
-						onstart="PF('statusDialog').show();"
-						onerror="PF('statusDialog').hide();"
-						oncomplete="if(args.validationFailed){PF('statusDialog').hide();}else{PF('dialogResposta').hide();}"
-						update="@form" />
-				</div>
-			</h:form>
-		</p:sidebar>
-		<p:sidebar widgetVar="dialogEncaminhamento" position="bottom"
-			onHide="#{solicitacaoBean.cadastrar()}">
-			<h:form id="form-encaminhamento"
-				styleClass="ui-g ui-fluid centeredColumn">
-				<div class="ui-inputgroup ui-g-12 ui-md-12">
-					<h2 class="centeredColumn">Encaminhar Solicitação</h2>
-				</div>
-				<div class="ui-inputgroup ui-g-12 ui-md-12">
-					<span class="ui-inputgroup-addon">Encaminhar para </span>
-					<p:selectOneMenu id="departamento"
-						value="#{solicitacaoBean.solicitacao.localDepartamento}"
-						title="Selecione o departamento" required="true"
-						filterMatchMode="contains" filter="true"
-						filterPlaceholder="Pesquise..."
-						converter="omnifaces.SelectItemsConverter"
-						requiredMessage="Departamento é obrigatório.">
-						<f:selectItem noSelectionOption="true"
-							itemLabel="Selecione um Departamento" />
-						<f:selectItems value="#{departamentoBean.listar()}"
-							var="departamento" itemValue="#{departamento}"
-							itemLabel="#{departamento.descricao}" />
-					</p:selectOneMenu>
-					<p:linkButton styleClass="ui-success-color" icon="pi pi-plus"
-						href="departamentos.xhtml" />
-					<p:tooltip for="departamento" position="top" />
-				</div>
-				<div class="ui-inputgroup ui-g-12 ui-md-12">
-					<span class="ui-inputgroup-addon">Motivo</span>
-					<p:inputTextarea id="motivo" rows="4"
-						title="Descreva para o cidadão, o motivo do encaminhamento da solicitação."
-						placeholder="Descreva para o cidadão, o motivo do encaminhamento da solicitação."
-						required="true"
-						requiredMessage="O Motivo do encaminhamento é um campo obrigatório."
-						value="#{solicitacaoBean.atendimento.resposta}" />
-					<p:tooltip for="motivo" position="top" />
-				</div>
-				<div class="ui-g-12">
-					<p:separator />
-					<p:messages id="local-mensagem" styleClass="ui-g-12"
-						skipDetailIfEqualsSummary="true" showDetail="true" closable="true">
-					</p:messages>
-				</div>
-				<div class="ui-g-12 ui-md-3 centeredColumn">
-					<p:commandButton id="btFechar" styleClass="ui-danger-color"
-						icon="pi  pi-times" iconPos="right" value="Fechar"
-						oncomplete="PF('dialogEncaminhamento').hide();" />
-				</div>
-
-				<div class="ui-g-12 ui-md-3 centeredColumn">
-					<p:commandButton id="btEncaminhar" styleClass="ui-success-color"
-						icon="pi  pi-reply" iconPos="right" value="Encaminhar"
-						action="#{solicitacaoBean.encaminhar()}"
-						onstart="PF('statusDialog').show();"
-						onerror="PF('statusDialog').hide();"
-						oncomplete="if(args.validationFailed){PF('statusDialog').hide();}else{PF('dialogEncaminhamento').hide();}"
-						update="@form" />
-				</div>
-			</h:form>
-		</p:sidebar>
+		<ui:include src="templates/dialog_resposta_solicitacao.xhtml" />
+		<ui:include src="templates/dialog_encaminhar_solicitacao.xhtml" />
 	</ui:define>
 </ui:composition>

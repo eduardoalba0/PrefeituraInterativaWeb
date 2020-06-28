@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:jsf="http://xmlns.jcp.org/jsf"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+	<p:confirmDialog global="true">
+		<p:commandButton value="Não" type="button"
+			styleClass="ui-confirmdialog-no ui-danger-color"
+			icon="pi pi-arrow-left" iconPos="left" />
+		<p:commandButton value="Sim" type="button"
+			styleClass="ui-confirmdialog-yes ui-success-color" icon="pi pi-check"
+			onstart="PF('statusDialog').show();"
+			onerror="PF('statusDialog').hide();"
+			oncomplete="if(args.validationFailed)PF('statusDialog').hide();}"
+			iconPos="right"
+			update=":mensagem" />
+	</p:confirmDialog>
+</ui:composition>
