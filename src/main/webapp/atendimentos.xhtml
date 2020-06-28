@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:jsf="http://xmlns.jcp.org/jsf"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="templates/menulateral.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form-tabela">
+			<p:dataTable id="tabela-atendimentos" var="atendimento" rows="15"
+				value="#{atendimentoBean.listar()}"
+				sortBy="#{atendimento.getDataTempoString()}"
+				widgetVar="tabelaatendimentos"
+				emptyMessage="Nenhum atendimento encontrado." paginator="true"
+				paginatorPosition="bottom">
+				<f:facet name="header">
+					<div class="ui-g ui-fluid">
+						<div class="ui-g-12 ui-md-6 ui-nopad">
+							<h2>Atendimentos</h2>
+						</div>
+						<div class="ui-g-12 ui-md-6 centeredColumn">
+							<p:inputText id="globalFilter" styleClass="ui-input-busca"
+								placeholder="Pesquise..."
+								onkeyup="PF('tabelaatendimentos').filter()" />
+						</div>
+					</div>
+				</f:facet>
+				<p:column headerText="Código" sortBy="#{atendimento._ID}"
+					filterBy="#{atendimento._ID}" styleClass="centeredColumn"
+					filterStyle="display:none" priority="5">
+					<h:outputText value="#{atendimento._ID}" />
+				</p:column>
+				<p:column headerText="Funcionário" priority="2"
+					sortBy="#{atendimento.localFuncionario.nome}"
+					filterBy="#{atendimento.localFuncionario.nome}"
+					filterStyle="display:none">
+					<h:outputText value="#{atendimento.localFuncionario.nome}" />
+				</p:column>
+				<p:column headerText="Departamento"
+					sortBy="#{atendimento.localDepartamento.descricao}"
+					filterBy="#{atendimento.localDepartamento.descricao}" priority="2"
+					styleClass="centeredColumn" filterStyle="display:none">
+					<h:outputText value="#{atendimento.localDepartamento.descricao}" />
+				</p:column>
+				<p:column headerText="Solicitação" priority="4"
+					sortBy="#{atendimento.solicitacao_ID}"
+					filterBy="#{atendimento.solicitacao_ID}"
+					styleClass="centeredColumn" filterStyle="display:none">
+					<h:outputText value="#{atendimento.solicitacao_ID}" />
+				</p:column>
+				<p:column headerText="Resposta" sortBy="#{atendimento.resposta}"
+					filterBy="#{atendimento.resposta}" priority="2"
+					styleClass="centeredColumn" filterStyle="display:none">
+					<h:outputText value="#{atendimento.resposta}" />
+				</p:column>
+				<p:column headerText="Data" sortBy="#{atendimento.dataTempoString}"
+					priority="3" styleClass="centeredColumn"
+					filterBy="#{atendimento.dataTempoString}"
+					filterStyle="display:none">
+					<h:outputText value="#{atendimento.dataTempoString}" />
+				</p:column>
+				<p:column headerText="Opções" styleClass="centeredColumn"
+					priority="1">
+					<p:commandButton icon="pi pi-external-link" title="Visualizar"
+						styleClass="ui-secondary-color"
+						actionListener="#{atendimentoBean.selecionar}"
+						onstart="PF('statusDialog').show();"
+						onerror="PF('statusDialog').hide();"
+						onsuccess="PF('dialogCadastro').show()"
+						update=":mensagem :form-cadastro @form">
+						<f:attribute name="atendimentoSelecionado" value="#{atendimento}" />
+						<f:actionListener
+							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+					</p:commandButton>
+					<p:commandButton
+						icon="#{atendimento.localFuncionario.habilitado ? 'pi pi-ban' : 'pi pi-check'}"
+						styleClass="#{atendimento.localFuncionario.habilitado ? 'ui-danger-color' : 'ui-success-color'}"
+						title="#{atendimento.localFuncionario.habilitado ? 'Bloquear Funcionário' : 'Habilitar Funcionário'}"
+						onstart="PF('statusDialog').show();"
+						onerror="PF('statusDialog').hide();"
+						actionListener="#{usuarioBean.removerDesabilitar}"
+						update=":mensagem @form">
+						<p:confirm header="Atenção!"
+							message="Tem certeza que deseja #{atendimento.localFuncionario.habilitado ? 'DESATIVAR' : 'HABILITAR'} o funcionário [#{atendimento.localFuncionario.nome}]?" />
+						<f:attribute name="usuarioSelecionado"
+							value="#{atendimento.localFuncionario}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+			<p:confirmDialog global="true">
+				<p:commandButton value="Não" type="button"
+					styleClass="ui-confirmdialog-no ui-danger-color"
+					icon="pi pi-arrow-left" iconPos="left" />
+				<p:commandButton value="Sim" type="button"
+					styleClass="ui-confirmdialog-yes ui-success-color"
+					icon="pi pi-check" onstart="PF('statusDialog').show();"
+					onerror="PF('statusDialog').hide();"
+					oncomplete="if(args.validationFailed){PF('statusDialog').hide();}"
+					iconPos="right" update=":mensagem :form-tabela" />
+			</p:confirmDialog>
+		</h:form>
+		<p:sidebar widgetVar="dialogCadastro" position="bottom">
+			<h:form id="form-cadastro" styleClass="ui-g ui-fluid centeredColumn">
+				<div class="ui-g-12 ui-md-6 centeredColumn">
+					<h2>Dados do atendimento</h2>
+					<p>COD: #{atendimentoBean.atendimento._ID}</p>
+				</div>
+				<div class="ui-g-12 ui-md-6 centeredColumn">
+					<p:barcode value="#{atendimentoBean.atendimento._ID}" type="qr"
+						format="png" title="#{atendimentoBean.atendimento._ID}"
+						alt="#{atendimentoBean.atendimento._ID}" />
+				</div>
+				<div class="ui-inputgroup ui-g-12 ui-md-6">
+					<span class="ui-inputgroup-addon">Departamento</span>
+					<p:selectOneMenu id="departamento"
+						value="#{atendimentoBean.atendimento.departamento_ID}"
+						title="Selecione o departamento."
+						requiredMessage="O departamento é obrigatório."
+						filterMatchMode="contains" filter="true"
+						filterPlaceholder="Pesquise..."
+						converter="omnifaces.SelectItemsConverter">
+						<f:selectItem noSelectionOption="true"
+							itemLabel="Selecione um Departamento..." />
+						<f:selectItems value="#{departamentoBean.departamentos}"
+							var="departamento" itemValue="#{departamento._ID}"
+							itemLabel="#{departamento.descricao}" />
+					</p:selectOneMenu>
+					<p:linkButton styleClass="ui-success-color" icon="pi pi-plus"
+						href="departamentos.xhtml" title="Novo departamento" />
+					<p:tooltip for="departamento" position="top" />
+				</div>
+				<div class="ui-inputgroup ui-g-12 ui-md-6">
+					<span class="ui-inputgroup-addon">Funcionário</span>
+					<p:selectOneMenu id="funcionario"
+						value="#{atendimentoBean.atendimento.funcionario_ID}"
+						title="Selecione o funcionário."
+						requiredMessage="O funcionário é obrigatório."
+						filterMatchMode="contains" filter="true"
+						filterPlaceholder="Pesquise..."
+						converter="omnifaces.SelectItemsConverter">
+						<f:selectItem noSelectionOption="true"
+							itemLabel="Selecione um Funcionário..." />
+						<f:selectItems value="#{usuarioBean.funcionarios}"
+							var="funcionario" itemValue="#{funcionario._ID}"
+							itemLabel="#{funcionario.nome}" />
+					</p:selectOneMenu>
+					<p:linkButton styleClass="ui-success-color" icon="pi pi-plus"
+						href="funcionarios.xhtml" title="Novo funcionário" />
+					<p:tooltip for="funcionario" position="top" />
+				</div>
+				<div class="ui-inputgroup ui-g-12 ui-md-6">
+					<span class="ui-inputgroup-addon">Solicitação</span>
+					<p:inputText id="solicitacao"
+						value="#{atendimentoBean.atendimento.solicitacao_ID}"
+						title="Código da Solicitação" readonly="true" />
+					<p:linkButton styleClass="ui-success-color"
+						icon="pi pi-external-link" title="Visualizar"
+						href="solicitacoes.xhtml" />
+					<p:tooltip for="solicitacao" position="top" />
+				</div>
+				<div class="ui-inputgroup ui-g-12 ui-md-6">
+					<span class="ui-inputgroup-addon">Ação realizada</span>
+					<p:inputText id="acao"
+						title="Ação realizada na demanda do cidadão."
+						placeholder="Nenhuma ação realizada na demanda."
+						value="#{atendimentoBean.atendimento.acao}">
+					</p:inputText>
+					<p:tooltip for="acao" position="top" />
+				</div>
+				<div class="ui-inputgroup ui-g-12 ui-md-12">
+					<span class="ui-inputgroup-addon">Resposta</span>
+					<p:inputTextarea id="comentario" rows="4"
+						title="Resposta para a demanda do cidadão."
+						placeholder="Resposta para a demanda do cidadão."
+						value="#{atendimentoBean.atendimento.resposta}">
+					</p:inputTextarea>
+					<p:tooltip for="comentario" position="top" />
+				</div>
+				<div class="ui-g-12">
+					<p:separator />
+					<p:messages styleClass="ui-g-12" skipDetailIfEqualsSummary="true"
+						showDetail="true" closable="true">
+						<p:autoUpdate />
+					</p:messages>
+				</div>
+				<div class="ui-g-12 ui-md-3 centeredColumn">
+					<p:commandButton id="btFechar" styleClass="ui-danger-color"
+						icon="pi pi-times" iconPos="right" value="Fechar"
+						oncomplete="PF('dialogCadastro').hide();"
+						update=":form-tabela:tabela-atendimentos" />
+				</div>
+				<div class="ui-g-12 ui-md-3 centeredColumn">
+					<p:commandButton id="btSalvar" type="submit"
+						styleClass="ui-success-color" icon="pi  pi-save" iconPos="right"
+						value="Salvar" action="#{atendimentoBean.salvarEditar()}"
+						onstart="PF('statusDialog').show();"
+						onerror="PF('statusDialog').hide();"
+						oncomplete="if(args.validationFailed){PF('statusDialog').hide();}"
+						update=":form-tabela:tabela-atendimentos @form" />
+				</div>
+			</h:form>
+		</p:sidebar>
+	</ui:define>
+</ui:composition>

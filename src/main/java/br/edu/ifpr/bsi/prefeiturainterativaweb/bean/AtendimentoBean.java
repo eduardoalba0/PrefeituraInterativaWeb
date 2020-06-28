@@ -1,7 +1,6 @@
 package br.edu.ifpr.bsi.prefeiturainterativaweb.bean;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,9 +13,7 @@ import javax.inject.Named;
 import org.omnifaces.cdi.ViewScoped;
 
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.AtendimentoDAO;
-import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.SolicitacaoDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Atendimento;
-import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Aviso;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Departamento;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Solicitacao;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Usuario;
@@ -27,8 +24,6 @@ import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Usuario;
 public class AtendimentoBean extends AbstractBean {
 
 	private Atendimento atendimento;
-	private Aviso aviso;
-	private Solicitacao solicitacao;
 	private List<Atendimento> atendimentos;
 
 	@Inject
@@ -40,6 +35,9 @@ public class AtendimentoBean extends AbstractBean {
 	@Inject
 	@Named("usuarios")
 	private List<Usuario> usuarios;
+	@Inject
+	@Named("solicitacoes")
+	private List<Solicitacao> solicitacoes;
 
 	@Override
 	@PostConstruct
@@ -62,6 +60,7 @@ public class AtendimentoBean extends AbstractBean {
 	public void cadastrar() {
 		atendimento = new Atendimento();
 		atendimento.setLocalFuncionario(funcionarioLogado);
+		atendimento.set_ID(UUID.randomUUID().toString());
 	}
 
 	@Override
@@ -74,6 +73,14 @@ public class AtendimentoBean extends AbstractBean {
 					&& departamentos.contains(new Departamento(aux.getDepartamento_ID())))
 				aux.setLocalDepartamento(
 						departamentos.get(departamentos.indexOf(new Departamento(aux.getDepartamento_ID()))));
+			else
+				showErrorMessage("Falha ao listar atendimentos. Consulte o suporte da ferramenta.");
+			if (solicitacoes != null && !solicitacoes.isEmpty()
+					&& solicitacoes.contains(new Solicitacao(aux.getSolicitacao_ID())))
+				aux.setLocalSolicitacao(
+						solicitacoes.get(solicitacoes.indexOf(new Solicitacao(aux.getSolicitacao_ID()))));
+			else
+				showErrorMessage("Falha ao listar atendimentos. Consulte o suporte da ferramenta.");
 		});
 		hideStatusDialog();
 		return atendimentos;
@@ -84,37 +91,9 @@ public class AtendimentoBean extends AbstractBean {
 		atendimento = (Atendimento) evento.getComponent().getAttributes().get("atendimentoSelecionado");
 	}
 
-	public void responder(ActionEvent evento) {
-		solicitacao = (Solicitacao) evento.getComponent().getAttributes().get("solicitacaoSelecionada");
-		atendimento = new Atendimento();
-		aviso = new Aviso();
-		atendimento.setLocalSolicitacao(solicitacao);
-		aviso.setTitulo("Sua demanda foi respondida!");
-		aviso.setCategoria(Aviso.CATEGORIA_TRAMITACAO);
-	}
-
 	@Override
 	public void salvarEditar() {
-		boolean tasksSuccess = false;
-		if (atendimento.get_ID() == null) {
-			atendimento.set_ID(UUID.randomUUID().toString());
-			List<String> stringList;
-			if (solicitacao.getAtendimentos() == null)
-				stringList = new ArrayList<String>();
-			else
-				stringList = solicitacao.getAtendimentos();
-			stringList.add(atendimento.get_ID());
-			solicitacao.setAtendimentos(stringList);
-			atendimento.setFuncionario_ID(funcionarioLogado.get_ID());
-			atendimento.setDepartamento_ID(funcionarioLogado.getDadosFuncionais().getDepartamento_ID());
-			tasksSuccess = AtendimentoDAO.merge(atendimento) && SolicitacaoDAO.merge(solicitacao);
-		} else
-			tasksSuccess = AtendimentoDAO.merge(atendimento);
-		if (tasksSuccess) {
-			aviso.setCorpo(atendimento.getResposta());
-			aviso.setSolicitacao_ID(solicitacao.get_ID());
-			aviso.setData(new Date());
-			aviso.setToken(solicitacao.getLocalCidadao().getToken());
+		if (AtendimentoDAO.merge(atendimento)) {
 			hideStatusDialog();
 			showSuccessMessage("Dados gravados na nuvem.");
 		} else {
@@ -163,27 +142,19 @@ public class AtendimentoBean extends AbstractBean {
 		this.departamentos = departamentos;
 	}
 
+	public List<Solicitacao> getSolicitacoes() {
+		return solicitacoes;
+	}
+
+	public void setSolicitacoes(List<Solicitacao> solicitacoes) {
+		this.solicitacoes = solicitacoes;
+	}
+
 	public List<Usuario> getUsuarios() {
 		return usuarios;
 	}
 
 	public void setUsuarios(List<Usuario> usuarios) {
 		this.usuarios = usuarios;
-	}
-
-	public Solicitacao getSolicitacao() {
-		return solicitacao;
-	}
-
-	public void setSolicitacao(Solicitacao solicitacao) {
-		this.solicitacao = solicitacao;
-	}
-
-	public Aviso getAviso() {
-		return aviso;
-	}
-
-	public void setAviso(Aviso aviso) {
-		this.aviso = aviso;
 	}
 }

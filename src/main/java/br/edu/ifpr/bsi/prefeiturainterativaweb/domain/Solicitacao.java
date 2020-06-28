@@ -16,6 +16,19 @@ import com.google.cloud.firestore.annotation.ServerTimestamp;
 @SuppressWarnings("serial")
 public class Solicitacao implements Serializable {
 
+	public Solicitacao() {
+		urlImagens = new ArrayList<>();
+		categorias = new ArrayList<>();
+		atendimentos = new ArrayList<>();
+	}
+
+	public Solicitacao(String _ID) {
+		this._ID = _ID;
+		urlImagens = new ArrayList<>();
+		categorias = new ArrayList<>();
+		atendimentos = new ArrayList<>();
+	}
+
 	private String _ID;
 	private String descricao;
 	private String usuario_ID;
@@ -44,12 +57,6 @@ public class Solicitacao implements Serializable {
 	private List<Atendimento> localAtendimentos;
 
 //---------------------- Encapsulamento ----------------------
-
-	public Solicitacao() {
-		urlImagens = new ArrayList<>();
-		categorias = new ArrayList<>();
-		atendimentos = new ArrayList<>();
-	}
 
 	public String get_ID() {
 		return _ID;

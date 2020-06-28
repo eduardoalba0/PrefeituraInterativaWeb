@@ -88,6 +88,7 @@ public class SolicitacaoBean extends AbstractBean {
 		atendimento = new Atendimento();
 		avisos = new ArrayList<Aviso>();
 		tempCategorias = new ArrayList<Categoria>();
+		solicitacao.set_ID(UUID.randomUUID().toString());
 	}
 
 	@Override
@@ -218,7 +219,7 @@ public class SolicitacaoBean extends AbstractBean {
 		avisos = new ArrayList<Aviso>();
 		solicitacao.setConcluida(true);
 		atendimento.set_ID(UUID.randomUUID().toString());
-		atendimento.setAcao("A demanda foi encerrada.");
+		atendimento.setAcao("Demanda foi encerrada.");
 		atendimento.setLocalSolicitacao(solicitacao);
 		atendimento.setData(new Date());
 		atendimento.setFuncionario_ID(funcionarioLogado.get_ID());
@@ -267,7 +268,7 @@ public class SolicitacaoBean extends AbstractBean {
 		avisos = new ArrayList<Aviso>();
 		atendimento.set_ID(UUID.randomUUID().toString());
 		atendimento
-				.setAcao("A demanda foi encaminhada para o (a) " + solicitacao.getLocalDepartamento().getDescricao());
+				.setAcao("Demanda encaminhada para o (a) " + solicitacao.getLocalDepartamento().getDescricao());
 		atendimento.setLocalSolicitacao(solicitacao);
 		atendimento.setData(new Date());
 		atendimento.setFuncionario_ID(funcionarioLogado.get_ID());
