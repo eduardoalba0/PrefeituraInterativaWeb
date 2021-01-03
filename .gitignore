@@ -3,3 +3,4 @@ target/*
 mvn
 !.gitignore
 !target/classes
+/target/

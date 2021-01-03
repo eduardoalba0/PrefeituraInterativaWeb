@@ -68,12 +68,7 @@ body,.div-tramitacao
 }
 
 .ui-datatable thead th.ui-state-active {
-    background: black !important;
-}
-
-.ui-input-busca {
-    width: 100% !important;
-    border-radius: 50px !important;
+    background: var(--color-yellow) !important;
 }
 
 .ui-icon-check,
@@ -82,8 +77,8 @@ body,.div-tramitacao
 .ui-chkbox .ui-chkbox-box.ui-state-active,
 .ui-inputgroup .ui-inputgroup-addon-checkbox,
 .ui-inputgroup .ui-inputgroup-addon {
-    background-color: var(--color-orange) !important;
-    border-color: var(--color-orange) !important;
+    background-color: var(--color-yellow) !important;
+    border-color: var(--color-yellow) !important;
 }
 
 .ui-inputfield .ui-state-focus:not(.ui-state-error),
@@ -93,7 +88,6 @@ body,.div-tramitacao
 
 .ui-messages-close,
 .ui-inputfield,
-.ui-icon-closethick,
 .ui-icon-check,
 .ui-inputgroup-addon:first-child,
 .ui-inputgroup .ui-inputgroup-addon>.pi {
@@ -120,18 +114,13 @@ body,.div-tramitacao
     background: black !important;
 }
 
-.ui-fieldset {
-    background: #585858 !important;
-}
-
-
 /* Sombras e Bordas*/
 
 .ui-fieldset,
 .ui-fieldset-legend,
 hr.ui-separator {
     border: 1px solid var(--color-orange) !important;
-    box-shadow: 1px 2px 2px black !important;
+    background: var(--color-orange) !important;
 }
 
 .ui-fieldset-legend,
@@ -208,10 +197,10 @@ ul, .ui-chips-container{
     mask-repeat: no-repeat !important;
     mask-size: contain !important;
     width: 99% !important;
+    background: var(--color-orange) !important;
     height: 95% !important;
     top: 10% !important;
     left: 11% !important;
-    background-color: white !important;
     -webkit-mask-image: url("../images/icone_prefeitura_interativa.svg") !important;
     -webkit-mask-repeat: no-repeat !important;
     -webkit-mask-size: contain !important;
@@ -225,7 +214,7 @@ ul, .ui-chips-container{
 .ui-growl-image-info,
 .ui-growl-image-warn,
 .ui-growl-image-error,
-ui-growl-image-fatal {
+.ui-growl-image-fatal {
     color: white !important;
 }
 
@@ -250,6 +239,11 @@ body {
     height: 60px !important;
     width: 60px !important;
     margin: 10px !important;
+}
+
+.ui-input-busca {
+    width: 100% !important;
+    border-radius: 50px !important;
 }
 
 .ui-tabs-selected,
@@ -412,9 +406,6 @@ h3,
 .ui-selectonemenu,
 .ui-dialog.ui-confirm-dialog .ui-dialog-content>span,
 .ui-datatable .ui-datatable-data tr {
-    font-family: fredoka !important;
-    color: white !important;
-    text-shadow: 2px 2px 2px black !important;
     line-height: 30px !important;
 }
 
@@ -427,30 +418,15 @@ h3,
 .ui-messages-info,
 .ui-messages-warn,
 .ui-messages-fatal,
+.ui-texto,
 .ui-growl-item-container {
     color: white !important;
-}
-
-.ui-widget,
-.ui-growl-message,
-.ui-button,
-.ui-menu,
-.ui-chips {
-    font-size: 13pt !important;
-    font-family: fredoka !important;
 }
 
 .ui-growl-message {
     text-align: justify;
     text-justify: inter-character;
 }
-
-@font-face {
-    font-family: fredoka;
-    src: url("../fonts/fredoka.ttf");
-    font-style: bold;
-}
-
 
 /* Media Queries */
 

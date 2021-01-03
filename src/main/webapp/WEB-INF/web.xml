@@ -14,7 +14,7 @@
 	<!-- Escolha do tema -->
 	<context-param>
 		<param-name>primefaces.THEME</param-name>
-		<param-value>luna-amber</param-value>
+		<param-value>nova-light</param-value>
 	</context-param>
 
 	<!-- Configuração do JSF -->

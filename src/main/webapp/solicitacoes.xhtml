@@ -30,16 +30,6 @@
 								placeholder="Pesquise..."
 								onkeyup="PF('tabelaSolicitacoes').filter()" />
 						</div>
-						<div class="ui-g-12 ui-md-3 centeredColumn">
-							<p:commandButton icon="pi pi-plus" title="Cadastrar"
-								styleClass="ui-success-color"
-								actionListener="#{solicitacaoBean.cadastrar()}"
-								oncomplete="PF('dialogCadastroSolicitacao').show()"
-								update=":mensagem :form-cadastro-solicitacao">
-								<f:actionListener
-									type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
-							</p:commandButton>
-						</div>
 					</div>
 				</f:facet>
 				<p:column headerText="Código" sortBy="#{solicitacao._ID}"
