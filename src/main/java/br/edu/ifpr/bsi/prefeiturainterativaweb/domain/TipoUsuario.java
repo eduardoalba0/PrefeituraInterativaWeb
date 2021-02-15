@@ -20,6 +20,7 @@ public class TipoUsuario implements Serializable {
 	private String descricao;
 	private boolean personalizado;
 	private boolean funcionario;
+	private boolean staged;
 
 //---------------------- Encapsulamento ----------------------
 
@@ -54,7 +55,13 @@ public class TipoUsuario implements Serializable {
 	public void setPersonalizado(boolean personalizado) {
 		this.personalizado = personalizado;
 	}
+	public boolean isStaged() {
+		return staged;
+	}
 
+	public void setStaged(boolean staged) {
+		this.staged = staged;
+	}
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)

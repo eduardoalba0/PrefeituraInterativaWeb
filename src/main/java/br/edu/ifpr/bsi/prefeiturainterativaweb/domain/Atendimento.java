@@ -25,6 +25,7 @@ public class Atendimento implements Serializable {
 	private String departamento_ID;
 	private String funcionario_ID;
 	private String solicitacao_ID;
+	private boolean staged;
 
 	@ServerTimestamp
 	private Date data;
@@ -98,7 +99,13 @@ public class Atendimento implements Serializable {
 	public void setDataTempoString(String dataTempoString) {
 		this.dataTempoString = dataTempoString;
 	}
+	public boolean isStaged() {
+		return staged;
+	}
 
+	public void setStaged(boolean staged) {
+		this.staged = staged;
+	}
 	@Exclude
 	public Usuario getLocalFuncionario() {
 		return localFuncionario;

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:jsf="http://xmlns.jcp.org/jsf"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="templates/menulateral.xhtml">
+
+	<ui:define name="conteudo">
+		<h:form id="form-demandas-area">
+			<p:dataTable id="tabela-demandas-area" var="demanda"
+				value="#{demandasAreaBean.listar()}" paginator="true"
+				paginatorPosition="bottom" rows="10">
+				<p:autoUpdate />
+				<f:facet name="header">
+					<div class="ui-g ui-fluid ui-nopad">
+						<div class="ui-g-12 ui-md-3">
+							<h2>DASHBOARDS | Demandas por área</h2>
+						</div>
+					</div>
+				</f:facet>
+			</p:dataTable>
+		</h:form>
+	</ui:define>
+</ui:composition>

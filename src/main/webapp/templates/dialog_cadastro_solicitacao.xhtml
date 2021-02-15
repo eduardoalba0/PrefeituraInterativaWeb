@@ -76,7 +76,7 @@
 					<div class="ui-inputgroup ui-g-12 ui-md-6">
 						<span class="ui-inputgroup-addon">Data</span>
 						<p:datePicker id="data" readonly="true" showTime="true"
-							readonlyInput="true" value="#{solicitacaoBean.solicitacao.data}"
+							readonlyInput="true" value="#{solicitacaoBean.solicitacao.dataAbertura}"
 							showIcon="true" />
 						<p:tooltip for="data" position="top" />
 					</div>
@@ -162,7 +162,7 @@
 						<div class="ui-g-12 ui-md-10">
 							<h3>Solicitação cadastrada para o (a)
 								#{solicitacaoBean.solicitacao.localDepartamento.descricao}</h3>
-							<h>Em #{solicitacaoBean.solicitacao.dataTempoString}</h>
+							<h>Em #{solicitacaoBean.solicitacao.dataAberturaString}</h>
 						</div>
 					</div>
 					<ui:repeat var="atendimento"

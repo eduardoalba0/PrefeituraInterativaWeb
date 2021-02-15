@@ -7,9 +7,9 @@
 	<session-factory>
 		<!-- Configurações de Conexão com o Banco de Dados -->
 		<property name="connection.driver_class">org.postgresql.Driver</property>
-		<property name="connection.url">jdbc:postgresql://localhost:5432/PrefeituraInterativa?sslmode=require</property>
-		<property name="connection.username">pmzbknxeupwcsf</property>
-		<property name="connection.password">45efa32da1c140f292ab147a3fc44674324e28c1f36de0053932ace08f7c54ab</property>
+		<property name="connection.url">jdbc:postgresql://ec2-52-22-161-59.compute-1.amazonaws.com/d3fg24bokjnqv?sslmode=require</property>
+		<property name="connection.username">ilbfqjmujrsuaf</property>
+		<property name="connection.password">16646ddf915e04973c7e6d0c2ee4dc1882e82b2aaf30e55787412bcc1d689b29</property>
 		<property name="connection.pool_size">1</property>
 		<property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
 		<property name="current_session_context_class">thread</property>
@@ -18,6 +18,17 @@
 		<property name="hbm2ddl.auto">validate</property>
 
 		<!-- Mapeamento das entidades -->
-		<!-- mapping class="br.edu.ifpr.bsi.happyhour.domain.Cidade" /-->
+		<mapping
+			class="br.edu.ifpr.bsi.prefeiturainterativaweb.domain.sad.Dim_Avaliacao" />
+		<mapping
+			class="br.edu.ifpr.bsi.prefeiturainterativaweb.domain.sad.Dim_Categoria" />
+		<mapping
+			class="br.edu.ifpr.bsi.prefeiturainterativaweb.domain.sad.Dim_Departamento" />
+		<mapping
+			class="br.edu.ifpr.bsi.prefeiturainterativaweb.domain.sad.Dim_Funcionario" />
+		<mapping
+			class="br.edu.ifpr.bsi.prefeiturainterativaweb.domain.sad.Dim_Tempo" />
+		<mapping
+			class="br.edu.ifpr.bsi.prefeiturainterativaweb.domain.sad.Fato_QualidadeAtendimento" />
 	</session-factory>
 </hibernate-configuration>

@@ -22,6 +22,7 @@ public class Categoria implements Serializable {
 	private String descricao;
 	private String departamento_ID;
 	private boolean habilitada;
+	private boolean staged;
 
 	@Exclude
 	private boolean selecionada;
@@ -62,7 +63,13 @@ public class Categoria implements Serializable {
 	public void setHabilitada(boolean habilitada) {
 		this.habilitada = habilitada;
 	}
+	public boolean isStaged() {
+		return staged;
+	}
 
+	public void setStaged(boolean staged) {
+		this.staged = staged;
+	}
 	@Exclude
 	public Departamento getLocalDepartamento() {
 		return localDepartamento;

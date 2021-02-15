@@ -10,6 +10,7 @@ public class Avaliacao implements Serializable {
     private float nota;
     private String comentario;
     private boolean solucionada;
+	private boolean staged;
 
     @ServerTimestamp
     private Date data;
@@ -37,7 +38,13 @@ public class Avaliacao implements Serializable {
     public void setSolucionada(boolean solucionada) {
         this.solucionada = solucionada;
     }
+    public boolean isStaged() {
+		return staged;
+	}
 
+	public void setStaged(boolean staged) {
+		this.staged = staged;
+	}
     @ServerTimestamp
     public Date getData() {
         return data;

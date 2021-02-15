@@ -17,7 +17,7 @@
 				value="#{solicitacaoBean.listar()}"
 				sortBy="#{solicitacao.getDataTempoString()}"
 				widgetVar="tabelasolicitacoes"
-				emptyMessage="Nenhum solicitacao encontrado." paginator="true"
+				emptyMessage="Nenhuma solicitacao encontrada." paginator="true"
 				paginatorPosition="bottom">
 				<p:autoUpdate />
 				<f:facet name="header">
@@ -44,11 +44,11 @@
 					filterStyle="display:none">
 					<h:outputText value="#{solicitacao.localCidadao.nome}" />
 				</p:column>
-				<p:column headerText="Data" sortBy="#{solicitacao.dataTempoString}"
+				<p:column headerText="Data" sortBy="#{solicitacao.dataAberturaString}"
 					priority="1" styleClass="centeredColumn"
-					filterBy="#{solicitacao.dataTempoString}"
+					filterBy="#{solicitacao.dataAberturaString}"
 					filterStyle="display:none">
-					<h:outputText value="#{solicitacao.dataTempoString}" />
+					<h:outputText value="#{solicitacao.dataAberturaString}" />
 				</p:column>
 				<p:column headerText="Categorias" priority="2"
 					filterBy="#{solicitacao.localCategorias}"

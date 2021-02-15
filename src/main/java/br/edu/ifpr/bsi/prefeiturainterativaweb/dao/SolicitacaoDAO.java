@@ -25,6 +25,11 @@ public class SolicitacaoDAO {
 		return DatabaseHelper.merge(reference.document(solicitacao.get_ID()), solicitacao) != null;
 	}
 
+	public static boolean update(Solicitacao solicitacao, String campo, Object valor) {
+		init();
+		return DatabaseHelper.update(reference.document(solicitacao.get_ID()), campo, valor) != null;
+	}
+
 	public static boolean remove(Solicitacao solicitacao) {
 		init();
 		return DatabaseHelper.remove(reference.document(solicitacao.get_ID())) != null;
@@ -46,7 +51,7 @@ public class SolicitacaoDAO {
 
 	public static List<Solicitacao> getAll() {
 		init();
-		QuerySnapshot lista = DatabaseHelper.getAll(reference.orderBy("data", Direction.ASCENDING));
+		QuerySnapshot lista = DatabaseHelper.getAll(reference.orderBy("dataAbertura", Direction.ASCENDING));
 		if (lista == null)
 			return null;
 		else
@@ -56,7 +61,7 @@ public class SolicitacaoDAO {
 	public static List<Solicitacao> getAllPorStatus(boolean status) {
 		init();
 		QuerySnapshot lista = DatabaseHelper
-				.getAll(reference.whereEqualTo("concluida", status).orderBy("data", Query.Direction.ASCENDING));
+				.getAll(reference.whereEqualTo("concluida", status).orderBy("dataAbertura", Query.Direction.ASCENDING));
 		if (lista == null)
 			return null;
 		else

@@ -33,22 +33,29 @@ public class Solicitacao implements Serializable {
 	private String descricao;
 	private String usuario_ID;
 	private String departamento_ID;
+	private String funcionarioConclusao_ID;
 	private boolean concluida;
 	private boolean anonima;
-	private Localizacao localizacao;
-	private Avaliacao avaliacao;
+	private boolean staged;
 	private List<String> urlImagens;
 	private List<String> categorias;
 	private List<String> atendimentos;
+	private Localizacao localizacao;
+	private Avaliacao avaliacao;
+	private Date dataConclusao;
 
 	@ServerTimestamp
-	private Date data;
+	private Date dataAbertura;
 	@Exclude
 	private Departamento localDepartamento;
 	@Exclude
 	private Usuario localCidadao;
 	@Exclude
-	private String dataTempoString;
+	private Usuario localFuncionarioConclusao;
+	@Exclude
+	private String dataAberturaString;
+	@Exclude
+	private String dataConclusaoString;
 	@Exclude
 	private List<Categoria> localCategorias;
 	@Exclude
@@ -98,6 +105,14 @@ public class Solicitacao implements Serializable {
 		this.anonima = anonima;
 	}
 
+	public boolean isStaged() {
+		return staged;
+	}
+
+	public void setStaged(boolean staged) {
+		this.staged = staged;
+	}
+
 	public List<String> getUrlImagens() {
 		return urlImagens;
 	}
@@ -122,25 +137,47 @@ public class Solicitacao implements Serializable {
 		this.usuario_ID = usuario_ID;
 	}
 
-	public Date getData() {
-		return data;
+	public String getFuncionarioConclusao_ID() {
+		return funcionarioConclusao_ID;
 	}
 
-	public void setData(Date data) {
-		if (dataTempoString == null || dataTempoString.isEmpty()) {
+	public void setFuncionarioConclusao_ID(String funcionarioConclusao_ID) {
+		this.funcionarioConclusao_ID = funcionarioConclusao_ID;
+	}
+
+	public Date getDataAbertura() {
+		return dataAbertura;
+	}
+
+	public void setDataAbertura(Date data) {
+		if (dataAberturaString == null || dataAberturaString.isEmpty()) {
 			DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, new Locale("pt", "BR"));
-			dataTempoString = df.format(data);
+			dataAberturaString = df.format(data);
 		}
-		this.data = data;
+		this.dataAbertura = data;
+	}
+
+	public Date getDataConclusao() {
+		return dataConclusao;
+	}
+
+	public void setDataConclusao(Date dataConclusao) {
+		if (dataConclusao != null)
+			if (dataConclusaoString == null || dataConclusaoString.isEmpty()) {
+				DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT,
+						new Locale("pt", "BR"));
+				dataConclusaoString = df.format(dataConclusao);
+			}
+		this.dataConclusao = dataConclusao;
 	}
 
 	@Exclude
-	public String getDataTempoString() {
-		return dataTempoString;
+	public String getDataAberturaString() {
+		return dataAberturaString;
 	}
 
-	public void setDataTempoString(String dataTempoString) {
-		this.dataTempoString = dataTempoString;
+	public void setDataAberturaString(String dataTempoString) {
+		this.dataAberturaString = dataTempoString;
 	}
 
 	public String getDepartamento_ID() {
@@ -209,6 +246,15 @@ public class Solicitacao implements Serializable {
 		if (usuario != null && usuario.get_ID() != null)
 			this.usuario_ID = usuario.get_ID();
 		this.localCidadao = usuario;
+	}
+
+	@Exclude
+	public Usuario getLocalFuncionarioConclusao() {
+		return localFuncionarioConclusao;
+	}
+
+	public void setLocalFuncionarioConclusao(Usuario funcionarioConclusao) {
+		this.localFuncionarioConclusao = funcionarioConclusao;
 	}
 
 	@Exclude

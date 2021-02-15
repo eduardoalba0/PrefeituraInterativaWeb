@@ -19,6 +19,8 @@ import org.primefaces.model.map.DefaultMapModel;
 import org.primefaces.model.map.MapModel;
 import org.primefaces.model.map.Marker;
 
+import com.google.api.client.testing.util.TestableByteArrayInputStream;
+
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.AtendimentoDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.SolicitacaoDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Atendimento;
@@ -26,6 +28,7 @@ import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Aviso;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Categoria;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Departamento;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Solicitacao;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.TipoUsuario;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Usuario;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.FirebaseHelper;
 
@@ -55,6 +58,10 @@ public class SolicitacaoBean extends AbstractBean {
 	@Inject
 	@Named("usuarios")
 	private List<Usuario> usuarios;
+	
+	@Inject
+	@Named("funcionarios")
+	private List<Usuario> funcionarios;
 
 	@Inject
 	@Named("atendimentos")
@@ -72,7 +79,7 @@ public class SolicitacaoBean extends AbstractBean {
 
 		if (mapModel == null)
 			mapModel = new DefaultMapModel();
-
+//TODO FILTRAR SOLICITAÇÕES POR DEPARTAMENTO
 		solicitacoes = SolicitacaoDAO.getAll();
 		if (solicitacoes == null) {
 			hideStatusDialog();
@@ -116,6 +123,9 @@ public class SolicitacaoBean extends AbstractBean {
 			aux.setLocalCategorias(localCategorias);
 			aux.setLocalAtendimentos(localAtendimentos);
 			aux.setLocalCidadao(usuarios.get(usuarios.indexOf(new Usuario(aux.getUsuario_ID()))));
+			if (aux.getFuncionarioConclusao_ID() != null)
+				aux.setLocalFuncionarioConclusao(
+						usuarios.get(funcionarios.indexOf(new Usuario(aux.getFuncionarioConclusao_ID()))));
 			aux.setLocalDepartamento(
 					departamentos.get(departamentos.indexOf(new Departamento(aux.getDepartamento_ID()))));
 		});
@@ -222,6 +232,8 @@ public class SolicitacaoBean extends AbstractBean {
 	public void responderEncerrar() {
 		avisos = new ArrayList<Aviso>();
 		solicitacao.setConcluida(true);
+		solicitacao.setFuncionarioConclusao_ID(funcionarioLogado.get_ID());
+		solicitacao.setDataConclusao(new Date());
 		atendimento.set_ID(UUID.randomUUID().toString());
 		atendimento.setAcao("Demanda foi encerrada.");
 		atendimento.setLocalSolicitacao(solicitacao);

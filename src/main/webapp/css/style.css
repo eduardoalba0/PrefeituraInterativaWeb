@@ -86,13 +86,13 @@ body,.div-tramitacao
     border-color: var (--color-orange) ! important;
 }
 
-.ui-messages-close,
+/*.ui-messages-close,
 .ui-inputfield,
 .ui-icon-check,
 .ui-inputgroup-addon:first-child,
 .ui-inputgroup .ui-inputgroup-addon>.pi {
     color: white !important;
-}
+}*/
 
 .ui-messages-info,
 .ui-growl-info {

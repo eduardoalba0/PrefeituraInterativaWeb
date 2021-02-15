@@ -37,6 +37,7 @@ public class Usuario implements Serializable {
 	private String uriFoto;
 	private boolean habilitado;
 	private DadosFuncionais dadosFuncionais;
+	private boolean staged;
 
 	@Exclude
 	private URI localUriFoto;
@@ -131,7 +132,13 @@ public class Usuario implements Serializable {
 	public void setHabilitado(boolean habilitado) {
 		this.habilitado = habilitado;
 	}
+	public boolean isStaged() {
+		return staged;
+	}
 
+	public void setStaged(boolean staged) {
+		this.staged = staged;
+	}
 	public String getToken() {
 		return token;
 	}
