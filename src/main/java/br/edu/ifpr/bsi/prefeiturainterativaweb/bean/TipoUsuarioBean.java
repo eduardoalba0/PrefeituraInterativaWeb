@@ -23,7 +23,6 @@ public class TipoUsuarioBean extends AbstractBean {
 
 	private List<TipoUsuario> tiposUsuario;
 
-	@Override
 	public void init() {
 		if (tipoUsuario == null) {
 			tipoUsuario = new TipoUsuario();
@@ -33,7 +32,6 @@ public class TipoUsuarioBean extends AbstractBean {
 
 	}
 
-	@Override
 	public List<TipoUsuario> listar() {
 		tiposUsuario = TipoUsuarioDAO.getAll();
 		if (tiposUsuario == null) {
@@ -45,19 +43,16 @@ public class TipoUsuarioBean extends AbstractBean {
 		return tiposUsuario;
 	}
 
-	@Override
 	public void cadastrar() {
 		tipoUsuario = new TipoUsuario();
 		tipoUsuario.set_ID(UUID.randomUUID().toString());
 		tipoUsuario.setPersonalizado(true);
 	}
 
-	@Override
 	public void selecionar(ActionEvent evento) {
 		tipoUsuario = (TipoUsuario) evento.getComponent().getAttributes().get("tipoUsuarioSelecionado");
 	}
 
-	@Override
 	public void salvarEditar() {
 		if (TipoUsuarioDAO.merge(tipoUsuario)) {
 			tipoUsuario = new TipoUsuario();
@@ -69,7 +64,6 @@ public class TipoUsuarioBean extends AbstractBean {
 		}
 	}
 
-	@Override
 	public void removerDesabilitar(ActionEvent evento) {
 		tipoUsuario = (TipoUsuario) evento.getComponent().getAttributes().get("tipoUsuarioSelecionado");
 		if (!tipoUsuario.isPersonalizado()) {

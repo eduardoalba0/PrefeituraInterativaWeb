@@ -19,8 +19,6 @@ import org.primefaces.model.map.DefaultMapModel;
 import org.primefaces.model.map.MapModel;
 import org.primefaces.model.map.Marker;
 
-import com.google.api.client.testing.util.TestableByteArrayInputStream;
-
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.AtendimentoDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.SolicitacaoDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Atendimento;
@@ -28,7 +26,6 @@ import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Aviso;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Categoria;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Departamento;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Solicitacao;
-import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.TipoUsuario;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Usuario;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.FirebaseHelper;
 
@@ -71,7 +68,6 @@ public class SolicitacaoBean extends AbstractBean {
 	@Named("departamentos")
 	private List<Departamento> departamentos;
 
-	@Override
 	@PostConstruct
 	public void init() {
 		if (solicitacao == null)
@@ -89,7 +85,6 @@ public class SolicitacaoBean extends AbstractBean {
 		hideStatusDialog();
 	}
 
-	@Override
 	public void cadastrar() {
 		solicitacao = new Solicitacao();
 		atendimento = new Atendimento();
@@ -98,7 +93,6 @@ public class SolicitacaoBean extends AbstractBean {
 		solicitacao.set_ID(UUID.randomUUID().toString());
 	}
 
-	@Override
 	public List<Solicitacao> listar() {
 		solicitacoes.forEach((aux) -> {
 			List<Categoria> localCategorias = new ArrayList<>();
@@ -134,7 +128,6 @@ public class SolicitacaoBean extends AbstractBean {
 		return solicitacoes;
 	}
 
-	@Override
 	public void selecionar(ActionEvent evento) {
 		solicitacao = (Solicitacao) evento.getComponent().getAttributes().get("solicitacaoSelecionada");
 		atendimento = new Atendimento();
@@ -149,7 +142,6 @@ public class SolicitacaoBean extends AbstractBean {
 		hideStatusDialog();
 	}
 
-	@Override
 	public void salvarEditar() {
 		boolean tasksSuccess = false;
 		if (tempCategorias != null && !tempCategorias.isEmpty()
@@ -179,11 +171,6 @@ public class SolicitacaoBean extends AbstractBean {
 			hideStatusDialog();
 			showErrorMessage("Ocorreu uma falha ao gravar os dados. Consulte o suporte da ferramenta.");
 		}
-	}
-
-	@Override
-	public void removerDesabilitar(ActionEvent evento) {
-
 	}
 
 	public void salvarCategorias() {

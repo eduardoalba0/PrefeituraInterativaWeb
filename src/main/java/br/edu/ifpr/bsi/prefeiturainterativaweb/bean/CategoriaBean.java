@@ -29,7 +29,6 @@ public class CategoriaBean extends AbstractBean {
 	@Named("departamentos")
 	private List<Departamento> departamentos;
 
-	@Override
 	@PostConstruct
 	public void init() {
 		if (categoria == null)
@@ -47,7 +46,6 @@ public class CategoriaBean extends AbstractBean {
 		}
 	}
 	
-	@Override
 	public List<Categoria> listar() {
 		categorias.forEach((aux) -> {
 			aux.setLocalDepartamento(
@@ -57,19 +55,16 @@ public class CategoriaBean extends AbstractBean {
 		return categorias;
 	}
 
-	@Override
 	public void cadastrar() {
 		categoria = new Categoria();
 		categoria.set_ID(UUID.randomUUID().toString());
 		categoria.setHabilitada(true);
 	}
 
-	@Override
 	public void selecionar(ActionEvent evento) {
 		categoria = (Categoria) evento.getComponent().getAttributes().get("categoriaSelecionada");
 	}
 
-	@Override
 	public void salvarEditar() {
 		boolean tasksSuccess = CategoriaDAO.merge(categoria);
 		Departamento departamento = null;
@@ -122,7 +117,6 @@ public class CategoriaBean extends AbstractBean {
 		}
 	}
 
-	@Override
 	public void removerDesabilitar(ActionEvent evento) {
 		categoria = (Categoria) evento.getComponent().getAttributes().get("categoriaSelecionada");
 		if (categoria.isHabilitada()) {

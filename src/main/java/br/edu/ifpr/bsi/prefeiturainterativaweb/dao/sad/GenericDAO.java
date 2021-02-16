@@ -5,12 +5,10 @@ import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
-import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 
 import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.HibernateHelper;
 
@@ -107,17 +105,15 @@ public class GenericDAO<Entidade> {
 		return success;
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<Entidade> getAll() {
 		List<Entidade> resultado = null;
 		Session sessao = HibernateHelper.getFabricaDeSessoes().openSession();
 		try {
 			CriteriaBuilder builder = sessao.getCriteriaBuilder();
 			CriteriaQuery<Entidade> criteria = builder.createQuery(classe);
-			criteria.
-			criteria.Criteria consulta = sessao.createCriteria(classe);
-			resultado = consulta.list();
-			return resultado;
+			Root<Entidade> root = criteria.from(classe);
+			criteria.select(root);
+			return sessao.createQuery(criteria).getResultList();
 		} catch (RuntimeException erro) {
 			resultado = null;
 		} finally {
@@ -126,56 +122,4 @@ public class GenericDAO<Entidade> {
 		return resultado;
 	}
 
-	@SuppressWarnings("unchecked")
-	public Entidade get(String _ID) {
-		Entidade resultado = null;
-		Session sessao = HibernateHelper.getFabricaDeSessoes().openSession();
-		try {
-			Criteria consulta = sessao.createCriteria(classe);
-			consulta.add(Restrictions.idEq(_ID));
-			resultado = (Entidade) consulta.uniqueResult();
-			return resultado;
-		} catch (RuntimeException erro) {
-			resultado = null;
-		} finally {
-			sessao.close();
-		}
-		return resultado;
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<Entidade> getAll(String campoOrdenacao) {
-		List<Entidade> resultado = null;
-		Session sessao = HibernateHelper.getFabricaDeSessoes().openSession();
-		try {
-			Criteria consulta = sessao.createCriteria(classe);
-			consulta.addOrder(Order.asc(campoOrdenacao));
-			resultado = consulta.list();
-			return resultado;
-		} catch (RuntimeException erro) {
-			resultado = null;
-		} finally {
-			sessao.close();
-		}
-		return resultado;
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<Entidade> getAll(String campo, String ordem, Object valor) {
-		List<Entidade> resultado = null;
-		Session sessao = HibernateHelper.getFabricaDeSessoes().openSession();
-		try {
-			Criteria consulta = sessao.createCriteria(classe);
-			if (valor != null)
-				consulta.add(Restrictions.eq(campo, valor));
-			consulta.addOrder(Order.asc(ordem));
-			resultado = consulta.list();
-			return resultado;
-		} catch (RuntimeException erro) {
-			resultado = null;
-		} finally {
-			sessao.close();
-		}
-		return resultado;
-	}
 }

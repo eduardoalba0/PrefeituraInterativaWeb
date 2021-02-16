@@ -176,6 +176,11 @@ public class Solicitacao implements Serializable {
 		return dataAberturaString;
 	}
 
+	@Exclude
+	public String getDataConclusaoString() {
+		return dataConclusaoString;
+	}
+
 	public void setDataAberturaString(String dataTempoString) {
 		this.dataAberturaString = dataTempoString;
 	}
@@ -238,7 +243,7 @@ public class Solicitacao implements Serializable {
 	@Exclude
 	public Usuario getLocalCidadao() {
 		if (this.anonima && localCidadao != null)
-			localCidadao.setNome("Cidadão anônimo");
+			localCidadao.setNome("Anônimo");
 		return localCidadao;
 	}
 

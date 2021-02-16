@@ -10,12 +10,12 @@
 		<property name="connection.url">jdbc:postgresql://ec2-52-22-161-59.compute-1.amazonaws.com/d3fg24bokjnqv?sslmode=require</property>
 		<property name="connection.username">ilbfqjmujrsuaf</property>
 		<property name="connection.password">16646ddf915e04973c7e6d0c2ee4dc1882e82b2aaf30e55787412bcc1d689b29</property>
-		<property name="connection.pool_size">1</property>
+		<property name="connection.pool_size">20</property>
 		<property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
 		<property name="current_session_context_class">thread</property>
 		<property name="cache.provider_class">org.hibernate.cache.internal.NoCacheProvider</property>
 		<property name="show_sql">true</property>
-		<property name="hbm2ddl.auto">validate</property>
+		<property name="hbm2ddl.auto">update</property>
 
 		<!-- Mapeamento das entidades -->
 		<mapping
@@ -27,8 +27,12 @@
 		<mapping
 			class="br.edu.ifpr.bsi.prefeiturainterativaweb.domain.sad.Dim_Funcionario" />
 		<mapping
+			class="br.edu.ifpr.bsi.prefeiturainterativaweb.domain.sad.Dim_Local" />
+		<mapping
 			class="br.edu.ifpr.bsi.prefeiturainterativaweb.domain.sad.Dim_Tempo" />
 		<mapping
 			class="br.edu.ifpr.bsi.prefeiturainterativaweb.domain.sad.Fato_QualidadeAtendimento" />
+		<mapping
+			class="br.edu.ifpr.bsi.prefeiturainterativaweb.domain.sad.Fato_DemandasLocal" />
 	</session-factory>
 </hibernate-configuration>

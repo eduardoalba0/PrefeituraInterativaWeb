@@ -1,9 +1,7 @@
 package br.edu.ifpr.bsi.prefeiturainterativaweb.domain.sad;
 
 import java.io.Serializable;
-import java.util.UUID;
 
-import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 

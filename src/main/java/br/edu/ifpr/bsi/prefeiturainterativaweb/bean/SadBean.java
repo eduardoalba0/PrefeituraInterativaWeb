@@ -2,33 +2,38 @@ package br.edu.ifpr.bsi.prefeiturainterativaweb.bean;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.Objects;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.SessionScoped;
-import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.charts.ChartData;
 import org.primefaces.model.charts.axes.cartesian.CartesianScales;
 import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearAxes;
 import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearTicks;
+import org.primefaces.model.charts.bar.BarChartDataSet;
+import org.primefaces.model.charts.bar.BarChartModel;
 import org.primefaces.model.charts.bar.BarChartOptions;
 import org.primefaces.model.charts.hbar.HorizontalBarChartDataSet;
 import org.primefaces.model.charts.hbar.HorizontalBarChartModel;
+import org.primefaces.model.charts.optionconfig.legend.Legend;
 
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.SolicitacaoDAO;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.sad.Fato_DemandasLocalDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.sad.Fato_QualidadeAtendimentoDAO;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Categoria;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Departamento;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Solicitacao;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Usuario;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.sad.Fato_DemandasLocal;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.sad.Fato_QualidadeAtendimento;
 
-@Named("qualidadeAtendimentoBean")
-@SessionScoped
+@Named("sadBean")
+@ViewScoped
 @SuppressWarnings("serial")
-public class QualidadeAtendimentoBean extends AbstractBean {
+public class SadBean extends AbstractBean {
 
 	@Inject
 	@Named("departamentos")
@@ -42,20 +47,30 @@ public class QualidadeAtendimentoBean extends AbstractBean {
 	@Named("funcionarios")
 	private List<Usuario> funcionarios;
 
-	private Fato_QualidadeAtendimento qualidadeAtendimento;
-	private Fato_QualidadeAtendimentoDAO dao;
-	private List<Fato_QualidadeAtendimento> qualidadeAtendimentoList;
-	private HorizontalBarChartModel modelDepartamentos;
+	@Inject
+	@Named("categorias")
+	private List<Categoria> categorias;
 
-	@Override
+	private Fato_QualidadeAtendimentoDAO qualidadeDAO;
+	private List<Fato_QualidadeAtendimento> qualidadeAtendimentoList;
+	private List<ModelAvaliacao> avMediaDepartamento;
+	private List<ModelAvaliacao> avMediaFuncionario;
+	private BarChartModel modelDepartamentos;
+	private HorizontalBarChartModel modelFuncionarios;
+
+	private Fato_DemandasLocalDAO demandasDAO;
+	private List<Fato_DemandasLocal> demandasLocalList;
+	private List<ModelDemandaLocal> qtCategoria;
+	private List<ModelDemandaLocal> qtDepartamento;
+
 	@PostConstruct
 	public void init() {
 		showStatusDialog();
-		if (qualidadeAtendimento == null) {
-			qualidadeAtendimento = new Fato_QualidadeAtendimento();
+		if (qualidadeDAO == null) {
+			qualidadeDAO = new Fato_QualidadeAtendimentoDAO();
 		}
-		if (dao == null) {
-			dao = new Fato_QualidadeAtendimentoDAO();
+		if (demandasDAO == null) {
+			demandasDAO = new Fato_DemandasLocalDAO();
 		}
 
 		stage();
@@ -64,90 +79,121 @@ public class QualidadeAtendimentoBean extends AbstractBean {
 	}
 
 	public void stage() {
-		List<Fato_QualidadeAtendimento> mergeList = new ArrayList<>();
-		solicitacoes.removeIf(solicitacao -> solicitacao.isStaged());
+		List<Fato_QualidadeAtendimento> mergeListQualidade = new ArrayList<>();
+		List<Fato_DemandasLocal> mergeListLocal = new ArrayList<>();
+		// solicitacoes.removeIf(solicitacao -> solicitacao.isStaged());
 		solicitacoes.forEach(solicitacao -> {
 			if (solicitacao.getFuncionarioConclusao_ID() != null)
 				solicitacao.setLocalFuncionarioConclusao(
 						funcionarios.get(funcionarios.indexOf(new Usuario(solicitacao.getFuncionarioConclusao_ID()))));
 			solicitacao.setLocalDepartamento(
 					departamentos.get(departamentos.indexOf(new Departamento(solicitacao.getDepartamento_ID()))));
-			mergeList.add(new Fato_QualidadeAtendimento(solicitacao));
-			solicitacao.setStaged(true);
+			mergeListQualidade.add(new Fato_QualidadeAtendimento(solicitacao));
+
+			solicitacao.getCategorias().forEach(categoria -> {
+				if (categorias != null && categorias.contains(new Categoria(categoria)))
+					mergeListLocal.add(new Fato_DemandasLocal(solicitacao,
+							categorias.get(categorias.indexOf(new Categoria(categoria)))));
+			});
 		});
-		if (dao.merge(mergeList)) {
+		if (qualidadeDAO.merge(mergeListQualidade) && demandasDAO.merge(mergeListLocal)) {
 			new Thread(() -> {
 				solicitacoes.forEach(solicitacao -> SolicitacaoDAO.update(solicitacao, "staged", true));
+				solicitacoes = SolicitacaoDAO.getAll();
 			}).run();
 		} else {
-			System.err.println("Falha ao sincronizar dados no Data Warehouse.");
+			showErrorMessage("Falha ao sincronizar dados no Data Warehouse.");
 		}
 	}
 
-	@Override
-	public void cadastrar() {
-		qualidadeAtendimento = new Fato_QualidadeAtendimento();
-		qualidadeAtendimento.set_ID(UUID.randomUUID().toString());
-	}
-
-	@Override
-	public void selecionar(ActionEvent evento) {
-		qualidadeAtendimento = (Fato_QualidadeAtendimento) evento.getComponent().getAttributes()
-				.get("qualidadeAtendimentoSelecionado");
-	}
-
-	@Override
-	public void salvarEditar() {
-		if (dao.merge(qualidadeAtendimento)) {
-			qualidadeAtendimento = new Fato_QualidadeAtendimento();
-			hideStatusDialog();
-			showSuccessMessage("Dados gravados na nuvem.");
-		} else {
-			hideStatusDialog();
-			showErrorMessage("Ocorreu uma falha ao gravar os dados. Consulte o suporte da ferramenta.");
-		}
-	}
-
-	@Override
 	public List<Fato_QualidadeAtendimento> listar() {
-		qualidadeAtendimentoList = dao.getAll();
-		if (qualidadeAtendimentoList == null) {
+		qualidadeAtendimentoList = qualidadeDAO.getAll();
+		demandasLocalList = demandasDAO.getAll();
+
+		if (qualidadeAtendimentoList == null || demandasLocalList == null) {
 			qualidadeAtendimentoList = new ArrayList<Fato_QualidadeAtendimento>();
+			demandasLocalList = new ArrayList<Fato_DemandasLocal>();
 			hideStatusDialog();
 			showErrorMessage("Ocorreu uma falha ao listar os dados. Consulte o suporte da ferramenta.");
 		}
+		filtrarQualidadeAtendimento();
+		filtrarDemandasLocal();
 		hideStatusDialog();
 		return qualidadeAtendimentoList;
 	}
 
-	@Override
-	public void removerDesabilitar(ActionEvent evento) {
+	public void filtrarQualidadeAtendimento() {
+		avMediaDepartamento = new ArrayList<ModelAvaliacao>();
+		avMediaFuncionario = new ArrayList<ModelAvaliacao>();
+		qualidadeAtendimentoList.removeIf(aux -> aux.getAvaliacao() == null);
+		qualidadeAtendimentoList.forEach(val -> {
+			ModelAvaliacao departamento = new ModelAvaliacao();
+			departamento._ID = val.getDepartamento().get_ID();
+			if (avMediaDepartamento.contains(departamento)) {
+				avMediaDepartamento.get(avMediaDepartamento.indexOf(departamento))
+						.addNota(val.getAvaliacao().getNota());
+			} else {
+				departamento._ID = val.getDepartamento().get_ID();
+				departamento.nome = val.getDepartamento().getDescricao();
+				departamento.addNota(val.getAvaliacao().getNota());
+				avMediaDepartamento.add(departamento);
+			}
+
+			if (val.getFuncionario() != null) {
+				ModelAvaliacao funcionario = new ModelAvaliacao();
+				funcionario._ID = val.getFuncionario().get_ID();
+				if (avMediaFuncionario.contains(funcionario)) {
+					avMediaFuncionario.get(avMediaFuncionario.indexOf(funcionario))
+							.addNota(val.getAvaliacao().getNota());
+				} else {
+					funcionario._ID = val.getFuncionario().get_ID();
+					funcionario.nome = val.getFuncionario().getNome();
+					funcionario.addNota(val.getAvaliacao().getNota());
+					avMediaFuncionario.add(funcionario);
+				}
+			}
+		});
 	}
 
-	public Fato_QualidadeAtendimento getFato_QualidadeAtendimento() {
-		return qualidadeAtendimento;
+	public void filtrarDemandasLocal() {
+		qtCategoria = new ArrayList<SadBean.ModelDemandaLocal>();
+		qtDepartamento = new ArrayList<SadBean.ModelDemandaLocal>();
+		demandasLocalList.forEach(val -> {
+			if (val.getCategoria() != null) {
+				ModelDemandaLocal categoria = new ModelDemandaLocal();
+				categoria._ID = val.getCategoria().get_ID();
+				if (qtCategoria.contains(categoria)) {
+					qtCategoria.get(qtCategoria.indexOf(categoria)).quantidadeSolicitacoes++;
+				}
+			}
+			if (val.getDepartamento() != null) {
+				ModelDemandaLocal departamento = new ModelDemandaLocal();
+				departamento._ID = val.getDepartamento().get_ID();
+				if (qtDepartamento.contains(departamento)) {
+					qtDepartamento.get(qtDepartamento.indexOf(departamento)).quantidadeSolicitacoes++;
+				}
+			}
+		});
 	}
 
-	public void setFato_QualidadeAtendimento(Fato_QualidadeAtendimento tipousuario) {
-		this.qualidadeAtendimento = tipousuario;
-	}
-
-	public HorizontalBarChartModel getModelDepartamentos() {
-		modelDepartamentos = new HorizontalBarChartModel();
+	public BarChartModel getModelDepartamentos() {
+		modelDepartamentos = new BarChartModel();
+		BarChartDataSet dataSet = new BarChartDataSet();
 		ChartData data = new ChartData();
+		BarChartOptions options = new BarChartOptions();
+		CartesianScales cScales = new CartesianScales();
+		CartesianLinearAxes linearAxes = new CartesianLinearAxes();
+		CartesianLinearTicks ticks = new CartesianLinearTicks();
+		Legend legend = new Legend();
 
-		HorizontalBarChartDataSet hbarDataSet = new HorizontalBarChartDataSet();
 		List<Number> values = new ArrayList<>();
 		List<String> bgColor = new ArrayList<>();
 		List<String> labels = new ArrayList<>();
 
-		for (int i = 0; i < qualidadeAtendimentoList.size(); i++) {
-			Fato_QualidadeAtendimento fato = qualidadeAtendimentoList.get(i);
-			if (fato.getAvaliacao() != null)
-				values.add((Number) fato.getAvaliacao().getNota());
-			else
-				values.add(10);
-			labels.add(fato.getDepartamento().getDescricao());
+		for (int i = 0; i < avMediaDepartamento.size(); i++) {
+			ModelAvaliacao departamento = avMediaDepartamento.get(i);
+			values.add(departamento.media);
+			labels.add(departamento.nome);
 
 			if (i % 7 == 0)
 				bgColor.add("#6200EA");
@@ -164,32 +210,138 @@ public class QualidadeAtendimentoBean extends AbstractBean {
 			else if (i % 1 == 0)
 				bgColor.add("#D50000");
 		}
-		hbarDataSet.setData(values);
+		dataSet.setData(values);
+		dataSet.setBackgroundColor(bgColor);
+		dataSet.setBorderColor(bgColor);
+		dataSet.setBorderWidth(1);
 		data.setLabels(labels);
+		data.addChartDataSet(dataSet);
 
-		hbarDataSet.setBackgroundColor(bgColor);
-		hbarDataSet.setBorderColor(bgColor);
-		hbarDataSet.setBorderWidth(1);
-		data.addChartDataSet(hbarDataSet);
+		ticks.setBeginAtZero(true);
+		linearAxes.setOffset(true);
+		linearAxes.setTicks(ticks);
+		cScales.addXAxesData(linearAxes);
+		legend.setDisplay(false);
+		options.setScales(cScales);
+		options.setLegend(legend);
 
 		modelDepartamentos.setData(data);
+		modelDepartamentos.setOptions(options);
+		return modelDepartamentos;
+	}
 
+	public HorizontalBarChartModel getModelFuncionarios() {
+		modelFuncionarios = new HorizontalBarChartModel();
+		HorizontalBarChartDataSet dataSet = new HorizontalBarChartDataSet();
+		ChartData data = new ChartData();
 		BarChartOptions options = new BarChartOptions();
 		CartesianScales cScales = new CartesianScales();
 		CartesianLinearAxes linearAxes = new CartesianLinearAxes();
-		linearAxes.setOffset(true);
 		CartesianLinearTicks ticks = new CartesianLinearTicks();
+		Legend legend = new Legend();
+
+		List<Number> values = new ArrayList<>();
+		List<String> bgColor = new ArrayList<>();
+		List<String> labels = new ArrayList<>();
+
+		for (int i = 0; i < avMediaFuncionario.size(); i++) {
+			ModelAvaliacao funcionario = avMediaFuncionario.get(i);
+			values.add(funcionario.media);
+			labels.add(funcionario.nome);
+
+			if (i % 7 == 0)
+				bgColor.add("#6200EA");
+			else if (i % 6 == 0)
+				bgColor.add("#0091EA");
+			else if (i % 5 == 0)
+				bgColor.add("#00BFA5");
+			else if (i % 4 == 0)
+				bgColor.add("#64DD17");
+			else if (i % 3 == 0)
+				bgColor.add("#FFD600");
+			else if (i % 2 == 0)
+				bgColor.add("#FF6D00");
+			else if (i % 1 == 0)
+				bgColor.add("#D50000");
+		}
+		dataSet.setData(values);
+		dataSet.setBackgroundColor(bgColor);
+		dataSet.setBorderColor(bgColor);
+		dataSet.setBorderWidth(1);
+		data.setLabels(labels);
+		data.addChartDataSet(dataSet);
+
+		legend.setDisplay(false);
+
+		linearAxes.setOffset(true);
 		ticks.setBeginAtZero(true);
 		linearAxes.setTicks(ticks);
 		cScales.addXAxesData(linearAxes);
 		options.setScales(cScales);
+		options.setLegend(legend);
 
-		modelDepartamentos.setOptions(options);
+		modelFuncionarios.setData(data);
+		modelFuncionarios.setOptions(options);
 
-		return modelDepartamentos;
+		return modelFuncionarios;
 	}
 
-	public void setModelDepartamentos(HorizontalBarChartModel modelDepartamentos) {
+	public void setModelAvaliacaos(BarChartModel modelDepartamentos) {
 		this.modelDepartamentos = modelDepartamentos;
+
+	}
+
+	public void setModelAvaliacaos(HorizontalBarChartModel modelFuncionarios) {
+		this.modelFuncionarios = modelFuncionarios;
+	}
+
+	private class ModelAvaliacao {
+		private String _ID;
+		private String nome;
+		private float media;
+		private List<Float> notas;
+
+		public ModelAvaliacao() {
+			notas = new ArrayList<Float>();
+		}
+
+		public void addNota(float nota) {
+			notas.add(nota);
+			media = 0;
+			notas.forEach(aux -> {
+				media += aux;
+			});
+			media /= notas.size();
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			ModelAvaliacao other = (ModelAvaliacao) obj;
+			return Objects.equals(_ID, other._ID);
+		}
+	}
+
+	private class ModelDemandaLocal {
+		private String _ID;
+		private String descricao;
+		private int quantidadeSolicitacoes;
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			ModelDemandaLocal other = (ModelDemandaLocal) obj;
+			return Objects.equals(_ID, other._ID);
+		}
 	}
 }

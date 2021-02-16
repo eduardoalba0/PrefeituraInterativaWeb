@@ -8,19 +8,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Categoria;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Solicitacao;
 
 @Entity
-@Table(name = "tb_fato_qualidadeatendimento")
+@Table(name = "tb_fato_demandaslocal")
 @SuppressWarnings("serial")
-public class Fato_QualidadeAtendimento extends GenericDomain {
+public class Fato_DemandasLocal extends GenericDomain {
 
 	@Column
 	private boolean solicitacaoConcluida;
-
-	@JoinColumn(nullable = true)
-	@OneToOne(cascade = CascadeType.ALL)
-	private Dim_Avaliacao avaliacao;
 
 	@JoinColumn(nullable = true)
 	@OneToOne(cascade = CascadeType.ALL)
@@ -36,21 +33,24 @@ public class Fato_QualidadeAtendimento extends GenericDomain {
 
 	@JoinColumn(nullable = true)
 	@ManyToOne(cascade = CascadeType.ALL)
-	private Dim_Funcionario funcionario;
+	private Dim_Categoria categoria;
 
-	public Fato_QualidadeAtendimento() {
+	@JoinColumn(nullable = true)
+	@OneToOne(cascade = CascadeType.ALL)
+	private Dim_Local local;
+
+	public Fato_DemandasLocal() {
 
 	}
 
-	public Fato_QualidadeAtendimento(Solicitacao solicitacao) {
+	public Fato_DemandasLocal(Solicitacao solicitacao, Categoria categoria) {
 		this.set_ID(solicitacao.get_ID());
 		this.solicitacaoConcluida = solicitacao.isConcluida();
-		this.avaliacao = new Dim_Avaliacao(solicitacao);
 		this.dataAbertura = new Dim_Tempo(solicitacao.getDataAbertura());
 		this.dataConclusao = new Dim_Tempo(solicitacao.getDataConclusao());
 		this.departamento = new Dim_Departamento(solicitacao.getLocalDepartamento());
-		if (solicitacao.getLocalFuncionarioConclusao() != null)
-			this.funcionario = new Dim_Funcionario(solicitacao.getLocalFuncionarioConclusao());
+		this.categoria = new Dim_Categoria(categoria);
+		this.local = new Dim_Local(solicitacao);
 	}
 
 	public boolean isSolicitacaoConcluida() {
@@ -59,14 +59,6 @@ public class Fato_QualidadeAtendimento extends GenericDomain {
 
 	public void setSolicitacaoConcluida(boolean solicitacaoConcluida) {
 		this.solicitacaoConcluida = solicitacaoConcluida;
-	}
-
-	public Dim_Avaliacao getAvaliacao() {
-		return avaliacao;
-	}
-
-	public void setAvaliacao(Dim_Avaliacao avaliacao) {
-		this.avaliacao = avaliacao;
 	}
 
 	public Dim_Tempo getDataAbertura() {
@@ -93,12 +85,20 @@ public class Fato_QualidadeAtendimento extends GenericDomain {
 		this.departamento = departamento;
 	}
 
-	public Dim_Funcionario getFuncionario() {
-		return funcionario;
+	public Dim_Categoria getCategoria() {
+		return categoria;
 	}
 
-	public void setFuncionario(Dim_Funcionario funcionario) {
-		this.funcionario = funcionario;
+	public void setCategoria(Dim_Categoria categoria) {
+		this.categoria = categoria;
+	}
+
+	public Dim_Local getLocal() {
+		return local;
+	}
+
+	public void setLocal(Dim_Local local) {
+		this.local = local;
 	}
 
 }

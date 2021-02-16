@@ -43,7 +43,6 @@ public class UsuarioBean extends AbstractBean {
 	@Named("departamentos")
 	private List<Departamento> departamentos;
 
-	@Override
 	@PostConstruct
 	public void init() {
 		if (usuario == null)
@@ -62,7 +61,7 @@ public class UsuarioBean extends AbstractBean {
 		}
 	}
 
-	@Override
+	
 	public void cadastrar() {
 		usuario = new Usuario();
 		dadosFuncionais = new DadosFuncionais();
@@ -70,7 +69,6 @@ public class UsuarioBean extends AbstractBean {
 		uid = UUID.randomUUID().toString();
 	}
 
-	@Override
 	public List<Usuario> listar() {
 		showStatusDialog();
 		usuarios = UsuarioDAO.getAll();
@@ -88,7 +86,6 @@ public class UsuarioBean extends AbstractBean {
 		return usuarios;
 	}
 
-	@Override
 	public void selecionar(ActionEvent evento) {
 		usuario = (Usuario) evento.getComponent().getAttributes().get("usuarioSelecionado");
 		uid = usuario.get_ID();
@@ -97,7 +94,6 @@ public class UsuarioBean extends AbstractBean {
 			dadosFuncionais = new DadosFuncionais();
 	}
 
-	@Override
 	public void salvarEditar() {
 		try {
 			if (isTipoFuncionario())
@@ -135,7 +131,6 @@ public class UsuarioBean extends AbstractBean {
 		}
 	}
 
-	@Override
 	public void removerDesabilitar(ActionEvent evento) {
 		try {
 			usuario = (Usuario) evento.getComponent().getAttributes().get("usuarioSelecionado");

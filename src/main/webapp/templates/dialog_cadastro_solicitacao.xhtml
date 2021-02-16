@@ -76,7 +76,8 @@
 					<div class="ui-inputgroup ui-g-12 ui-md-6">
 						<span class="ui-inputgroup-addon">Data</span>
 						<p:datePicker id="data" readonly="true" showTime="true"
-							readonlyInput="true" value="#{solicitacaoBean.solicitacao.dataAbertura}"
+							readonlyInput="true"
+							value="#{solicitacaoBean.solicitacao.dataAbertura}"
 							showIcon="true" />
 						<p:tooltip for="data" position="top" />
 					</div>
@@ -190,21 +191,16 @@
 				</p:tab>
 				<p:tab id="avaliacao" title="Avaliação"
 					rendered="#{solicitacaoBean.solicitacao.avaliacao != null}">
-					<div class="ui-inputgroup ui-g-12 ui-md-6 ui-g-nopad">
+					<div class="ui-inputgroup ui-g-12 ui-md-6">
 						<span class="ui-inputgroup-addon">Nota</span>
-						<p:rating id="nota" stars="5" readonly="true"
-							value="#{solicitacaoBean.solicitacao.avaliacao.nota}" />
+						<p:inputText id="nota" readonly="true"
+							value="#{solicitacaoBean.solicitacao.avaliacao.nota} de 5.0" />
 					</div>
 					<div class="ui-inputgroup ui-g-12 ui-md-6">
 						<span class="ui-inputgroup-addon">Solucionada</span>
 						<p:inputText id="solucionada"
 							value="#{solicitacaoBean.solicitacao.avaliacao.solucionada ? 'Sim' : 'Não'}"
 							readonly="true" />
-						<span class="ui-inputgroup-addon-checkbox"> <p:selectBooleanCheckbox
-								value="#{solicitacaoBean.solicitacao.avaliacao.solucionada}">
-								<f:ajax event="change" render="solucionada" />
-							</p:selectBooleanCheckbox>
-						</span>
 					</div>
 					<div class="ui-inputgroup ui-g-12 ui-md-12">
 						<span class="ui-inputgroup-addon">Comentário</span>

@@ -39,7 +39,6 @@ public class AtendimentoBean extends AbstractBean {
 	@Named("solicitacoes")
 	private List<Solicitacao> solicitacoes;
 
-	@Override
 	@PostConstruct
 	public void init() {
 		showStatusDialog();
@@ -56,14 +55,12 @@ public class AtendimentoBean extends AbstractBean {
 		hideStatusDialog();
 	}
 
-	@Override
 	public void cadastrar() {
 		atendimento = new Atendimento();
 		atendimento.setLocalFuncionario(funcionarioLogado);
 		atendimento.set_ID(UUID.randomUUID().toString());
 	}
 
-	@Override
 	public List<Atendimento> listar() {
 		atendimentos.forEach((aux) -> {
 			if (usuarios != null && !usuarios.isEmpty() && usuarios.contains(new Usuario(aux.getFuncionario_ID()))) {
@@ -86,12 +83,10 @@ public class AtendimentoBean extends AbstractBean {
 		return atendimentos;
 	}
 
-	@Override
 	public void selecionar(ActionEvent evento) {
 		atendimento = (Atendimento) evento.getComponent().getAttributes().get("atendimentoSelecionado");
 	}
 
-	@Override
 	public void salvarEditar() {
 		if (AtendimentoDAO.merge(atendimento)) {
 			hideStatusDialog();
@@ -100,10 +95,6 @@ public class AtendimentoBean extends AbstractBean {
 			hideStatusDialog();
 			showErrorMessage("Ocorreu uma falha ao gravar os dados. Consulte o suporte da ferramenta.");
 		}
-	}
-
-	@Override
-	public void removerDesabilitar(ActionEvent evento) {
 	}
 
 	public Usuario getFuncionarioLogado() {

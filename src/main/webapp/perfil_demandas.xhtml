@@ -10,19 +10,19 @@
 	template="templates/menulateral.xhtml">
 
 	<ui:define name="conteudo">
-		<h:form id="form-demandas-area">
-			<p:dataTable id="tabela-demandas-area" var="demanda"
-				value="#{demandasAreaBean.listar()}" paginator="true"
-				paginatorPosition="bottom" rows="10">
-				<p:autoUpdate />
-				<f:facet name="header">
-					<div class="ui-g ui-fluid ui-nopad">
-						<div class="ui-g-12 ui-md-3">
-							<h2>DASHBOARDS | Demandas por área</h2>
-						</div>
-					</div>
-				</f:facet>
-			</p:dataTable>
-		</h:form>
+		<p:card class="ui-g-12 ui-md-12">
+			<div class="ui-g-12 ui-md-12">
+				<h1>Solicitações por Categoria</h1>
+			</div>
+			<p:barChart model="#{sadBean.modelDepartamentos}"
+				style="width: 100%; height: 500px;" />
+		</p:card>
+		<p:card class="ui-g-12 ui-md-12">
+			<div class="ui-g-12 ui-md-12">
+				<h1>Solicitações por Departamento</h1>
+			</div>
+			<p:barChart model="#{sadBean.modelFuncionarios}"
+				style="width: 100%; height: 500px;" />
+		</p:card>
 	</ui:define>
 </ui:composition>

@@ -10,11 +10,18 @@
 	template="templates/menulateral.xhtml">
 
 	<ui:define name="conteudo">
-		<p:card>
+		<p:card class="ui-g-12 ui-md-12">
 			<div class="ui-g-12 ui-md-12">
-				<h1>Média das avaliações</h1>
+				<h1>Nota média por departamento</h1>
 			</div>
-			<p:barChart model="#{qualidadeAtendimentoBean.modelDepartamentos}"
+			<p:barChart model="#{sadBean.modelDepartamentos}"
+				style="width: 100%; height: 500px;" />
+		</p:card>
+		<p:card class="ui-g-12 ui-md-12">
+			<div class="ui-g-12 ui-md-12">
+				<h1>Nota média por funcionário</h1>
+			</div>
+			<p:barChart model="#{sadBean.modelFuncionarios}"
 				style="width: 100%; height: 500px;" />
 		</p:card>
 	</ui:define>

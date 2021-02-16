@@ -4,20 +4,20 @@
 
 :root {
     --color-red: #D50000;
-    --color-orange: #FF6D00;
-    --color-yellow: #FFAB00;
+    --color-primary: #1A237E;
+    --color-blue: #304FFE;
     --color-green: #2E7D32;
-    --color-blue: #0091EA;
-    --color-darkblue: #6200EA;
-    --color-pink: #F50057;
-    --input-hover-border-color: var(--color-orange) !important;
-    --input-focus-border-color: var(--color-orange) !important;
+    --color-tertiary: #2E7D32;
+    --color-darkblue: #1A237E;
+    --color-secondary: #6200EA;
+    --input-hover-border-color: var(--color-primary) !important;
+    --input-focus-border-color: var(--color-primary) !important;
 }
 
 html,
 body,.div-tramitacao
  {
-    background: linear-gradient(to left, var(--color-orange) 0%, var(--color-pink) 100%) !important;
+    background: linear-gradient(to left, var(--color-primary) 0%, var(--color-secondary) 100%) !important;
 }
 
 .ui-success-color {
@@ -31,19 +31,19 @@ body,.div-tramitacao
 }
 
 .ui-warning-color {
-    background-color: var(--color-yellow) !important;
-    border: var(--color-yellow) !important;
-}
-
-.ui-secondary-color,
-.ui-tooltip-text {
     background-color: var(--color-blue) !important;
     border: var(--color-blue) !important;
 }
 
+.ui-secondary-color,
+.ui-tooltip-text {
+    background-color: var(--color-tertiary) !important;
+    border: var(--color-tertiary) !important;
+}
+
 .ui-tertiary-color {
-    background-color: var(--color-pink) !important;
-    border: var(--color-pink) !important;
+    background-color: var(--color-secondary) !important;
+    border: var(--color-secondary) !important;
 }
 
 .ui-quartiary-color {
@@ -62,13 +62,13 @@ body,.div-tramitacao
 .ui-paginator-page,
 .ui-chips-token,
 .ui-button:not(.ui-success-color):not(.ui-danger-color):not(.ui-warning-color):not(.ui-secondary-color):not(.ui-tertiary-color):not(.ui-quartiary-color) {
-    background-color: var(--color-orange) !important;
-    border: var(--color-orange) !important;
+    background-color: var(--color-primary) !important;
+    border: var(--color-primary) !important;
     color: white !important;
 }
 
 .ui-datatable thead th.ui-state-active {
-    background: var(--color-yellow) !important;
+    background: var(--color-blue) !important;
 }
 
 .ui-icon-check,
@@ -77,22 +77,21 @@ body,.div-tramitacao
 .ui-chkbox .ui-chkbox-box.ui-state-active,
 .ui-inputgroup .ui-inputgroup-addon-checkbox,
 .ui-inputgroup .ui-inputgroup-addon {
-    background-color: var(--color-yellow) !important;
-    border-color: var(--color-yellow) !important;
+    background-color: var(--color-blue) !important;
+    border-color: var(--color-blue) !important;
 }
 
 .ui-inputfield .ui-state-focus:not(.ui-state-error),
 .ui-inputfield .ui-state-hover:not(.ui-state-error) {
-    border-color: var (--color-orange) ! important;
+    border-color: var (--color-primary) ! important;
 }
 
-/*.ui-messages-close,
-.ui-inputfield,
+.ui-messages-close,
 .ui-icon-check,
 .ui-inputgroup-addon:first-child,
 .ui-inputgroup .ui-inputgroup-addon>.pi {
     color: white !important;
-}*/
+}
 
 .ui-messages-info,
 .ui-growl-info {
@@ -119,13 +118,13 @@ body,.div-tramitacao
 .ui-fieldset,
 .ui-fieldset-legend,
 hr.ui-separator {
-    border: 1px solid var(--color-orange) !important;
-    background: var(--color-orange) !important;
+    border: 1px solid var(--color-primary) !important;
+    background: var(--color-primary) !important;
 }
 
 .ui-fieldset-legend,
 .ui-fieldset {
-    border-radius: 50px !important;
+    /*border-radius: 50px !important;*/
 }
 
 .ui-image {
@@ -138,9 +137,7 @@ hr.ui-separator {
     border: 3px solid var(--color-red) !important;
 }
 
-.ui-growl-item-container,
-.ui-chips-token,
-.ui-button:not(.ui-button-icon-only) {
+.ui-chips-token {
     border-radius: 30px !important;
     box-shadow: 1px 2px 3px black !important;
 }
@@ -197,7 +194,7 @@ ul, .ui-chips-container{
     mask-repeat: no-repeat !important;
     mask-size: contain !important;
     width: 99% !important;
-    background: var(--color-orange) !important;
+    background: var(--color-primary) !important;
     height: 95% !important;
     top: 10% !important;
     left: 11% !important;
@@ -419,6 +416,7 @@ h3,
 .ui-messages-warn,
 .ui-messages-fatal,
 .ui-texto,
+.div-tramitacao,
 .ui-growl-item-container {
     color: white !important;
 }
