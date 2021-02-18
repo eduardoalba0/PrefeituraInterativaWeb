@@ -22,6 +22,7 @@ public class SolicitacaoDAO {
 
 	public static boolean merge(Solicitacao solicitacao) {
 		init();
+		solicitacao.setStaged(false);
 		return DatabaseHelper.merge(reference.document(solicitacao.get_ID()), solicitacao) != null;
 	}
 

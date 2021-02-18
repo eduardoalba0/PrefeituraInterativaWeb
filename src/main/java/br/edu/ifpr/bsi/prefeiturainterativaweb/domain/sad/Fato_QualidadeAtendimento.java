@@ -24,10 +24,6 @@ public class Fato_QualidadeAtendimento extends GenericDomain {
 
 	@JoinColumn(nullable = true)
 	@OneToOne(cascade = CascadeType.ALL)
-	private Dim_Tempo dataAbertura;
-
-	@JoinColumn(nullable = true)
-	@OneToOne(cascade = CascadeType.ALL)
 	private Dim_Tempo dataConclusao;
 
 	@JoinColumn(nullable = true)
@@ -45,8 +41,8 @@ public class Fato_QualidadeAtendimento extends GenericDomain {
 	public Fato_QualidadeAtendimento(Solicitacao solicitacao) {
 		this.set_ID(solicitacao.get_ID());
 		this.solicitacaoConcluida = solicitacao.isConcluida();
-		this.avaliacao = new Dim_Avaliacao(solicitacao);
-		this.dataAbertura = new Dim_Tempo(solicitacao.getDataAbertura());
+		if (solicitacao.getAvaliacao() != null)
+			this.avaliacao = new Dim_Avaliacao(solicitacao);
 		this.dataConclusao = new Dim_Tempo(solicitacao.getDataConclusao());
 		this.departamento = new Dim_Departamento(solicitacao.getLocalDepartamento());
 		if (solicitacao.getLocalFuncionarioConclusao() != null)
@@ -67,14 +63,6 @@ public class Fato_QualidadeAtendimento extends GenericDomain {
 
 	public void setAvaliacao(Dim_Avaliacao avaliacao) {
 		this.avaliacao = avaliacao;
-	}
-
-	public Dim_Tempo getDataAbertura() {
-		return dataAbertura;
-	}
-
-	public void setDataAbertura(Dim_Tempo dataAbertura) {
-		this.dataAbertura = dataAbertura;
 	}
 
 	public Dim_Tempo getDataConclusao() {

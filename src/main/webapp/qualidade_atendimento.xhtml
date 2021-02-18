@@ -10,19 +10,190 @@
 	template="templates/menulateral.xhtml">
 
 	<ui:define name="conteudo">
-		<p:card class="ui-g-12 ui-md-12">
-			<div class="ui-g-12 ui-md-12">
-				<h1>Nota média por departamento</h1>
-			</div>
-			<p:barChart model="#{sadBean.modelDepartamentos}"
-				style="width: 100%; height: 500px;" />
-		</p:card>
-		<p:card class="ui-g-12 ui-md-12">
-			<div class="ui-g-12 ui-md-12">
-				<h1>Nota média por funcionário</h1>
-			</div>
-			<p:barChart model="#{sadBean.modelFuncionarios}"
-				style="width: 100%; height: 500px;" />
+		<p:card>
+			<h:form id="form-cadastro-solicitacao"
+				styleClass="ui-g ui-fluid centeredColumn">
+				<p:tabView id="root-tabview"
+					styleClass="centeredColumn ui-g-12 ui-g-nopad">
+					<p:tab id="media-departamento" title="Por Departamento">
+						<p:fieldset legend="Filtros" toggleable="true" toggleSpeed="500"
+							styleClass="ui-white-color">
+							<div class="p-grid no-update" align="left">
+								<p:outputLabel class="p-col-6" value="Filtrar por Departamento " />
+								<p:commandButton class="p-col-4" value="TODOS"
+									actionListener="#{sadBean.selecionarAvDepartamento}"
+									update="@(form :not(.no-update))">
+									<f:attribute name="departamentoSelecionado" value="#{null}" />
+								</p:commandButton>
+								<p:repeat value="#{sadBean.departamentos}"
+									var="departamento">
+									<p:commandButton class="p-col-4" value="#{departamento.descricao}"
+										disabled="#{sadBean.departamentoSelecionado != null and sadBean.departamentoSelecionado._ID != departamento._ID}"
+										icon="#{sadBean.departamentoSelecionado != null and sadBean.departamentoSelecionado._ID == departamento._ID ? 'pi pi-check' : ''}"
+										actionListener="#{sadBean.selecionarAvDepartamento}"
+										update="@(form :not(.no-update))">
+										<f:attribute name="departamentoSelecionado"
+											value="#{departamento}" />
+									</p:commandButton>
+								</p:repeat>
+							</div>
+							<p:divider />
+							<div class="p-grid no-update" align="left">
+								<div class="ui-inputgroup ui-md-4">
+									<p:outputLabel
+										value="Filtrar por data de conclusão da solicitação: " />
+								</div>
+								<div class="ui-inputgroup ui-md-4" align="left">
+									<span class="ui-inputgroup-addon">Data Inicial</span>
+									<p:datePicker value="#{sadBean.dataInicio}"
+										readonlyInput="true">
+										<p:ajax event="dateSelect"
+											listener="#{sadBean.selecionarData}"
+											update="@(form :not(.no-update))" />
+									</p:datePicker>
+								</div>
+								<div class="ui-inputgroup ui-md-4" align="left">
+									<span class="ui-inputgroup-addon">Data Final</span>
+									<p:datePicker value="#{sadBean.dataFim}" readonlyInput="true">
+										<p:ajax event="dateSelect"
+											listener="#{sadBean.selecionarData}"
+											update="@(form :not(.no-update))" />
+									</p:datePicker>
+								</div>
+								<div class="ui-inputgroup ui-md-4" align="left">
+									<p:commandButton class="p-col-4" value="Limpar Data"
+										actionListener="#{sadBean.limparData}"
+										update="@(form :not(.no-update))" styleClass="ui-danger-color"
+										icon="pi pi-refresh">
+									</p:commandButton>
+								</div>
+							</div>
+						</p:fieldset>
+						<div class="ui-g-12 ui-md-12">
+							<h1>Média das avaliações</h1>
+						</div>
+						<p:barChart id="chart-av-departamentos"
+							model="#{sadBean.modelMediaDepartamentos()}"
+							style="width: 100%; height: auto;" />
+						<p:divider />
+						<div class="ui-g-12 ui-md-12">
+							<h1>Distribuição das notas</h1>
+						</div>
+						<p:barChart model="#{sadBean.modelNotasDepartamentos()}"
+							style="width: 100%; height: 400px;" />
+						<p:divider />
+						<div class="ui-g-12 ui-md-12">
+							<h1>Índice de solução</h1>
+						</div>
+						<p:pieChart model="#{sadBean.modelSolucaoDepartamentos()}"
+							style="width: 100%; height: 400px;" />
+						<p:divider />
+						<div class="ui-g-12 ui-md-12">
+							<h1>Evolução das avaliações</h1>
+						</div>
+						<p:lineChart model="#{sadBean.modelEvolucaoAvDepartamentos()}"
+							style="width: 100%; height: 400px;" />
+					</p:tab>
+					<p:tab id="media-funcionario" title="Por Funcionário">
+						<p:fieldset legend="Filtros" toggleable="true" toggleSpeed="500"
+							styleClass="ui-white-color">
+							<div class="p-grid no-update" align="left">
+								<p:outputLabel class="p-col-6" value="Filtrar por Departamento " />
+								<p:commandButton class="p-col-4" value="TODOS"
+									actionListener="#{sadBean.selecionarAvDepartamento}"
+									update="@(form :not(.no-update))">
+									<f:attribute name="departamentoSelecionado" value="#{null}" />
+								</p:commandButton>
+								<p:repeat value="#{sadBean.departamentos}"
+									var="departamento">
+									<p:commandButton class="p-col-4" value="#{departamento.descricao}"
+										disabled="#{sadBean.departamentoSelecionado != null and sadBean.departamentoSelecionado._ID != departamento._ID}"
+										icon="#{sadBean.departamentoSelecionado != null and sadBean.departamentoSelecionado._ID == departamento._ID ? 'pi pi-check' : ''}"
+										actionListener="#{sadBean.selecionarAvDepartamento}"
+										update="@(form :not(.no-update))">
+										<f:attribute name="departamentoSelecionado"
+											value="#{departamento}" />
+									</p:commandButton>
+								</p:repeat>
+							</div>
+							<p:divider />
+							<div class="p-grid no-update" align="left">
+								<p:outputLabel class="p-col-6" value="Filtrar por Funcionário: " />
+								<p:commandButton class="p-col-4" value="TODOS"
+									actionListener="#{sadBean.selecionarAvFuncionario}"
+									update="@(form :not(.no-update))">
+									<f:attribute name="funcionarioSelecionado" value="#{null}" />
+								</p:commandButton>
+								<p:repeat value="#{sadBean.funcionarios}"
+									var="funcionario">
+									<p:commandButton class="p-col-4" value="#{funcionario.nome}"
+										disabled="#{(sadBean.funcionarioSelecionado != null and sadBean.funcionarioSelecionado._ID != funcionario._ID) || (sadBean.departamentoSelecionado != null and sadBean.departamentoSelecionado._ID != funcionario.departamentoFuncionario)}"
+										icon="#{sadBean.funcionarioSelecionado != null and sadBean.funcionarioSelecionado._ID == funcionario._ID ? 'pi pi-check' : ''}"
+										actionListener="#{sadBean.selecionarAvFuncionario}"
+										update="@(form :not(.no-update))">
+										<f:attribute name="funcionarioSelecionado"
+											value="#{funcionario}" />
+									</p:commandButton>
+								</p:repeat>
+							</div>
+							<p:divider />
+							<div class="p-grid no-update" align="left">
+								<div class="ui-inputgroup ui-md-4">
+									<p:outputLabel
+										value="Filtrar por data de conclusão da solicitação: " />
+								</div>
+								<div class="ui-inputgroup ui-md-4" align="left">
+									<span class="ui-inputgroup-addon">Data Inicial</span>
+									<p:datePicker value="#{sadBean.dataInicio}"
+										readonlyInput="true">
+										<p:ajax event="dateSelect"
+											listener="#{sadBean.selecionarData}"
+											update="@(form :not(.no-update))" />
+									</p:datePicker>
+								</div>
+								<div class="ui-inputgroup ui-md-4" align="left">
+									<span class="ui-inputgroup-addon">Data Final</span>
+									<p:datePicker value="#{sadBean.dataFim}" readonlyInput="true">
+										<p:ajax event="dateSelect"
+											listener="#{sadBean.selecionarData}"
+											update="@(form :not(.no-update))" />
+									</p:datePicker>
+								</div>
+								<div class="ui-inputgroup ui-md-4" align="left">
+									<p:commandButton class="p-col-4" value="Limpar Data"
+										actionListener="#{sadBean.limparData}"
+										update="@(form :not(.no-update))" styleClass="ui-danger-color"
+										icon="pi pi-refresh">
+									</p:commandButton>
+								</div>
+							</div>
+						</p:fieldset>
+						<div class="ui-g-12 ui-md-12">
+							<h1>Média das avaliações</h1>
+						</div>
+						<p:barChart model="#{sadBean.modelMediaFuncionarios()}"
+							style="width: 100%; height: auto;" />
+						<p:divider />
+						<div class="ui-g-12 ui-md-12">
+							<h1>Distribuição das notas</h1>
+						</div>
+						<p:barChart model="#{sadBean.modelNotasFuncionarios()}"
+							style="width: 100%; height: 400px;" />
+						<p:divider />
+						<div class="ui-g-12 ui-md-12">
+							<h1>Índice de solução</h1>
+						</div>
+						<p:pieChart model="#{sadBean.modelSolucaoFuncionarios()}"
+							style="width: 100%; height: 400px;" />
+						<p:divider />
+						<div class="ui-g-12 ui-md-12">
+							<h1>Evolução das avaliações</h1>
+						</div>
+						<p:lineChart model="#{sadBean.modelEvolucaoAvFuncionarios()}"
+							style="width: 100%; height: 400px;" />
+					</p:tab>
+				</p:tabView>
+			</h:form>
 		</p:card>
 	</ui:define>
 </ui:composition>

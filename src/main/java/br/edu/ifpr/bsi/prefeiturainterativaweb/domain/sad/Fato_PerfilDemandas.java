@@ -12,9 +12,9 @@ import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Categoria;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Solicitacao;
 
 @Entity
-@Table(name = "tb_fato_demandaslocal")
+@Table(name = "tb_fato_perfildemandas")
 @SuppressWarnings("serial")
-public class Fato_DemandasLocal extends GenericDomain {
+public class Fato_PerfilDemandas extends GenericDomain {
 
 	@Column
 	private boolean solicitacaoConcluida;
@@ -22,10 +22,6 @@ public class Fato_DemandasLocal extends GenericDomain {
 	@JoinColumn(nullable = true)
 	@OneToOne(cascade = CascadeType.ALL)
 	private Dim_Tempo dataAbertura;
-
-	@JoinColumn(nullable = true)
-	@OneToOne(cascade = CascadeType.ALL)
-	private Dim_Tempo dataConclusao;
 
 	@JoinColumn(nullable = true)
 	@ManyToOne(cascade = CascadeType.ALL)
@@ -39,15 +35,14 @@ public class Fato_DemandasLocal extends GenericDomain {
 	@OneToOne(cascade = CascadeType.ALL)
 	private Dim_Local local;
 
-	public Fato_DemandasLocal() {
+	public Fato_PerfilDemandas() {
 
 	}
 
-	public Fato_DemandasLocal(Solicitacao solicitacao, Categoria categoria) {
+	public Fato_PerfilDemandas(Solicitacao solicitacao, Categoria categoria) {
 		this.set_ID(solicitacao.get_ID());
 		this.solicitacaoConcluida = solicitacao.isConcluida();
 		this.dataAbertura = new Dim_Tempo(solicitacao.getDataAbertura());
-		this.dataConclusao = new Dim_Tempo(solicitacao.getDataConclusao());
 		this.departamento = new Dim_Departamento(solicitacao.getLocalDepartamento());
 		this.categoria = new Dim_Categoria(categoria);
 		this.local = new Dim_Local(solicitacao);
@@ -67,14 +62,6 @@ public class Fato_DemandasLocal extends GenericDomain {
 
 	public void setDataAbertura(Dim_Tempo dataAbertura) {
 		this.dataAbertura = dataAbertura;
-	}
-
-	public Dim_Tempo getDataConclusao() {
-		return dataConclusao;
-	}
-
-	public void setDataConclusao(Dim_Tempo dataConclusao) {
-		this.dataConclusao = dataConclusao;
 	}
 
 	public Dim_Departamento getDepartamento() {

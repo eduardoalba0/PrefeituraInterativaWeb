@@ -33,6 +33,6 @@
 		<mapping
 			class="br.edu.ifpr.bsi.prefeiturainterativaweb.domain.sad.Fato_QualidadeAtendimento" />
 		<mapping
-			class="br.edu.ifpr.bsi.prefeiturainterativaweb.domain.sad.Fato_DemandasLocal" />
+			class="br.edu.ifpr.bsi.prefeiturainterativaweb.domain.sad.Fato_PerfilDemandas" />
 	</session-factory>
 </hibernate-configuration>
