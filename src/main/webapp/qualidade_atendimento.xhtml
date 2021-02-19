@@ -21,7 +21,7 @@
 							<div class="p-grid no-update" align="left">
 								<p:outputLabel class="p-col-6" value="Filtrar por Departamento " />
 								<p:commandButton class="p-col-4" value="TODOS"
-									actionListener="#{sadBean.selecionarAvDepartamento}"
+									actionListener="#{sadBean.selecionarDepartamento}"
 									update="@(form :not(.no-update))">
 									<f:attribute name="departamentoSelecionado" value="#{null}" />
 								</p:commandButton>
@@ -30,7 +30,7 @@
 									<p:commandButton class="p-col-4" value="#{departamento.descricao}"
 										disabled="#{sadBean.departamentoSelecionado != null and sadBean.departamentoSelecionado._ID != departamento._ID}"
 										icon="#{sadBean.departamentoSelecionado != null and sadBean.departamentoSelecionado._ID == departamento._ID ? 'pi pi-check' : ''}"
-										actionListener="#{sadBean.selecionarAvDepartamento}"
+										actionListener="#{sadBean.selecionarDepartamento}"
 										update="@(form :not(.no-update))">
 										<f:attribute name="departamentoSelecionado"
 											value="#{departamento}" />
@@ -100,7 +100,7 @@
 							<div class="p-grid no-update" align="left">
 								<p:outputLabel class="p-col-6" value="Filtrar por Departamento " />
 								<p:commandButton class="p-col-4" value="TODOS"
-									actionListener="#{sadBean.selecionarAvDepartamento}"
+									actionListener="#{sadBean.selecionarDepartamento}"
 									update="@(form :not(.no-update))">
 									<f:attribute name="departamentoSelecionado" value="#{null}" />
 								</p:commandButton>
@@ -109,7 +109,7 @@
 									<p:commandButton class="p-col-4" value="#{departamento.descricao}"
 										disabled="#{sadBean.departamentoSelecionado != null and sadBean.departamentoSelecionado._ID != departamento._ID}"
 										icon="#{sadBean.departamentoSelecionado != null and sadBean.departamentoSelecionado._ID == departamento._ID ? 'pi pi-check' : ''}"
-										actionListener="#{sadBean.selecionarAvDepartamento}"
+										actionListener="#{sadBean.selecionarDepartamento}"
 										update="@(form :not(.no-update))">
 										<f:attribute name="departamentoSelecionado"
 											value="#{departamento}" />
@@ -120,7 +120,7 @@
 							<div class="p-grid no-update" align="left">
 								<p:outputLabel class="p-col-6" value="Filtrar por Funcionário: " />
 								<p:commandButton class="p-col-4" value="TODOS"
-									actionListener="#{sadBean.selecionarAvFuncionario}"
+									actionListener="#{sadBean.selecionarFuncionario}"
 									update="@(form :not(.no-update))">
 									<f:attribute name="funcionarioSelecionado" value="#{null}" />
 								</p:commandButton>
@@ -129,7 +129,7 @@
 									<p:commandButton class="p-col-4" value="#{funcionario.nome}"
 										disabled="#{(sadBean.funcionarioSelecionado != null and sadBean.funcionarioSelecionado._ID != funcionario._ID) || (sadBean.departamentoSelecionado != null and sadBean.departamentoSelecionado._ID != funcionario.departamentoFuncionario)}"
 										icon="#{sadBean.funcionarioSelecionado != null and sadBean.funcionarioSelecionado._ID == funcionario._ID ? 'pi pi-check' : ''}"
-										actionListener="#{sadBean.selecionarAvFuncionario}"
+										actionListener="#{sadBean.selecionarFuncionario}"
 										update="@(form :not(.no-update))">
 										<f:attribute name="funcionarioSelecionado"
 											value="#{funcionario}" />

@@ -10,19 +10,187 @@
 	template="templates/menulateral.xhtml">
 
 	<ui:define name="conteudo">
-		<p:card class="ui-g-12 ui-md-12">
-			<div class="ui-g-12 ui-md-12">
-				<h1>Solicitações por Departamento</h1>
-			</div>
-			<p:barChart model="#{sadBean.modelQtDepartamentos()}"
-				style="width: 100%; height: 500px;" />
-		</p:card>
-		<p:card class="ui-g-12 ui-md-12">
-			<div class="ui-g-12 ui-md-12">
-				<h1>Solicitações por Categoria</h1>
-			</div>
-			<p:barChart model="#{sadBean.modelQtCategorias()}"
-				style="width: 100%; height: 500px;" />
+		<p:card>
+			<h:form id="form-cadastro-solicitacao"
+				styleClass="ui-g ui-fluid centeredColumn">
+				<p:tabView id="root-tabview"
+					styleClass="centeredColumn ui-g-12 ui-g-nopad">
+					<p:tab title="Por Categoria">
+						<p:fieldset legend="Filtros" toggleable="true" toggleSpeed="500"
+							styleClass="ui-white-color">
+							<div class="p-grid no-update" align="left">
+								<p:outputLabel class="p-col-6" value="Filtrar por Categoria " />
+								<p:commandButton class="p-col-4" value="TODOS"
+									actionListener="#{sadBean.selecionarCategoria}"
+									update="@(form :not(.no-update))">
+									<f:attribute name="categoriaSelecionada" value="#{null}" />
+								</p:commandButton>
+								<p:repeat value="#{sadBean.categorias}" var="categoria">
+									<p:commandButton class="p-col-4" value="#{categoria.descricao}"
+										disabled="#{sadBean.categoriaSelecionada != null and sadBean.categoriaSelecionada._ID != categoria._ID}"
+										icon="#{sadBean.categoriaSelecionada != null and sadBean.categoriaSelecionada._ID == categoria._ID ? 'pi pi-check' : ''}"
+										actionListener="#{sadBean.selecionarCategoria}"
+										update="@(form :not(.no-update))">
+										<f:attribute name="categoriaSelecionada" value="#{categoria}" />
+									</p:commandButton>
+								</p:repeat>
+							</div>
+							<p:divider />
+							<div class="p-grid no-update" align="left">
+								<p:outputLabel class="p-col-6" value="Filtrar por Funcionário: " />
+								<p:commandButton class="p-col-4" value="TODOS"
+									actionListener="#{sadBean.selecionarBairro}"
+									update="@(form :not(.no-update))">
+									<f:attribute name="bairroSelecionado" value="#{null}" />
+								</p:commandButton>
+								<p:repeat value="#{sadBean.bairros}" var="bairro">
+									<p:commandButton class="p-col-4" value="#{bairro}"
+										disabled="#{sadBean.bairroSelecionado != null and sadBean.bairroSelecionado != bairro}"
+										icon="#{sadBean.bairroSelecionado != null and sadBean.bairroSelecionado == bairro ? 'pi pi-check' : ''}"
+										actionListener="#{sadBean.selecionarBairro}"
+										update="@(form :not(.no-update))">
+										<f:attribute name="bairroSelecionado" value="#{bairro}" />
+									</p:commandButton>
+								</p:repeat>
+							</div>
+							<p:divider />
+							<div class="p-grid no-update" align="left">
+								<div class="ui-inputgroup ui-md-4">
+									<p:outputLabel value="Filtrar pela Data da Solicitação " />
+								</div>
+								<div class="ui-inputgroup ui-md-4" align="left">
+									<span class="ui-inputgroup-addon">Data Inicial</span>
+									<p:datePicker value="#{sadBean.dataInicio}"
+										readonlyInput="true">
+										<p:ajax event="dateSelect"
+											listener="#{sadBean.selecionarData}"
+											update="@(form :not(.no-update))" />
+									</p:datePicker>
+								</div>
+								<div class="ui-inputgroup ui-md-4" align="left">
+									<span class="ui-inputgroup-addon">Data Final</span>
+									<p:datePicker value="#{sadBean.dataFim}" readonlyInput="true">
+										<p:ajax event="dateSelect"
+											listener="#{sadBean.selecionarData}"
+											update="@(form :not(.no-update))" />
+									</p:datePicker>
+								</div>
+								<div class="ui-inputgroup ui-md-4" align="left">
+									<p:commandButton class="p-col-4" value="Limpar Data"
+										actionListener="#{sadBean.limparData}"
+										update="@(form :not(.no-update))" styleClass="ui-danger-color"
+										icon="pi pi-refresh">
+									</p:commandButton>
+								</div>
+							</div>
+						</p:fieldset>
+						<div class="ui-g-12 ui-md-12">
+							<h1>Quantidade de Solicitações</h1>
+						</div>
+						<p:barChart model="#{sadBean.modelQuantidadeCategorias()}"
+							style="width: 100%; height: auto;" />
+						<p:divider />
+						<div class="ui-g-12 ui-md-12">
+							<h1>Índice de conclusão</h1>
+						</div>
+						<p:pieChart model="#{sadBean.modelConclusaoCategorias()}"
+							style="width: 100%; height: 400px;" />
+						<p:divider />
+						<div class="ui-g-12 ui-md-12">
+							<h1>Evolução da Quantidade de Solicitações</h1>
+						</div>
+						<p:lineChart model="#{sadBean.modelEvolucaoCategorias()}"
+							style="width: 100%; height: 400px;" />
+					</p:tab>
+					<p:tab title="Por Bairro">
+						<p:fieldset legend="Filtros" toggleable="true" toggleSpeed="500"
+							styleClass="ui-white-color">
+							<div class="p-grid no-update" align="left">
+								<p:outputLabel class="p-col-6" value="Filtrar por Categoria " />
+								<p:commandButton class="p-col-4" value="TODOS"
+									actionListener="#{sadBean.selecionarCategoria}"
+									update="@(form :not(.no-update))">
+									<f:attribute name="categoriaSelecionada" value="#{null}" />
+								</p:commandButton>
+								<p:repeat value="#{sadBean.categorias}" var="categoria">
+									<p:commandButton class="p-col-4" value="#{categoria.descricao}"
+										disabled="#{sadBean.categoriaSelecionada != null and sadBean.categoriaSelecionada._ID != categoria._ID}"
+										icon="#{sadBean.categoriaSelecionada != null and sadBean.categoriaSelecionada._ID == categoria._ID ? 'pi pi-check' : ''}"
+										actionListener="#{sadBean.selecionarCategoria}"
+										update="@(form :not(.no-update))">
+										<f:attribute name="categoriaSelecionada" value="#{categoria}" />
+									</p:commandButton>
+								</p:repeat>
+							</div>
+							<p:divider />
+							<div class="p-grid no-update" align="left">
+								<p:outputLabel class="p-col-6" value="Filtrar por Funcionário: " />
+								<p:commandButton class="p-col-4" value="TODOS"
+									actionListener="#{sadBean.selecionarBairro}"
+									update="@(form :not(.no-update))">
+									<f:attribute name="bairroSelecionado" value="#{null}" />
+								</p:commandButton>
+								<p:repeat value="#{sadBean.bairros}" var="bairro">
+									<p:commandButton class="p-col-4" value="#{bairro}"
+										disabled="#{sadBean.bairroSelecionado != null and sadBean.bairroSelecionado != bairro}"
+										icon="#{sadBean.bairroSelecionado != null and sadBean.bairroSelecionado == bairro ? 'pi pi-check' : ''}"
+										actionListener="#{sadBean.selecionarBairro}"
+										update="@(form :not(.no-update))">
+										<f:attribute name="bairroSelecionado" value="#{bairro}" />
+									</p:commandButton>
+								</p:repeat>
+							</div>
+							<p:divider />
+							<div class="p-grid no-update" align="left">
+								<div class="ui-inputgroup ui-md-4">
+									<p:outputLabel value="Filtrar pela Data da Solicitação " />
+								</div>
+								<div class="ui-inputgroup ui-md-4" align="left">
+									<span class="ui-inputgroup-addon">Data Inicial</span>
+									<p:datePicker value="#{sadBean.dataInicio}"
+										readonlyInput="true">
+										<p:ajax event="dateSelect"
+											listener="#{sadBean.selecionarData}"
+											update="@(form :not(.no-update))" />
+									</p:datePicker>
+								</div>
+								<div class="ui-inputgroup ui-md-4" align="left">
+									<span class="ui-inputgroup-addon">Data Final</span>
+									<p:datePicker value="#{sadBean.dataFim}" readonlyInput="true">
+										<p:ajax event="dateSelect"
+											listener="#{sadBean.selecionarData}"
+											update="@(form :not(.no-update))" />
+									</p:datePicker>
+								</div>
+								<div class="ui-inputgroup ui-md-4" align="left">
+									<p:commandButton class="p-col-4" value="Limpar Data"
+										actionListener="#{sadBean.limparData}"
+										update="@(form :not(.no-update))" styleClass="ui-danger-color"
+										icon="pi pi-refresh">
+									</p:commandButton>
+								</div>
+							</div>
+						</p:fieldset>
+						<div class="ui-g-12 ui-md-12">
+							<h1>Quantidade de Solicitações</h1>
+						</div>
+						<p:barChart model="#{sadBean.modelQuantidadeBairros()}"
+							style="width: 100%; height: auto;" />
+						<p:divider />
+						<div class="ui-g-12 ui-md-12">
+							<h1>Índice de conclusão</h1>
+						</div>
+						<p:pieChart model="#{sadBean.modelConclusaoBairros()}"
+							style="width: 100%; height: 400px;" />
+						<p:divider />
+						<div class="ui-g-12 ui-md-12">
+							<h1>Evolução da Quantidade de Solicitações</h1>
+						</div>
+						<p:lineChart model="#{sadBean.modelEvolucaoBairros()}"
+							style="width: 100%; height: 400px;" />
+					</p:tab>
+				</p:tabView>
+			</h:form>
 		</p:card>
 	</ui:define>
 </ui:composition>

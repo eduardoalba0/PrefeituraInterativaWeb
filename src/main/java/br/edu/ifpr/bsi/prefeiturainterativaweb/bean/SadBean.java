@@ -2,7 +2,6 @@ package br.edu.ifpr.bsi.prefeiturainterativaweb.bean;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -40,14 +39,12 @@ import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Categoria;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Departamento;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Solicitacao;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Usuario;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.sad.Dim_Categoria;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.sad.Dim_Departamento;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.sad.Dim_Funcionario;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.sad.Fato_PerfilDemandas;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.sad.Fato_QualidadeAtendimento;
-import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.chartHolders.AvaliacaoHolder;
-import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.chartHolders.DepartamentoHolder;
-import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.chartHolders.FuncionarioHolder;
-import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.chartHolders.GenericHolder;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.ChartHolder;
 
 @Named("sadBean")
 @ViewScoped
@@ -70,15 +67,20 @@ public class SadBean extends AbstractBean {
 	@Named("categorias")
 	private List<Categoria> categorias;
 
+	private List<String> bairros;
+
 	private Fato_QualidadeAtendimentoDAO qualidadeDAO;
 	private List<Fato_QualidadeAtendimento> avaliacaoList;
 	private List<Fato_QualidadeAtendimento> avaliacaoListFiltered;
 
 	private Departamento departamentoSelecionado;
 	private Usuario funcionarioSelecionado;
+	private Categoria categoriaSelecionada;
+	private String bairroSelecionado;
 
 	private Fato_PerfilDemandasDAO demandasDAO;
 	private List<Fato_PerfilDemandas> perfilDemandasList;
+	private List<Fato_PerfilDemandas> perfilDemandasListFiltered;
 
 	private Date dataInicio;
 	private Date dataFim;
@@ -131,14 +133,26 @@ public class SadBean extends AbstractBean {
 		}
 	}
 
-	public void selecionarAvDepartamento(ActionEvent evento) {
+	public void selecionarDepartamento(ActionEvent evento) {
 		departamentoSelecionado = (Departamento) evento.getComponent().getAttributes().get("departamentoSelecionado");
 		filtrarQualidadeAtendimento();
 		filtrarPerfilDemandas();
 	}
 
-	public void selecionarAvFuncionario(ActionEvent evento) {
+	public void selecionarFuncionario(ActionEvent evento) {
 		funcionarioSelecionado = (Usuario) evento.getComponent().getAttributes().get("funcionarioSelecionado");
+		filtrarQualidadeAtendimento();
+		filtrarPerfilDemandas();
+	}
+
+	public void selecionarCategoria(ActionEvent evento) {
+		categoriaSelecionada = (Categoria) evento.getComponent().getAttributes().get("categoriaSelecionada");
+		filtrarQualidadeAtendimento();
+		filtrarPerfilDemandas();
+	}
+
+	public void selecionarBairro(ActionEvent evento) {
+		bairroSelecionado = (String) evento.getComponent().getAttributes().get("bairroSelecionado");
 		filtrarQualidadeAtendimento();
 		filtrarPerfilDemandas();
 	}
@@ -155,7 +169,7 @@ public class SadBean extends AbstractBean {
 		filtrarPerfilDemandas();
 	}
 
-	public List<Fato_QualidadeAtendimento> listar() {
+	public void listar() {
 		avaliacaoList = qualidadeDAO.getAll();
 		perfilDemandasList = demandasDAO.getAll();
 
@@ -165,10 +179,10 @@ public class SadBean extends AbstractBean {
 			hideStatusDialog();
 			showErrorMessage("Ocorreu uma falha ao listar os dados. Consulte o suporte da ferramenta.");
 		}
+
 		filtrarQualidadeAtendimento();
 		filtrarPerfilDemandas();
 		hideStatusDialog();
-		return avaliacaoListFiltered;
 	}
 
 	public void filtrarQualidadeAtendimento() {
@@ -186,19 +200,31 @@ public class SadBean extends AbstractBean {
 	}
 
 	public void filtrarPerfilDemandas() {
+		perfilDemandasListFiltered = new ArrayList<Fato_PerfilDemandas>();
+		bairros = new ArrayList<String>();
+		perfilDemandasList.forEach(val -> {
+			perfilDemandasListFiltered.add(val);
+			if (!bairros.contains(val.getLocal().getBairro())) {
+				bairros.add(val.getLocal().getBairro());
+			}
+		});
 
+		if (dataInicio != null)
+			perfilDemandasListFiltered.removeIf(aux -> aux.getDataAbertura().getDate().before(dataInicio));
+		if (dataFim != null)
+			perfilDemandasListFiltered.removeIf(aux -> aux.getDataAbertura().getDate().after(dataFim));
 	}
 
 	public HorizontalBarChartModel modelMediaDepartamentos() {
-		List<DepartamentoHolder> holderList = new ArrayList<DepartamentoHolder>();
-		Map<Dim_Departamento, Float[]> mapNotas = new HashMap<Dim_Departamento, Float[]>();
+		List<ChartHolder> holderList = new ArrayList<ChartHolder>();
+		Map<Dim_Departamento, Float[]> hashMap = new HashMap<Dim_Departamento, Float[]>();
 
 		avaliacaoListFiltered.forEach(val -> {
 			if (departamentoSelecionado == null || val.getDepartamento().get_ID() != departamentoSelecionado.get_ID()) {
 				Dim_Departamento key = val.getDepartamento();
 				Float[] notas;
-				if (mapNotas.containsKey(key)) {
-					notas = mapNotas.get(key);
+				if (hashMap.containsKey(key)) {
+					notas = hashMap.get(key);
 					notas[0] += val.getAvaliacao().getNota();
 					notas[1] += (float) 1.0;
 				} else {
@@ -206,25 +232,25 @@ public class SadBean extends AbstractBean {
 					notas[0] = val.getAvaliacao().getNota();
 					notas[1] = (float) 1.0;
 				}
-				mapNotas.put(key, notas);
+				hashMap.put(key, notas);
 			}
 		});
 
-		mapNotas.forEach((key, val) -> {
-			DepartamentoHolder holder = new DepartamentoHolder();
+		hashMap.forEach((key, val) -> {
+			ChartHolder holder = new ChartHolder();
 			holder.set_ID(key.get_ID());
 			holder.setLabel(key.getDescricao());
 			holder.setValue(val[0] / val[1]);
 			holderList.add(holder);
 		});
 
-		holderList.sort((GenericHolder o1, GenericHolder o2) -> o1.getLabel().compareTo(o2.getLabel()));
-		return renderMediaChart(holderList);
+		holderList.sort((ChartHolder o1, ChartHolder o2) -> o1.getLabel().compareTo(o2.getLabel()));
+		return renderHorizontalChart(holderList);
 	}
 
 	public HorizontalBarChartModel modelMediaFuncionarios() {
-		List<FuncionarioHolder> holderList = new ArrayList<FuncionarioHolder>();
-		Map<Dim_Funcionario, Float[]> mapNotas = new HashMap<Dim_Funcionario, Float[]>();
+		List<ChartHolder> holderList = new ArrayList<ChartHolder>();
+		Map<Dim_Funcionario, Float[]> hashMap = new HashMap<Dim_Funcionario, Float[]>();
 
 		avaliacaoListFiltered.forEach(val -> {
 			if ((departamentoSelecionado == null || val.getDepartamento().get_ID() != departamentoSelecionado.get_ID())
@@ -232,8 +258,8 @@ public class SadBean extends AbstractBean {
 							|| val.getFuncionario().get_ID() != funcionarioSelecionado.get_ID())) {
 				Dim_Funcionario key = val.getFuncionario();
 				Float[] notas;
-				if (mapNotas.containsKey(key)) {
-					notas = mapNotas.get(key);
+				if (hashMap.containsKey(key)) {
+					notas = hashMap.get(key);
 					notas[0] += val.getAvaliacao().getNota();
 					notas[1] += (float) 1.0;
 				} else {
@@ -241,78 +267,78 @@ public class SadBean extends AbstractBean {
 					notas[0] = val.getAvaliacao().getNota();
 					notas[1] = (float) 1.0;
 				}
-				mapNotas.put(key, notas);
+				hashMap.put(key, notas);
 			}
 		});
 
-		mapNotas.forEach((key, val) -> {
-			FuncionarioHolder holder = new FuncionarioHolder();
+		hashMap.forEach((key, val) -> {
+			ChartHolder holder = new ChartHolder();
 			holder.set_ID(key.get_ID());
 			holder.setLabel(key.getNome());
 			holder.setValue(val[0] / val[1]);
 			holderList.add(holder);
 		});
-		holderList.sort((GenericHolder o1, GenericHolder o2) -> o1.getLabel().compareTo(o2.getLabel()));
-		return renderMediaChart(holderList);
+		holderList.sort((ChartHolder o1, ChartHolder o2) -> o1.getLabel().compareTo(o2.getLabel()));
+		return renderHorizontalChart(holderList);
 	}
 
 	public BarChartModel modelNotasDepartamentos() {
-		List<AvaliacaoHolder> holderList = new ArrayList<AvaliacaoHolder>();
-		Map<Float, Integer> mapNotas = new HashMap<Float, Integer>();
+		List<ChartHolder> holderList = new ArrayList<ChartHolder>();
+		Map<Float, Integer> hashMap = new HashMap<Float, Integer>();
 
-		mapNotas.put((float) 0.0, 0);
-		mapNotas.put((float) 0.5, 0);
-		mapNotas.put((float) 1.0, 0);
-		mapNotas.put((float) 1.5, 0);
-		mapNotas.put((float) 2.0, 0);
-		mapNotas.put((float) 2.5, 0);
-		mapNotas.put((float) 3.0, 0);
-		mapNotas.put((float) 3.5, 0);
-		mapNotas.put((float) 4.0, 0);
-		mapNotas.put((float) 4.5, 0);
-		mapNotas.put((float) 5.0, 0);
+		hashMap.put((float) 0.0, 0);
+		hashMap.put((float) 0.5, 0);
+		hashMap.put((float) 1.0, 0);
+		hashMap.put((float) 1.5, 0);
+		hashMap.put((float) 2.0, 0);
+		hashMap.put((float) 2.5, 0);
+		hashMap.put((float) 3.0, 0);
+		hashMap.put((float) 3.5, 0);
+		hashMap.put((float) 4.0, 0);
+		hashMap.put((float) 4.5, 0);
+		hashMap.put((float) 5.0, 0);
 
 		avaliacaoListFiltered.forEach(val -> {
 			if (departamentoSelecionado == null || val.getDepartamento().get_ID() != departamentoSelecionado.get_ID()) {
 				Float key = val.getAvaliacao().getNota();
 				int quantidade;
-				if (mapNotas.containsKey(key)) {
-					quantidade = mapNotas.get(key);
+				if (hashMap.containsKey(key)) {
+					quantidade = hashMap.get(key);
 					quantidade++;
 				} else {
 					quantidade = 1;
 				}
-				mapNotas.put(key, quantidade);
+				hashMap.put(key, quantidade);
 			}
 		});
 
-		mapNotas.forEach((key, val) -> {
-			AvaliacaoHolder holder = new AvaliacaoHolder();
+		hashMap.forEach((key, val) -> {
+			ChartHolder holder = new ChartHolder();
 			holder.set_ID(key + "");
 			holder.setLabel(key + " estrela(s)");
 			holder.setValue(val);
 			holderList.add(holder);
 		});
 
-		holderList.sort((GenericHolder o1, GenericHolder o2) -> o1.getLabel().compareTo(o2.getLabel()));
-		return renderNotasChart(holderList);
+		holderList.sort((ChartHolder o1, ChartHolder o2) -> o1.getLabel().compareTo(o2.getLabel()));
+		return renderVerticalChart(holderList);
 	}
 
 	public BarChartModel modelNotasFuncionarios() {
-		List<AvaliacaoHolder> holderList = new ArrayList<AvaliacaoHolder>();
-		Map<Float, Integer> mapNotas = new HashMap<Float, Integer>();
+		List<ChartHolder> holderList = new ArrayList<ChartHolder>();
+		Map<Float, Integer> hashMap = new HashMap<Float, Integer>();
 
-		mapNotas.put((float) 0.0, 0);
-		mapNotas.put((float) 0.5, 0);
-		mapNotas.put((float) 1.0, 0);
-		mapNotas.put((float) 1.5, 0);
-		mapNotas.put((float) 2.0, 0);
-		mapNotas.put((float) 2.5, 0);
-		mapNotas.put((float) 3.0, 0);
-		mapNotas.put((float) 3.5, 0);
-		mapNotas.put((float) 4.0, 0);
-		mapNotas.put((float) 4.5, 0);
-		mapNotas.put((float) 5.0, 0);
+		hashMap.put((float) 0.0, 0);
+		hashMap.put((float) 0.5, 0);
+		hashMap.put((float) 1.0, 0);
+		hashMap.put((float) 1.5, 0);
+		hashMap.put((float) 2.0, 0);
+		hashMap.put((float) 2.5, 0);
+		hashMap.put((float) 3.0, 0);
+		hashMap.put((float) 3.5, 0);
+		hashMap.put((float) 4.0, 0);
+		hashMap.put((float) 4.5, 0);
+		hashMap.put((float) 5.0, 0);
 
 		avaliacaoListFiltered.forEach(val -> {
 			if ((departamentoSelecionado == null || val.getDepartamento().get_ID() != departamentoSelecionado.get_ID())
@@ -320,29 +346,29 @@ public class SadBean extends AbstractBean {
 							|| val.getFuncionario().get_ID() != funcionarioSelecionado.get_ID())) {
 				Float key = val.getAvaliacao().getNota();
 				int quantidade;
-				if (mapNotas.containsKey(key)) {
-					quantidade = mapNotas.get(key);
+				if (hashMap.containsKey(key)) {
+					quantidade = hashMap.get(key);
 					quantidade++;
 				} else {
 					quantidade = 1;
 				}
-				mapNotas.put(key, quantidade);
+				hashMap.put(key, quantidade);
 			}
 		});
 
-		mapNotas.forEach((key, val) -> {
-			AvaliacaoHolder holder = new AvaliacaoHolder();
+		hashMap.forEach((key, val) -> {
+			ChartHolder holder = new ChartHolder();
 			holder.setLabel(key + " estrela(s)");
 			holder.setValue(val);
 			holderList.add(holder);
 		});
 
-		holderList.sort((GenericHolder o1, GenericHolder o2) -> o1.getLabel().compareTo(o2.getLabel()));
-		return renderNotasChart(holderList);
+		holderList.sort((ChartHolder o1, ChartHolder o2) -> o1.getLabel().compareTo(o2.getLabel()));
+		return renderVerticalChart(holderList);
 	}
 
 	public PieChartModel modelSolucaoDepartamentos() {
-		List<AvaliacaoHolder> holderList = new ArrayList<AvaliacaoHolder>();
+		List<ChartHolder> holderList = new ArrayList<ChartHolder>();
 		Map<Boolean, Integer> mapSolucionadas = new HashMap<Boolean, Integer>();
 
 		avaliacaoListFiltered.forEach(val -> {
@@ -360,18 +386,18 @@ public class SadBean extends AbstractBean {
 		});
 
 		mapSolucionadas.forEach((key, val) -> {
-			AvaliacaoHolder holder = new AvaliacaoHolder();
+			ChartHolder holder = new ChartHolder();
 			holder.setLabel(key ? "Demandas Solucionadas" : "Demandas não Solucionadas");
 			holder.setValue(val);
 			holderList.add(holder);
 		});
 
-		holderList.sort((GenericHolder o1, GenericHolder o2) -> o1.getLabel().compareTo(o2.getLabel()));
-		return renderSolucaoChart(holderList);
+		holderList.sort((ChartHolder o1, ChartHolder o2) -> o1.getLabel().compareTo(o2.getLabel()));
+		return renderPieChart(holderList);
 	}
 
 	public PieChartModel modelSolucaoFuncionarios() {
-		List<AvaliacaoHolder> holderList = new ArrayList<AvaliacaoHolder>();
+		List<ChartHolder> holderList = new ArrayList<ChartHolder>();
 		Map<Boolean, Integer> mapSolucionadas = new HashMap<Boolean, Integer>();
 
 		avaliacaoListFiltered.forEach(val -> {
@@ -391,27 +417,27 @@ public class SadBean extends AbstractBean {
 		});
 
 		mapSolucionadas.forEach((key, val) -> {
-			AvaliacaoHolder holder = new AvaliacaoHolder();
+			ChartHolder holder = new ChartHolder();
 			holder.setLabel(key ? "Demandas Solucionadas" : "Demandas não Solucionadas");
 			holder.setValue(val);
 			holderList.add(holder);
 		});
 
-		holderList.sort((GenericHolder o1, GenericHolder o2) -> o1.getLabel().compareTo(o2.getLabel()));
-		return renderSolucaoChart(holderList);
+		holderList.sort((ChartHolder o1, ChartHolder o2) -> o1.getLabel().compareTo(o2.getLabel()));
+		return renderPieChart(holderList);
 	}
 
 	public LineChartModel modelEvolucaoAvDepartamentos() {
-		List<AvaliacaoHolder> holderList = new ArrayList<AvaliacaoHolder>();
-		Map<String, Float[]> mapNotas = new HashMap<String, Float[]>();
-		SimpleDateFormat df = new SimpleDateFormat("yyyy MMMM", new Locale("pt", "BR"));
+		List<ChartHolder> holderList = new ArrayList<ChartHolder>();
+		Map<String, Float[]> hashMap = new HashMap<String, Float[]>();
+		SimpleDateFormat df = new SimpleDateFormat("yyyy/MM", new Locale("pt", "BR"));
 
 		avaliacaoListFiltered.forEach(val -> {
 			if (departamentoSelecionado == null || val.getDepartamento().get_ID() != departamentoSelecionado.get_ID()) {
 				String key = df.format(val.getDataConclusao().getDate());
 				Float[] notas;
-				if (mapNotas.containsKey(key)) {
-					notas = mapNotas.get(key);
+				if (hashMap.containsKey(key)) {
+					notas = hashMap.get(key);
 					notas[0] += val.getAvaliacao().getNota();
 					notas[1] += (float) 1.0;
 				} else {
@@ -419,26 +445,26 @@ public class SadBean extends AbstractBean {
 					notas[0] = val.getAvaliacao().getNota();
 					notas[1] = (float) 1.0;
 				}
-				mapNotas.put(key, notas);
+				hashMap.put(key, notas);
 			}
 		});
 
-		mapNotas.forEach((key, val) -> {
-			AvaliacaoHolder holder = new AvaliacaoHolder();
+		hashMap.forEach((key, val) -> {
+			ChartHolder holder = new ChartHolder();
 			holder.set_ID(key);
 			holder.setLabel(key);
 			holder.setValue(val[0] / val[1]);
 			holderList.add(holder);
 		});
 
-		holderList.sort((GenericHolder o1, GenericHolder o2) -> o1.getLabel().compareTo(o2.getLabel()));
-		return renderEvolucaoChart(holderList);
+		holderList.sort((ChartHolder o1, ChartHolder o2) -> o1.getLabel().compareTo(o2.getLabel()));
+		return renderLineChart(holderList);
 	}
 
 	public LineChartModel modelEvolucaoAvFuncionarios() {
-		List<AvaliacaoHolder> holderList = new ArrayList<AvaliacaoHolder>();
-		Map<String, Float[]> mapNotas = new HashMap<String, Float[]>();
-		SimpleDateFormat df = new SimpleDateFormat("yyyy MMMM", new Locale("pt", "BR"));
+		List<ChartHolder> holderList = new ArrayList<ChartHolder>();
+		Map<String, Float[]> hashMap = new HashMap<String, Float[]>();
+		SimpleDateFormat df = new SimpleDateFormat("yyyy/MM", new Locale("pt", "BR"));
 
 		avaliacaoListFiltered.forEach(val -> {
 			if ((departamentoSelecionado == null || val.getDepartamento().get_ID() != departamentoSelecionado.get_ID())
@@ -446,8 +472,8 @@ public class SadBean extends AbstractBean {
 							|| val.getFuncionario().get_ID() != funcionarioSelecionado.get_ID())) {
 				String key = df.format(val.getDataConclusao().getDate());
 				Float[] notas;
-				if (mapNotas.containsKey(key)) {
-					notas = mapNotas.get(key);
+				if (hashMap.containsKey(key)) {
+					notas = hashMap.get(key);
 					notas[0] += val.getAvaliacao().getNota();
 					notas[1] += (float) 1.0;
 				} else {
@@ -455,22 +481,208 @@ public class SadBean extends AbstractBean {
 					notas[0] = val.getAvaliacao().getNota();
 					notas[1] = (float) 1.0;
 				}
-				mapNotas.put(key, notas);
+				hashMap.put(key, notas);
 			}
 		});
 
-		mapNotas.forEach((key, val) -> {
-			AvaliacaoHolder holder = new AvaliacaoHolder();
+		hashMap.forEach((key, val) -> {
+			ChartHolder holder = new ChartHolder();
 			holder.set_ID(key);
 			holder.setLabel(key);
 			holder.setValue(val[0] / val[1]);
 			holderList.add(holder);
 		});
-		holderList.sort((GenericHolder o1, GenericHolder o2) -> o1.getLabel().compareTo(o2.getLabel()));
-		return renderEvolucaoChart(holderList);
+		holderList.sort((ChartHolder o1, ChartHolder o2) -> o1.getLabel().compareTo(o2.getLabel()));
+		return renderLineChart(holderList);
 	}
 
-	public HorizontalBarChartModel renderMediaChart(List<? extends GenericHolder> list) {
+	public HorizontalBarChartModel modelQuantidadeCategorias() {
+		List<ChartHolder> holderList = new ArrayList<ChartHolder>();
+		Map<Dim_Categoria, Integer> hashMap = new HashMap<Dim_Categoria, Integer>();
+
+		perfilDemandasListFiltered.forEach(val -> {
+			if ((bairroSelecionado == null || val.getLocal().getBairro() != bairroSelecionado)
+					&& (categoriaSelecionada == null || val.getCategoria().get_ID() != categoriaSelecionada.get_ID())) {
+				Dim_Categoria key = val.getCategoria();
+				int quantidade;
+				if (hashMap.containsKey(key)) {
+					quantidade = hashMap.get(key);
+					quantidade++;
+				} else {
+					quantidade = 1;
+				}
+				hashMap.put(key, quantidade);
+			}
+		});
+
+		hashMap.forEach((key, val) -> {
+			ChartHolder holder = new ChartHolder();
+			holder.set_ID(key.get_ID());
+			holder.setLabel(key.getDescricao());
+			holder.setValue(val);
+			holderList.add(holder);
+		});
+
+		holderList.sort((ChartHolder o1, ChartHolder o2) -> o1.getLabel().compareTo(o2.getLabel()));
+		return renderHorizontalChart(holderList);
+	}
+
+	public HorizontalBarChartModel modelQuantidadeBairros() {
+		List<ChartHolder> holderList = new ArrayList<ChartHolder>();
+		Map<String, Integer> hashMap = new HashMap<String, Integer>();
+
+		perfilDemandasListFiltered.forEach(val -> {
+			if ((bairroSelecionado == null || val.getLocal().getBairro() != bairroSelecionado)
+					&& (categoriaSelecionada == null || val.getCategoria().get_ID() != categoriaSelecionada.get_ID())) {
+				String key = val.getLocal().getBairro();
+				int quantidade;
+				if (hashMap.containsKey(key)) {
+					quantidade = hashMap.get(key);
+					quantidade++;
+				} else {
+					quantidade = 1;
+				}
+				hashMap.put(key, quantidade);
+			}
+		});
+
+		hashMap.forEach((key, val) -> {
+			ChartHolder holder = new ChartHolder();
+			holder.set_ID(key);
+			holder.setLabel(key);
+			holder.setValue(val);
+			holderList.add(holder);
+		});
+
+		holderList.sort((ChartHolder o1, ChartHolder o2) -> o1.getLabel().compareTo(o2.getLabel()));
+		return renderHorizontalChart(holderList);
+	}
+
+	public PieChartModel modelConclusaoCategorias() {
+		List<ChartHolder> holderList = new ArrayList<ChartHolder>();
+		Map<Boolean, Integer> mapSolucionadas = new HashMap<Boolean, Integer>();
+
+		perfilDemandasListFiltered.forEach(val -> {
+			if ((bairroSelecionado == null || val.getLocal().getBairro() != bairroSelecionado)
+					&& (categoriaSelecionada == null || val.getCategoria().get_ID() != categoriaSelecionada.get_ID())) {
+				Boolean key = val.isSolicitacaoConcluida();
+				int quantidade;
+				if (mapSolucionadas.containsKey(key)) {
+					quantidade = mapSolucionadas.get(key);
+					quantidade++;
+				} else {
+					quantidade = 1;
+				}
+				mapSolucionadas.put(key, quantidade);
+			}
+		});
+
+		mapSolucionadas.forEach((key, val) -> {
+			ChartHolder holder = new ChartHolder();
+			holder.setLabel(key ? "Demandas Concluídas" : "Demandas Pendentes");
+			holder.setValue(val);
+			holderList.add(holder);
+		});
+
+		holderList.sort((ChartHolder o1, ChartHolder o2) -> o1.getLabel().compareTo(o2.getLabel()));
+		return renderPieChart(holderList);
+	}
+
+	public PieChartModel modelConclusaoBairros() {
+		List<ChartHolder> holderList = new ArrayList<ChartHolder>();
+		Map<Boolean, Integer> mapSolucionadas = new HashMap<Boolean, Integer>();
+
+		perfilDemandasListFiltered.forEach(val -> {
+			if ((bairroSelecionado == null || val.getLocal().getBairro() != bairroSelecionado)
+					&& (categoriaSelecionada == null || val.getCategoria().get_ID() != categoriaSelecionada.get_ID())) {
+				Boolean key = val.isSolicitacaoConcluida();
+				int quantidade;
+				if (mapSolucionadas.containsKey(key)) {
+					quantidade = mapSolucionadas.get(key);
+					quantidade++;
+				} else {
+					quantidade = 1;
+				}
+				mapSolucionadas.put(key, quantidade);
+			}
+		});
+
+		mapSolucionadas.forEach((key, val) -> {
+			ChartHolder holder = new ChartHolder();
+			holder.setLabel(key ? "Demandas Concluídas" : "Demandas Pendentes");
+			holder.setValue(val);
+			holderList.add(holder);
+		});
+
+		holderList.sort((ChartHolder o1, ChartHolder o2) -> o1.getLabel().compareTo(o2.getLabel()));
+		return renderPieChart(holderList);
+	}
+
+	public LineChartModel modelEvolucaoCategorias() {
+		List<ChartHolder> holderList = new ArrayList<ChartHolder>();
+		Map<String, Integer> hashMap = new HashMap<String, Integer>();
+		SimpleDateFormat df = new SimpleDateFormat("yyyy/MM", new Locale("pt", "BR"));
+
+		perfilDemandasListFiltered.forEach(val -> {
+			if ((bairroSelecionado == null || val.getLocal().getBairro() != bairroSelecionado)
+					&& (categoriaSelecionada == null || val.getCategoria().get_ID() != categoriaSelecionada.get_ID())) {
+				String key = df.format(val.getDataAbertura().getDate());
+				int quantidade;
+				if (hashMap.containsKey(key)) {
+					quantidade = hashMap.get(key);
+					quantidade++;
+				} else {
+					quantidade = 1;
+				}
+				hashMap.put(key, quantidade);
+			}
+		});
+
+		hashMap.forEach((key, val) -> {
+			ChartHolder holder = new ChartHolder();
+			holder.set_ID(key);
+			holder.setLabel(key);
+			holder.setValue(val);
+			holderList.add(holder);
+		});
+
+		holderList.sort((ChartHolder o1, ChartHolder o2) -> o1.getLabel().compareTo(o2.getLabel()));
+		return renderLineChart(holderList);
+	}
+
+	public LineChartModel modelEvolucaoBairros() {
+		List<ChartHolder> holderList = new ArrayList<ChartHolder>();
+		Map<String, Integer> hashMap = new HashMap<String, Integer>();
+		SimpleDateFormat df = new SimpleDateFormat("yyyy/MM", new Locale("pt", "BR"));
+
+		perfilDemandasListFiltered.forEach(val -> {
+			if ((bairroSelecionado == null || val.getLocal().getBairro() != bairroSelecionado)
+					&& (categoriaSelecionada == null || val.getCategoria().get_ID() != categoriaSelecionada.get_ID())) {
+				String key = df.format(val.getDataAbertura().getDate());
+				int quantidade;
+				if (hashMap.containsKey(key)) {
+					quantidade = hashMap.get(key);
+					quantidade++;
+				} else {
+					quantidade = 1;
+				}
+				hashMap.put(key, quantidade);
+			}
+		});
+
+		hashMap.forEach((key, val) -> {
+			ChartHolder holder = new ChartHolder();
+			holder.set_ID(key);
+			holder.setLabel(key);
+			holder.setValue(val);
+			holderList.add(holder);
+		});
+
+		holderList.sort((ChartHolder o1, ChartHolder o2) -> o1.getLabel().compareTo(o2.getLabel()));
+		return renderLineChart(holderList);
+	}
+
+	public HorizontalBarChartModel renderHorizontalChart(List<? extends ChartHolder> list) {
 		HorizontalBarChartModel chartModel = new HorizontalBarChartModel();
 		HorizontalBarChartDataSet dataSet = new HorizontalBarChartDataSet();
 		ChartData data = new ChartData();
@@ -485,7 +697,7 @@ public class SadBean extends AbstractBean {
 		List<String> labels = new ArrayList<>();
 
 		for (int i = 0; i < list.size(); i++) {
-			GenericHolder model = list.get(i);
+			ChartHolder model = list.get(i);
 			values.add(model.getValue());
 			labels.add(model.getLabel());
 		}
@@ -528,8 +740,8 @@ public class SadBean extends AbstractBean {
 
 	}
 
-	public BarChartModel renderNotasChart(List<? extends GenericHolder> list) {
-		BarChartModel modelDepartamentos = new BarChartModel();
+	public BarChartModel renderVerticalChart(List<? extends ChartHolder> list) {
+		BarChartModel chartModel = new BarChartModel();
 		BarChartDataSet dataSet = new BarChartDataSet();
 		ChartData data = new ChartData();
 		BarChartOptions options = new BarChartOptions();
@@ -543,7 +755,7 @@ public class SadBean extends AbstractBean {
 		List<String> labels = new ArrayList<>();
 
 		for (int i = 0; i < list.size(); i++) {
-			GenericHolder model = list.get(i);
+			ChartHolder model = list.get(i);
 			values.add(model.getValue());
 			labels.add(model.getLabel());
 		}
@@ -582,14 +794,14 @@ public class SadBean extends AbstractBean {
 		options.setScales(cScales);
 		options.setLegend(legend);
 
-		modelDepartamentos.setData(data);
-		modelDepartamentos.setOptions(options);
-		return modelDepartamentos;
+		chartModel.setData(data);
+		chartModel.setOptions(options);
+		return chartModel;
 
 	}
 
-	public PieChartModel renderSolucaoChart(List<? extends GenericHolder> list) {
-		PieChartModel modelDepartamentos = new PieChartModel();
+	public PieChartModel renderPieChart(List<? extends ChartHolder> list) {
+		PieChartModel chartModel = new PieChartModel();
 		PieChartDataSet dataSet = new PieChartDataSet();
 		ChartData data = new ChartData();
 		PieChartOptions options = new PieChartOptions();
@@ -600,22 +812,22 @@ public class SadBean extends AbstractBean {
 		List<String> labels = new ArrayList<>();
 
 		for (int i = 0; i < list.size(); i++) {
-			GenericHolder model = list.get(i);
+			ChartHolder model = list.get(i);
 			values.add(model.getValue());
 			labels.add(model.getLabel());
 		}
 
 		for (int i = 0; i < (int) list.size() / 10 + 1; i++) {
+			bgColor.add("#4CAF50");
+			bgColor.add("#CDDC39");
+			bgColor.add("#FFEB3B");
+			bgColor.add("#FF9800");
 			bgColor.add("#f44336");
 			bgColor.add("#E91E63");
 			bgColor.add("#673AB7");
 			bgColor.add("#2196F3");
 			bgColor.add("#00BCD4");
 			bgColor.add("#009688");
-			bgColor.add("#4CAF50");
-			bgColor.add("#CDDC39");
-			bgColor.add("#FFEB3B");
-			bgColor.add("#FF9800");
 		}
 
 		while (bgColor.size() > list.size()) {
@@ -631,13 +843,13 @@ public class SadBean extends AbstractBean {
 		legend.setPosition("left");
 		options.setLegend(legend);
 
-		modelDepartamentos.setOptions(options);
-		modelDepartamentos.setData(data);
-		return modelDepartamentos;
+		chartModel.setOptions(options);
+		chartModel.setData(data);
+		return chartModel;
 	}
 
-	public LineChartModel renderEvolucaoChart(List<? extends GenericHolder> list) {
-		LineChartModel modelDepartamentos = new LineChartModel();
+	public LineChartModel renderLineChart(List<? extends ChartHolder> list) {
+		LineChartModel chartModel = new LineChartModel();
 		LineChartDataSet dataSet = new LineChartDataSet();
 		ChartData data = new ChartData();
 		LineChartOptions options = new LineChartOptions();
@@ -647,7 +859,7 @@ public class SadBean extends AbstractBean {
 		List<String> labels = new ArrayList<>();
 
 		for (int i = 0; i < list.size(); i++) {
-			GenericHolder model = list.get(i);
+			ChartHolder model = list.get(i);
 			values.add(model.getValue());
 			labels.add(model.getLabel());
 		}
@@ -661,9 +873,9 @@ public class SadBean extends AbstractBean {
 		legend.setDisplay(false);
 		options.setLegend(legend);
 
-		modelDepartamentos.setOptions(options);
-		modelDepartamentos.setData(data);
-		return modelDepartamentos;
+		chartModel.setOptions(options);
+		chartModel.setData(data);
+		return chartModel;
 
 	}
 
@@ -675,12 +887,28 @@ public class SadBean extends AbstractBean {
 		return funcionarioSelecionado;
 	}
 
+	public Categoria getCategoriaSelecionada() {
+		return categoriaSelecionada;
+	}
+
+	public String getBairroSelecionado() {
+		return bairroSelecionado;
+	}
+
 	public List<Departamento> getDepartamentos() {
 		return departamentos;
 	}
 
 	public List<Usuario> getFuncionarios() {
 		return funcionarios;
+	}
+
+	public List<Categoria> getCategorias() {
+		return categorias;
+	}
+
+	public List<String> getBairros() {
+		return bairros;
 	}
 
 	public Date getDataInicio() {

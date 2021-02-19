@@ -1,8 +1,8 @@
-package br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.chartHolders;
+package br.edu.ifpr.bsi.prefeiturainterativaweb.helpers;
 
 import java.util.Objects;
 
-public abstract class GenericHolder {
+public class ChartHolder {
 	private String _ID;
 	private Number value;
 	private String label;
@@ -44,7 +44,7 @@ public abstract class GenericHolder {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		GenericHolder other = (GenericHolder) obj;
+		ChartHolder other = (ChartHolder) obj;
 		return Objects.equals(_ID, other._ID);
 	}
 
