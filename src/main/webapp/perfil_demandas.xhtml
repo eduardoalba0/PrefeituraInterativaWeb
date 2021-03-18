@@ -37,7 +37,7 @@
 							</div>
 							<p:divider />
 							<div class="p-grid no-update" align="left">
-								<p:outputLabel class="p-col-6" value="Filtrar por Funcionário: " />
+								<p:outputLabel class="p-col-6" value="Filtrar por Bairro " />
 								<p:commandButton class="p-col-4" value="TODOS"
 									actionListener="#{sadBean.selecionarBairro}"
 									update="@(form :not(.no-update))">
@@ -88,7 +88,7 @@
 							<h1>Quantidade de Solicitações</h1>
 						</div>
 						<p:barChart model="#{sadBean.modelQuantidadeCategorias()}"
-							style="width: 100%; height: auto;" />
+							style="width: 100%; height: 400px;" />
 						<p:divider />
 						<div class="ui-g-12 ui-md-12">
 							<h1>Índice de conclusão</h1>
@@ -175,7 +175,7 @@
 							<h1>Quantidade de Solicitações</h1>
 						</div>
 						<p:barChart model="#{sadBean.modelQuantidadeBairros()}"
-							style="width: 100%; height: auto;" />
+							style="width: 100%; height: 400px;" />
 						<p:divider />
 						<div class="ui-g-12 ui-md-12">
 							<h1>Índice de conclusão</h1>

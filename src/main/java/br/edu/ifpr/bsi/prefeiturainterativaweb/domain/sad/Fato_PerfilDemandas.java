@@ -42,7 +42,8 @@ public class Fato_PerfilDemandas extends GenericDomain {
 	public Fato_PerfilDemandas(Solicitacao solicitacao, Categoria categoria) {
 		this.set_ID(solicitacao.get_ID());
 		this.solicitacaoConcluida = solicitacao.isConcluida();
-		this.dataAbertura = new Dim_Tempo(solicitacao.getDataAbertura());
+		if (solicitacao.getDataAbertura() != null)
+			this.dataAbertura = new Dim_Tempo(solicitacao.getDataAbertura());
 		this.departamento = new Dim_Departamento(solicitacao.getLocalDepartamento());
 		this.categoria = new Dim_Categoria(categoria);
 		this.local = new Dim_Local(solicitacao);

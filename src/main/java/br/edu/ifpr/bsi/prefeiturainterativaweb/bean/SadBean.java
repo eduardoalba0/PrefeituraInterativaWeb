@@ -33,6 +33,8 @@ import org.primefaces.model.charts.pie.PieChartModel;
 import org.primefaces.model.charts.pie.PieChartOptions;
 
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.SolicitacaoDAO;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.sad.Dim_CategoriaDAO;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.sad.Dim_DepartamentoDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.sad.Fato_PerfilDemandasDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.sad.Fato_QualidadeAtendimentoDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Categoria;
@@ -101,11 +103,24 @@ public class SadBean extends AbstractBean {
 	}
 
 	public void stage() {
+		List<Dim_Departamento> mergeDepartamentos = new ArrayList<Dim_Departamento>();
+		List<Dim_Categoria> mergeCategorias = new ArrayList<Dim_Categoria>();
+
+		departamentos.forEach(aux->{
+			mergeDepartamentos.add(new Dim_Departamento(aux));
+		});
+		categorias.forEach(aux->{
+			mergeCategorias.add(new Dim_Categoria(aux));
+		});
+
+		new Dim_DepartamentoDAO().merge(mergeDepartamentos);
+		new Dim_CategoriaDAO().merge(mergeCategorias);
+
 		List<Fato_QualidadeAtendimento> mergeListQualidade = new ArrayList<>();
 		List<Fato_PerfilDemandas> mergeListLocal = new ArrayList<>();
 		solicitacoes.removeIf(solicitacao -> solicitacao.isStaged());
 		solicitacoes.forEach(solicitacao -> {
-			if (solicitacao.getFuncionarioConclusao_ID() != null) {
+			if (solicitacao.getFuncionarioConclusao_ID() != null && solicitacao.getDataConclusao() != null) {
 				Usuario aux = funcionarios
 						.get(funcionarios.indexOf(new Usuario(solicitacao.getFuncionarioConclusao_ID())));
 				if (aux.getDadosFuncionais() != null && aux.getDadosFuncionais().getDepartamento_ID() != null)

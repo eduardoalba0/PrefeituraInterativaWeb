@@ -14,7 +14,7 @@ import javax.persistence.TemporalType;
 @SuppressWarnings("serial")
 public class Dim_Tempo extends GenericDomain {
 
-	@Column(nullable = false)
+	@Column(nullable = true)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date date;
 

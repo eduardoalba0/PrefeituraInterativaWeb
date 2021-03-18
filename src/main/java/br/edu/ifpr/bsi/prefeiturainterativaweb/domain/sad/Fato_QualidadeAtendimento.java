@@ -43,6 +43,7 @@ public class Fato_QualidadeAtendimento extends GenericDomain {
 		this.solicitacaoConcluida = solicitacao.isConcluida();
 		if (solicitacao.getAvaliacao() != null)
 			this.avaliacao = new Dim_Avaliacao(solicitacao);
+		if(solicitacao.getDataConclusao() != null )
 		this.dataConclusao = new Dim_Tempo(solicitacao.getDataConclusao());
 		this.departamento = new Dim_Departamento(solicitacao.getLocalDepartamento());
 		if (solicitacao.getLocalFuncionarioConclusao() != null)

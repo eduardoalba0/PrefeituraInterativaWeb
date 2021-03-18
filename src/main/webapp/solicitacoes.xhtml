@@ -65,6 +65,8 @@
 				<p:column headerText="Opções" styleClass="centeredColumn"
 					priority="1">
 					<p:commandButton icon="pi pi-external-link" title="Visualizar"
+																value="Visualizar"
+				
 						styleClass="ui-secondary-color"
 						actionListener="#{solicitacaoBean.selecionar}"
 						onstart="PF('statusDialog').show();"
@@ -76,6 +78,8 @@
 							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
 					</p:commandButton>
 					<p:commandButton icon="pi pi-comment" title="Responder"
+											value="Responder"
+					
 						styleClass="ui-tertiary-color"
 						actionListener="#{solicitacaoBean.selecionar}"
 						onsuccess="PF('dialogResposta').show()"
@@ -88,6 +92,7 @@
 					</p:commandButton>
 					<p:commandButton icon="pi pi-reply" title="Encaminhar"
 						actionListener="#{solicitacaoBean.selecionar}"
+												value="Encaminhar"
 						onstart="PF('statusDialog').show();"
 						onerror="PF('statusDialog').hide();"
 						onsuccess="PF('dialogEncaminhamento').show()"
@@ -98,6 +103,7 @@
 					</p:commandButton>
 					<p:commandButton
 						icon="#{solicitacao.localCidadao.habilitado ? 'pi pi-ban' : 'pi pi-check'}"
+						value="Bloquear"
 						styleClass="#{solicitacao.localCidadao.habilitado ? 'ui-danger-color' : 'ui-success-color'}"
 						title="#{solicitacao.localCidadao.habilitado ? 'Bloquear Cidadão' : 'Habilitar Usuário'}"
 						onstart="PF('statusDialog').show();"
