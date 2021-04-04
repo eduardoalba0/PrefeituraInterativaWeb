@@ -20,13 +20,9 @@ public class Departamento implements Serializable {
 
 	private String _ID;
 	private String descricao;
-	private String departamentoSuperior_ID;
 	private boolean habilitado;
 	private boolean staged;
 	private List<String> categorias;
-
-	@Exclude
-	private Departamento departamentoSuperior;
 
 	@Exclude
 	private List<Categoria> localCategorias;
@@ -47,14 +43,6 @@ public class Departamento implements Serializable {
 
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
-	}
-
-	public String getDepartamentoSuperior_ID() {
-		return departamentoSuperior_ID;
-	}
-
-	public void setDepartamentoSuperior_ID(String departamentoSuperior_ID) {
-		this.departamentoSuperior_ID = departamentoSuperior_ID;
 	}
 
 	public List<String> getCategorias() {
@@ -80,15 +68,6 @@ public class Departamento implements Serializable {
 
 	public void setStaged(boolean staged) {
 		this.staged = staged;
-	}
-
-	@Exclude
-	public Departamento getDepartamentoSuperior() {
-		return departamentoSuperior;
-	}
-
-	public void setDepartamentoSuperior(Departamento departamentoSuperior) {
-		this.departamentoSuperior = departamentoSuperior;
 	}
 
 	@Exclude

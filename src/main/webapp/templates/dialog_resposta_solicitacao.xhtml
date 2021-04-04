@@ -7,7 +7,8 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-	<p:sidebar widgetVar="dialogResposta" position="bottom">
+	<p:sidebar widgetVar="dialogResposta" position="bottom"
+		rendered="#{funcionarioLogado != null}">
 		<h:form id="form-resposta" styleClass="ui-g ui-fluid centeredColumn">
 			<div class="ui-inputgroup ui-g-12 ui-md-12">
 				<h2 class="centeredColumn">Responder Solicitação</h2>

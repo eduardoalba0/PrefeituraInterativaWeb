@@ -23,15 +23,18 @@
 	<h:outputStylesheet name="primeicons/primeicons.css"
 		library="primefaces" />
 	<div class="ui-g">
-		<h:form id="form-menu" class="ui-g-12 ui-md-2 ui-g-nopad" rendered="#{usuarioBean.funcionarioLogado != null}">
+		<h:form id="form-menu" class="ui-g-12 ui-md-2 ui-g-nopad"
+			rendered="#{funcionarioLogado != null}">
 			<p:menu style="width:100%;">
-				<p:submenu label="Gestão">
+				<p:submenu label="Gestão"
+					rendered="#{funcionarioLogado.localTipoUsuario.descricao.equals('Gestor') || funcionarioLogado.localTipoUsuario.descricao.equals('Admin')}">
 					<p:menuitem value="Avaliações" url="avaliacoes.xhtml" />
 					<p:menuitem value="Qualidade do Atendimento"
 						url="qualidade_atendimento.xhtml" />
 					<p:menuitem value="Perfil das Demandas" url="perfil_demandas.xhtml" />
 				</p:submenu>
-				<p:submenu label="Administrativo">
+				<p:submenu label="Administrativo"
+					rendered="#{funcionarioLogado.localTipoUsuario.descricao.equals('Gestor') || funcionarioLogado.localTipoUsuario.descricao.equals('Admin')}">
 					<p:menuitem value="Categorias" url="categorias.xhtml" />
 					<p:menuitem value="Departamentos" url="departamentos.xhtml" />
 					<p:menuitem value="Tipos de Usuários" url="tiposusuarios.xhtml" />
@@ -55,19 +58,9 @@
 				<ui:insert name="conteudo" />
 			</div>
 		</div>
-		<div class="ui-g-12 centeredColumn ui-widget ui-texto">
-			<!-- Footer -->
-			<div class="ui-g-12">
-				<h:outputLabel
-					value="Elaborado por Eduardo Luiz Alba e Pâmela Cristina Zini &copy; (2020) "
-					rendered="#{funcionarioLogado != null}" />
-			</div>
-			<div class="ui-g-12">
-				<h:outputLabel value="Todos os Direitos Reservados."
-					rendered="#{funcionarioLogado != null}" />
-			</div>
-		</div>
 	</div>
+	<ui:include src="acesso_negado.xhtml" />
+	<ui:include src="nao_logado.xhtml" />
 	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
 		closable="false" resizable="false" showHeader="true"
 		header="Aguarde um momento...">

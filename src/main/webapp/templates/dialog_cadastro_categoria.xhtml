@@ -7,7 +7,8 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-	<p:sidebar widgetVar="dialogCadastroCategoria" position="bottom">
+	<p:sidebar widgetVar="dialogCadastroCategoria" position="bottom"
+		rendered="#{funcionarioLogado != null  and (funcionarioLogado.localTipoUsuario.descricao.equals('Gestor') || funcionarioLogado.localTipoUsuario.descricao.equals('Admin'))}">
 		<h:form id="form-cadastro-categoria" class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-md-6 centeredColumn">
 				<h2>#{categoriaBean.categoria.descricao == null ? 'Cadastrar

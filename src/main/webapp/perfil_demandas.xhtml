@@ -10,7 +10,8 @@
 	template="templates/menulateral.xhtml">
 
 	<ui:define name="conteudo">
-		<p:card>
+		<p:card
+			rendered="#{funcionarioLogado != null  and (funcionarioLogado.localTipoUsuario.descricao.equals('Gestor') || funcionarioLogado.localTipoUsuario.descricao.equals('Admin'))}">
 			<h:form id="form-cadastro-solicitacao"
 				styleClass="ui-g ui-fluid centeredColumn">
 				<p:tabView id="root-tabview"
@@ -124,7 +125,7 @@
 							</div>
 							<p:divider />
 							<div class="p-grid no-update" align="left">
-								<p:outputLabel class="p-col-6" value="Filtrar por Funcionário: " />
+								<p:outputLabel class="p-col-6" value="Filtrar por Bairro " />
 								<p:commandButton class="p-col-4" value="TODOS"
 									actionListener="#{sadBean.selecionarBairro}"
 									update="@(form :not(.no-update))">

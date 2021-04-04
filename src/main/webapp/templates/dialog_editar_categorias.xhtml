@@ -8,8 +8,10 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-	<p:sidebar widgetVar="dialogEditarCategorias" position="bottom">
-		<h:form id="form-editar-categorias" styleClass="ui-g ui-fluid centeredColumn">
+	<p:sidebar widgetVar="dialogEditarCategorias" position="bottom"
+		rendered="#{funcionarioLogado != null}">
+		<h:form id="form-editar-categorias"
+			styleClass="ui-g ui-fluid centeredColumn">
 			<div class="ui-inputgroup ui-g-12 ui-md-12">
 				<h2 class="centeredColumn">Editar Categorias</h2>
 			</div>

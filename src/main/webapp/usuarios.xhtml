@@ -10,7 +10,8 @@
 	template="templates/menulateral.xhtml">
 
 	<ui:define name="conteudo">
-		<h:form id="form-usuarios">
+		<h:form id="form-usuarios"
+			rendered="#{funcionarioLogado != null  and (funcionarioLogado.localTipoUsuario.descricao.equals('Gestor') || funcionarioLogado.localTipoUsuario.descricao.equals('Admin'))}">
 			<p:dataTable id="tabela-usuarios" var="usuario" rows="10"
 				value="#{usuarioBean.usuarios}" sortBy="#{usuario.nome}"
 				widgetVar="tabelausuarios" emptyMessage="Nenhum usuario encontrado."
@@ -112,7 +113,7 @@
 					update=":mensagem :form-usuarios :form-cadastro-usuario" />
 			</p:confirmDialog>
 		</h:form>
-		<ui:include src="templates/dialog_cadastro_usuario.xhtml" />
+		<ui:include src="templates/dialog_cadastro_usuario.xhtml"/>
 		<ui:include src="templates/dialog_redefinir_senha.xhtml" />
 	</ui:define>
 </ui:composition>

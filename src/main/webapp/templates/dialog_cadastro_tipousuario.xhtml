@@ -8,7 +8,8 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-	<p:sidebar widgetVar="dialogCadastroTipoUsuario" position="bottom">
+	<p:sidebar widgetVar="dialogCadastroTipoUsuario" position="bottom"
+		rendered="#{funcionarioLogado != null  and (funcionarioLogado.localTipoUsuario.descricao.equals('Gestor') || funcionarioLogado.localTipoUsuario.descricao.equals('Admin'))}">
 		<h:form id="form-cadastro-tipousuario" class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-md-6 centeredColumn">
 				<h2>#{tipoUsuarioBean.tipoUsuario.descricao == null ?

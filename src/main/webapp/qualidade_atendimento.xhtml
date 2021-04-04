@@ -10,7 +10,8 @@
 	template="templates/menulateral.xhtml">
 
 	<ui:define name="conteudo">
-		<p:card>
+		<p:card
+			rendered="#{funcionarioLogado != null  and (funcionarioLogado.localTipoUsuario.descricao.equals('Gestor') || funcionarioLogado.localTipoUsuario.descricao.equals('Admin'))}">
 			<h:form id="form-cadastro-solicitacao"
 				styleClass="ui-g ui-fluid centeredColumn">
 				<p:tabView id="root-tabview"
@@ -25,9 +26,9 @@
 									update="@(form :not(.no-update))">
 									<f:attribute name="departamentoSelecionado" value="#{null}" />
 								</p:commandButton>
-								<p:repeat value="#{sadBean.departamentos}"
-									var="departamento">
-									<p:commandButton class="p-col-4" value="#{departamento.descricao}"
+								<p:repeat value="#{sadBean.departamentos}" var="departamento">
+									<p:commandButton class="p-col-4"
+										value="#{departamento.descricao}"
 										disabled="#{sadBean.departamentoSelecionado != null and sadBean.departamentoSelecionado._ID != departamento._ID}"
 										icon="#{sadBean.departamentoSelecionado != null and sadBean.departamentoSelecionado._ID == departamento._ID ? 'pi pi-check' : ''}"
 										actionListener="#{sadBean.selecionarDepartamento}"
@@ -104,9 +105,9 @@
 									update="@(form :not(.no-update))">
 									<f:attribute name="departamentoSelecionado" value="#{null}" />
 								</p:commandButton>
-								<p:repeat value="#{sadBean.departamentos}"
-									var="departamento">
-									<p:commandButton class="p-col-4" value="#{departamento.descricao}"
+								<p:repeat value="#{sadBean.departamentos}" var="departamento">
+									<p:commandButton class="p-col-4"
+										value="#{departamento.descricao}"
 										disabled="#{sadBean.departamentoSelecionado != null and sadBean.departamentoSelecionado._ID != departamento._ID}"
 										icon="#{sadBean.departamentoSelecionado != null and sadBean.departamentoSelecionado._ID == departamento._ID ? 'pi pi-check' : ''}"
 										actionListener="#{sadBean.selecionarDepartamento}"
@@ -124,8 +125,7 @@
 									update="@(form :not(.no-update))">
 									<f:attribute name="funcionarioSelecionado" value="#{null}" />
 								</p:commandButton>
-								<p:repeat value="#{sadBean.funcionarios}"
-									var="funcionario">
+								<p:repeat value="#{sadBean.funcionarios}" var="funcionario">
 									<p:commandButton class="p-col-4" value="#{funcionario.nome}"
 										disabled="#{(sadBean.funcionarioSelecionado != null and sadBean.funcionarioSelecionado._ID != funcionario._ID) || (sadBean.departamentoSelecionado != null and sadBean.departamentoSelecionado._ID != funcionario.departamentoFuncionario)}"
 										icon="#{sadBean.funcionarioSelecionado != null and sadBean.funcionarioSelecionado._ID == funcionario._ID ? 'pi pi-check' : ''}"

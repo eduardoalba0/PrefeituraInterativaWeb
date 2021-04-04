@@ -10,9 +10,14 @@
 	template="templates/menulateral.xhtml">
 
 	<ui:define name="conteudo">
+		<script>
+			$(function() {
+				$('#acesso_negado').css("display", "none")
+			})
+		</script>
 		<script type="text/javascript"
 			src="http://maps.google.com/maps/api/js?key=AIzaSyDdbMgttlDqaG1dkYwqCXGVw4ugRqEJzRc" />
-		<h:form id="form-solicitacoes">
+		<h:form id="form-solicitacoes" rendered="#{funcionarioLogado != null}">
 			<p:dataTable id="tabela-solicitacoes" var="solicitacao" rows="10"
 				value="#{solicitacaoBean.listar()}"
 				sortBy="#{solicitacao.getDataTempoString()}"
@@ -44,8 +49,9 @@
 					filterStyle="display:none">
 					<h:outputText value="#{solicitacao.localCidadao.nome}" />
 				</p:column>
-				<p:column headerText="Data" sortBy="#{solicitacao.dataAberturaString}"
-					priority="1" styleClass="centeredColumn"
+				<p:column headerText="Data"
+					sortBy="#{solicitacao.dataAberturaString}" priority="1"
+					styleClass="centeredColumn"
 					filterBy="#{solicitacao.dataAberturaString}"
 					filterStyle="display:none">
 					<h:outputText value="#{solicitacao.dataAberturaString}" />
@@ -65,9 +71,7 @@
 				<p:column headerText="Opções" styleClass="centeredColumn"
 					priority="1">
 					<p:commandButton icon="pi pi-external-link" title="Visualizar"
-																value="Visualizar"
-				
-						styleClass="ui-secondary-color"
+						value="Visualizar" styleClass="ui-secondary-color"
 						actionListener="#{solicitacaoBean.selecionar}"
 						onstart="PF('statusDialog').show();"
 						onerror="PF('statusDialog').hide();"
@@ -77,10 +81,8 @@
 						<f:actionListener
 							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
 					</p:commandButton>
-					<p:commandButton icon="pi pi-comment" title="Responder"
-											value="Responder"
-					
-						styleClass="ui-tertiary-color"
+					<p:commandButton icon="pi pi-comment" title="Responder" rendered="${!solicitacao.concluida}"
+						value="Responder" styleClass="ui-tertiary-color"
 						actionListener="#{solicitacaoBean.selecionar}"
 						onsuccess="PF('dialogResposta').show()"
 						onstart="PF('statusDialog').show();"
@@ -90,9 +92,8 @@
 						<f:actionListener
 							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
 					</p:commandButton>
-					<p:commandButton icon="pi pi-reply" title="Encaminhar"
-						actionListener="#{solicitacaoBean.selecionar}"
-												value="Encaminhar"
+					<p:commandButton icon="pi pi-reply" title="Encaminhar" rendered="${!solicitacao.concluida}"
+						actionListener="#{solicitacaoBean.selecionar}" value="Encaminhar"
 						onstart="PF('statusDialog').show();"
 						onerror="PF('statusDialog').hide();"
 						onsuccess="PF('dialogEncaminhamento').show()"

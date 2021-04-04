@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Produces;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
@@ -14,14 +14,16 @@ import javax.inject.Named;
 import org.primefaces.PrimeFaces;
 
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.UsuarioDAO;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.sad.Dim_FuncionarioDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.DadosFuncionais;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Departamento;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.TipoUsuario;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Usuario;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.sad.Dim_Funcionario;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.helpers.FirebaseHelper;
 
 @Named("usuarioBean")
-@ApplicationScoped
+@SessionScoped
 @SuppressWarnings("serial")
 public class UsuarioBean extends AbstractBean {
 
@@ -30,9 +32,6 @@ public class UsuarioBean extends AbstractBean {
 	private List<Usuario> usuarios;
 	private List<Usuario> funcionarios;
 	private String uid;
-
-	@Produces
-	@Named("funcionarioLogado")
 	private Usuario funcionarioLogado;
 
 	@Inject
@@ -61,7 +60,6 @@ public class UsuarioBean extends AbstractBean {
 		}
 	}
 
-	
 	public void cadastrar() {
 		usuario = new Usuario();
 		dadosFuncionais = new DadosFuncionais();
@@ -110,6 +108,8 @@ public class UsuarioBean extends AbstractBean {
 			boolean tasksSuccess = usuario.get_ID() != null && !usuario.get_ID().trim().equals("");
 			if (tasksSuccess) {
 				tasksSuccess = UsuarioDAO.merge(usuario);
+				if (isTipoFuncionario())
+					tasksSuccess = new Dim_FuncionarioDAO().merge(new Dim_Funcionario(usuario));
 				usuario = new Usuario();
 				usuarios = null;
 				init();
@@ -187,23 +187,21 @@ public class UsuarioBean extends AbstractBean {
 		String _ID = FirebaseHelper.autenticar(usuario);
 		boolean tasksSuccess = _ID != null && !_ID.trim().equals("");
 		if (tasksSuccess) {
-			// Login com sucesso.
-			// Verifica se o usuário possui as informações complementares.
 			usuario = UsuarioDAO.get(_ID);
 			tasksSuccess = usuario != null;
 
-			// Usuário possui informações complementares.
 			if (tasksSuccess) {
 				tasksSuccess = false;
-				// Verifica se o usuário está habilitado
 				if (usuario.isHabilitado()) {
 					if (usuario.getTipoUsuario_ID() != null) {
 						if (tiposUsuario != null && !tiposUsuario.isEmpty()) {
 							int index = tiposUsuario.indexOf(new TipoUsuario(usuario.getTipoUsuario_ID()));
 							if (index >= 0 && tiposUsuario.get(index) != null) {
-								if (tiposUsuario.get(index).isFuncionario())
+								if (tiposUsuario.get(index).isFuncionario()) {
 									tasksSuccess = true;
-								else {
+									usuario.setLocalTipoUsuario(tiposUsuario
+											.get(tiposUsuario.indexOf(new TipoUsuario(usuario.getTipoUsuario_ID()))));
+								} else {
 									hideStatusDialog();
 									showErrorMessage(
 											"Seu usuário não possuí privilégios para acessar a plataforma. Consulte o suporte da ferramenta.");
@@ -214,26 +212,23 @@ public class UsuarioBean extends AbstractBean {
 				}
 			}
 		} else {
-			// Chama a função .JS para mostrar o erro do login.
 			PrimeFaces.current().executeScript("login();");
 			return;
 		}
 
 		if (tasksSuccess) {
-			// Login com Sucesso, redireciona à pagina principal.
-			funcionarioLogado = usuario;
-			usuario = new Usuario();
+			setFuncionarioLogado(usuario);
 			hideStatusDialog();
 			redirect("solicitacoes.xhtml", "Bem vindo, " + funcionarioLogado.getNome() + "! ");
 		} else {
-			// Falha ao logar.
 			hideStatusDialog();
 			showErrorMessage("Falha ao autenticar dados. Consulte o suporte da ferramenta.");
 		}
 	}
 
 	public void deslogar() {
-		funcionarioLogado = null;
+		setFuncionarioLogado(null);
+		;
 		showStatusDialog();
 		PrimeFaces.current().executeScript("logout();");
 		redirect("index.xhtml", "Obrigado por utilizar nossos serviços.");
@@ -259,6 +254,8 @@ public class UsuarioBean extends AbstractBean {
 		this.funcionarioLogado = funcionarioLogado;
 	}
 
+	@Produces
+	@Named("funcionarioLogado")
 	public Usuario getFuncionarioLogado() {
 		return funcionarioLogado;
 	}

@@ -9,7 +9,7 @@ import org.primefaces.PrimeFaces;
 
 @SuppressWarnings("serial")
 public class AbstractBean implements Serializable {
-	
+
 	public final void redirect(String pagina) {
 		try {
 			FacesContext.getCurrentInstance().getExternalContext().redirect(pagina);
@@ -23,6 +23,17 @@ public class AbstractBean implements Serializable {
 		try {
 			FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
 			showSuccessMessage(mensagem);
+			FacesContext.getCurrentInstance().getExternalContext().redirect(pagina);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			showErrorMessage("Ocorreu uma falha no redirecionamento da página. Consulte o suporte da ferramenta.");
+		}
+	}
+
+	public final void redirectError(String pagina, String mensagem) {
+		try {
+			FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
+			showErrorMessage(mensagem);
 			FacesContext.getCurrentInstance().getExternalContext().redirect(pagina);
 		} catch (Exception ex) {
 			ex.printStackTrace();

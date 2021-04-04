@@ -6,6 +6,11 @@
 	template="templates/menulateral.xhtml">
 
 	<ui:define name="conteudo">
+		<script>
+			$(function() {
+				$('.form_acesso_negado').css("display", "none")
+			})
+		</script>
 		<h:form id="form-login" class="ui-g ui-fluid centerDiv">
 			<p:panel id="painel-login" class="centeredColumn">
 				<p:commandButton icon="icon-app" iconPos="center"

@@ -8,7 +8,8 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	template="templates/menulateral.xhtml">
 	<ui:define name="conteudo">
-		<h:form id="form-funcionarios">
+		<h:form id="form-funcionarios"
+			rendered="#{funcionarioLogado != null  and (funcionarioLogado.localTipoUsuario.descricao.equals('Gestor') || funcionarioLogado.localTipoUsuario.descricao.equals('Admin'))}">
 			<p:dataTable id="tabela-usuarios" var="usuario" rows="10"
 				value="#{usuarioBean.funcionarios}" sortBy="#{usuario.nome}"
 				widgetVar="tabelausuarios" emptyMessage="Nenhum usuario encontrado."

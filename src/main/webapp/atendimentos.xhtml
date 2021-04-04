@@ -10,7 +10,12 @@
 	template="templates/menulateral.xhtml">
 
 	<ui:define name="conteudo">
-		<h:form id="form-atendimentos">
+		<script>
+			$(function() {
+				$('#acesso_negado').css("display", "none")
+			})
+		</script>
+		<h:form id="form-atendimentos" rendered="#{funcionarioLogado != null}">
 			<p:dataTable id="tabela-atendimentos" var="atendimento" rows="10"
 				value="#{atendimentoBean.listar()}"
 				sortBy="#{atendimento.getDataTempoString()}"

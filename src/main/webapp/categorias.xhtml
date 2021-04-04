@@ -9,7 +9,8 @@
 	template="templates/menulateral.xhtml">
 
 	<ui:define name="conteudo">
-		<h:form id="form-categorias">
+		<h:form id="form-categorias"
+			rendered="#{funcionarioLogado != null  and (funcionarioLogado.localTipoUsuario.descricao.equals('Gestor') || funcionarioLogado.localTipoUsuario.descricao.equals('Admin'))}">
 			<p:dataTable id="tabela-categorias" var="categoria"
 				value="#{categoriaBean.listar()}" paginator="true"
 				emptyMessage="Nenhuma categoria encontrada."

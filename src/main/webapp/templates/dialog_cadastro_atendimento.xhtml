@@ -7,7 +7,8 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-	<p:sidebar widgetVar="dialogCadastroAtendimento" position="bottom">
+	<p:sidebar widgetVar="dialogCadastroAtendimento" position="bottom"
+		rendered="#{funcionarioLogado != null}">
 		<h:form id="form-cadastro-atendimento"
 			styleClass="ui-g ui-fluid centeredColumn">
 			<div class="ui-g-12 ui-md-6 centeredColumn">

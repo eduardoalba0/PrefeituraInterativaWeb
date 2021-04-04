@@ -62,6 +62,9 @@ public class AtendimentoBean extends AbstractBean {
 	}
 
 	public List<Atendimento> listar() {
+		atendimentos.removeIf(aux -> !funcionarioLogado.getLocalTipoUsuario().getDescricao().equals("Admin")
+				&& !funcionarioLogado.getLocalTipoUsuario().getDescricao().equals("Gestor")
+				&& !aux.getFuncionario_ID().equals(funcionarioLogado.get_ID()));
 		atendimentos.forEach((aux) -> {
 			if (usuarios != null && !usuarios.isEmpty() && usuarios.contains(new Usuario(aux.getFuncionario_ID()))) {
 				aux.setLocalFuncionario(usuarios.get(usuarios.indexOf(new Usuario(aux.getFuncionario_ID()))));

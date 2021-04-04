@@ -12,8 +12,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.DepartamentoDAO;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.sad.Dim_DepartamentoDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Categoria;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Departamento;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.sad.Dim_Departamento;
 
 @Named("departamentoBean")
 @SessionScoped
@@ -70,7 +72,9 @@ public class DepartamentoBean extends AbstractBean {
 	}
 
 	public void salvarEditar() {
-		if (DepartamentoDAO.merge(departamento)) {
+		boolean taskSuccess = DepartamentoDAO.merge(departamento)
+				&& new Dim_DepartamentoDAO().merge(new Dim_Departamento(departamento));
+		if (taskSuccess) {
 			hideStatusDialog();
 			departamento = new Departamento();
 			showSuccessMessage("Dados gravados na nuvem.");

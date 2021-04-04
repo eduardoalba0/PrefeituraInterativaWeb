@@ -9,7 +9,8 @@
 	template="templates/menulateral.xhtml">
 
 	<ui:define name="conteudo">
-		<h:form id="form-tiposusuarios">
+		<h:form id="form-tiposusuarios"
+			rendered="#{funcionarioLogado != null  and (funcionarioLogado.localTipoUsuario.descricao.equals('Gestor') || funcionarioLogado.localTipoUsuario.descricao.equals('Admin'))}">
 			<p:dataTable id="tabela-tipoUsuarios" var="tipoUsuario"
 				value="#{tipoUsuarioBean.listar()}" paginator="true"
 				emptyMessage="Nenhum Tipo de Usuario encontrado."

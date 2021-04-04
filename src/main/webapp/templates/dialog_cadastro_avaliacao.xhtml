@@ -10,7 +10,8 @@
 
 	<script type="text/javascript"
 		src="http://maps.google.com/maps/api/js?key=AIzaSyDdbMgttlDqaG1dkYwqCXGVw4ugRqEJzRc" />
-	<p:sidebar widgetVar="dialogCadastroAvaliacao" position="bottom">
+	<p:sidebar widgetVar="dialogCadastroAvaliacao" position="bottom"
+		rendered="#{funcionarioLogado != null  and (funcionarioLogado.localTipoUsuario.descricao.equals('Gestor') || funcionarioLogado.localTipoUsuario.descricao.equals('Admin'))}">
 		<h:form id="form-cadastro-avaliacao"
 			styleClass="ui-g ui-fluid centeredColumn">
 			<div class="ui-g-12 ui-md-6 centeredColumn">
@@ -63,7 +64,8 @@
 				<p:tooltip for="descricao" position="top" />
 			</div>
 			<div class="ui-inputgroup ui-g-12 ui-md-12">
-				<span class="ui-inputgroup-addon">Comentários sobre o atendimento</span>
+				<span class="ui-inputgroup-addon">Comentários sobre o
+					atendimento</span>
 				<p:inputTextarea id="comentario" rows="2" readonly="true"
 					title="#{avaliacaoBean.solicitacao.avaliacao.comentario == null ? 'Nenhum comentário inserido.' : ''}"
 					placeholder="#{avaliacaoBean.solicitacao.avaliacao.comentario == null ? 'Nenhum comentário inserido.' : ''}"

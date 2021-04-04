@@ -55,7 +55,7 @@ public class SolicitacaoBean extends AbstractBean {
 	@Inject
 	@Named("usuarios")
 	private List<Usuario> usuarios;
-	
+
 	@Inject
 	@Named("funcionarios")
 	private List<Usuario> funcionarios;
@@ -73,10 +73,10 @@ public class SolicitacaoBean extends AbstractBean {
 		if (solicitacao == null)
 			solicitacao = new Solicitacao();
 
-		if (mapModel == null)
+		if (mapModel == null) {
 			mapModel = new DefaultMapModel();
-//TODO FILTRAR SOLICITAÇÕES POR DEPARTAMENTO
-		solicitacoes = SolicitacaoDAO.getAll();
+			solicitacoes = SolicitacaoDAO.getAll();
+		}
 		if (solicitacoes == null) {
 			hideStatusDialog();
 			solicitacoes = new ArrayList<>();
@@ -94,6 +94,9 @@ public class SolicitacaoBean extends AbstractBean {
 	}
 
 	public List<Solicitacao> listar() {
+		solicitacoes.removeIf(aux -> !funcionarioLogado.getLocalTipoUsuario().getDescricao().equals("Admin")
+				&& !funcionarioLogado.getLocalTipoUsuario().getDescricao().equals("Gestor")
+				&& !aux.getDepartamento_ID().equals(funcionarioLogado.getDadosFuncionais().getDepartamento_ID()));
 		solicitacoes.forEach((aux) -> {
 			List<Categoria> localCategorias = new ArrayList<>();
 			List<Atendimento> localAtendimentos = new ArrayList<>();

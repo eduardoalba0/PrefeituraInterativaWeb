@@ -7,7 +7,8 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-	<p:sidebar widgetVar="dialogCadastroDepartamento" position="bottom">
+	<p:sidebar widgetVar="dialogCadastroDepartamento" position="bottom"
+		rendered="#{funcionarioLogado != null  and (funcionarioLogado.localTipoUsuario.descricao.equals('Gestor') || funcionarioLogado.localTipoUsuario.descricao.equals('Admin'))}">
 		<h:form id="form-cadastro-departamento" class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-md-6 centeredColumn">
 				<h2>#{departamentoBean.departamento.descricao == null ?
@@ -28,22 +29,6 @@
 					requiredMessage="Nome do departamento é obrigatório.">
 				</p:inputText>
 				<p:tooltip for="descricao" position="top" />
-			</div>
-			<div class="ui-inputgroup ui-g-12 ui-md-6">
-				<span class="ui-inputgroup-addon" style="width: 30%;">Superior</span>
-				<p:selectOneMenu id="departamento" required="false"
-					style="margin-right:0 !important;"
-					value="#{departamentoBean.departamento.departamentoSuperior_ID}"
-					title="Selecione o departamento hierarquicamente superior (se houver)"
-					filterMatchMode="contains" filter="true"
-					filterPlaceholder="Pesquise..."
-					converter="omnifaces.SelectItemsConverter">
-					<f:selectItem noSelectionOption="true" itemLabel="Nenhum" />
-					<f:selectItems value="#{departamentoBean.departamentos}"
-						var="departamento" itemValue="#{departamento._ID}"
-						itemLabel="#{departamento.descricao}" />
-				</p:selectOneMenu>
-				<p:tooltip for="departamento" position="top" />
 			</div>
 			<div class="ui-inputgroup ui-g-12 ui-md-6">
 				<span class="ui-inputgroup-addon">Habilitado</span>

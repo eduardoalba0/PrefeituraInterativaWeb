@@ -14,8 +14,10 @@ import org.omnifaces.cdi.ViewScoped;
 
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.CategoriaDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.DepartamentoDAO;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.dao.sad.Dim_CategoriaDAO;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Categoria;
 import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.Departamento;
+import br.edu.ifpr.bsi.prefeiturainterativaweb.domain.sad.Dim_Categoria;
 
 @Named("categoriaBean")
 @ViewScoped
@@ -45,7 +47,7 @@ public class CategoriaBean extends AbstractBean {
 			hideStatusDialog();
 		}
 	}
-	
+
 	public List<Categoria> listar() {
 		categorias.forEach((aux) -> {
 			aux.setLocalDepartamento(
@@ -66,23 +68,19 @@ public class CategoriaBean extends AbstractBean {
 	}
 
 	public void salvarEditar() {
-		boolean tasksSuccess = CategoriaDAO.merge(categoria);
+		boolean tasksSuccess = CategoriaDAO.merge(categoria)
+				&& new Dim_CategoriaDAO().merge(new Dim_Categoria(categoria));
 		Departamento departamento = null;
 
-		// Se a operação foi concluida com êxito, continua.
 		if (tasksSuccess) {
 			departamento = DepartamentoDAO.get(categoria.getDepartamento_ID());
 			tasksSuccess = departamento != null;
 		}
 
-		// Se a operação foi concluida com êxito, continua.
 		if (tasksSuccess) {
 			List<String> listaAdicionar = departamento.getCategorias();
-			// Caso o departamento não possua nenhuma, precisa ser criada uma lista.
 			if (listaAdicionar == null)
 				listaAdicionar = new ArrayList<String>();
-
-			// Caso seja uma categoria nova, ela precisa ser associada à um departamento.
 			if (!listaAdicionar.contains(categoria.get_ID())) {
 				listaAdicionar.add(categoria.get_ID());
 				departamento.setCategorias(listaAdicionar);
@@ -90,9 +88,7 @@ public class CategoriaBean extends AbstractBean {
 			}
 		}
 
-		// Se a operação foi concluida com êxito, continua.
 		if (tasksSuccess) {
-			// Caso o departamento for alterado, ela precisa ser desassociada
 			departamento = categoria.getLocalDepartamento();
 			if (departamento != null && departamento.getCategorias() != null) {
 				List<String> listaRemover = departamento.getCategorias();
@@ -105,12 +101,10 @@ public class CategoriaBean extends AbstractBean {
 				}
 			}
 		}
-		// Se a operação foi concluida com êxito, mostra mensagem de sucesso.
 		if (tasksSuccess) {
 			categoria = new Categoria();
 			hideStatusDialog();
 			showSuccessMessage("Dados gravados na nuvem.");
-			// Se ocorreu erro em qualquer etapa, mostra mensagem de erro.
 		} else {
 			hideStatusDialog();
 			showErrorMessage("Ocorreu uma falha ao gravar os dados. Consulte o suporte da ferramenta.");
@@ -145,7 +139,7 @@ public class CategoriaBean extends AbstractBean {
 	public void setCategoria(Categoria categoria) {
 		this.categoria = categoria;
 	}
-	
+
 	@Produces
 	@Named("categorias")
 	public List<Categoria> getCategorias() {
