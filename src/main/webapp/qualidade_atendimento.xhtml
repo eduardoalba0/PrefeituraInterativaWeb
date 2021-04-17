@@ -12,7 +12,7 @@
 	<ui:define name="conteudo">
 		<p:card
 			rendered="#{funcionarioLogado != null  and (funcionarioLogado.localTipoUsuario.descricao.equals('Gestor') || funcionarioLogado.localTipoUsuario.descricao.equals('Admin'))}">
-			<h:form id="form-cadastro-solicitacao"
+			<h:form id="form-qualidade-atendimento"
 				styleClass="ui-g ui-fluid centeredColumn">
 				<p:tabView id="root-tabview"
 					styleClass="centeredColumn ui-g-12 ui-g-nopad">
@@ -127,7 +127,7 @@
 								</p:commandButton>
 								<p:repeat value="#{sadBean.funcionarios}" var="funcionario">
 									<p:commandButton class="p-col-4" value="#{funcionario.nome}"
-										disabled="#{(sadBean.funcionarioSelecionado != null and sadBean.funcionarioSelecionado._ID != funcionario._ID) || (sadBean.departamentoSelecionado != null and sadBean.departamentoSelecionado._ID != funcionario.departamentoFuncionario)}"
+										disabled="#{(sadBean.funcionarioSelecionado != null and sadBean.funcionarioSelecionado._ID != funcionario._ID) || (sadBean.departamentoSelecionado != null and sadBean.departamentoSelecionado._ID != funcionario.dadosFuncionais.departamento_ID)}"
 										icon="#{sadBean.funcionarioSelecionado != null and sadBean.funcionarioSelecionado._ID == funcionario._ID ? 'pi pi-check' : ''}"
 										actionListener="#{sadBean.selecionarFuncionario}"
 										update="@(form :not(.no-update))">

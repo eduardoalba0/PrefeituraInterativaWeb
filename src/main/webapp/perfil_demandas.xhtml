@@ -12,7 +12,7 @@
 	<ui:define name="conteudo">
 		<p:card
 			rendered="#{funcionarioLogado != null  and (funcionarioLogado.localTipoUsuario.descricao.equals('Gestor') || funcionarioLogado.localTipoUsuario.descricao.equals('Admin'))}">
-			<h:form id="form-cadastro-solicitacao"
+			<h:form id="form-perfil-demandas"
 				styleClass="ui-g ui-fluid centeredColumn">
 				<p:tabView id="root-tabview"
 					styleClass="centeredColumn ui-g-12 ui-g-nopad">

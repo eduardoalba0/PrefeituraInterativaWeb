@@ -106,10 +106,10 @@ public class SadBean extends AbstractBean {
 		List<Dim_Departamento> mergeDepartamentos = new ArrayList<Dim_Departamento>();
 		List<Dim_Categoria> mergeCategorias = new ArrayList<Dim_Categoria>();
 
-		departamentos.forEach(aux->{
+		departamentos.forEach(aux -> {
 			mergeDepartamentos.add(new Dim_Departamento(aux));
 		});
-		categorias.forEach(aux->{
+		categorias.forEach(aux -> {
 			mergeCategorias.add(new Dim_Categoria(aux));
 		});
 
@@ -151,24 +151,21 @@ public class SadBean extends AbstractBean {
 	public void selecionarDepartamento(ActionEvent evento) {
 		departamentoSelecionado = (Departamento) evento.getComponent().getAttributes().get("departamentoSelecionado");
 		filtrarQualidadeAtendimento();
-		filtrarPerfilDemandas();
+		modelMediaDepartamentos();	
 	}
 
 	public void selecionarFuncionario(ActionEvent evento) {
 		funcionarioSelecionado = (Usuario) evento.getComponent().getAttributes().get("funcionarioSelecionado");
 		filtrarQualidadeAtendimento();
-		filtrarPerfilDemandas();
 	}
 
 	public void selecionarCategoria(ActionEvent evento) {
 		categoriaSelecionada = (Categoria) evento.getComponent().getAttributes().get("categoriaSelecionada");
-		filtrarQualidadeAtendimento();
 		filtrarPerfilDemandas();
 	}
 
 	public void selecionarBairro(ActionEvent evento) {
 		bairroSelecionado = (String) evento.getComponent().getAttributes().get("bairroSelecionado");
-		filtrarQualidadeAtendimento();
 		filtrarPerfilDemandas();
 	}
 
@@ -208,6 +205,11 @@ public class SadBean extends AbstractBean {
 
 		avaliacaoListFiltered.removeIf(aux -> aux.getAvaliacao() == null);
 
+		if (funcionarioSelecionado != null && funcionarioSelecionado.get_ID() != null)
+			avaliacaoListFiltered.removeIf(aux -> aux.getFuncionario().get_ID() != funcionarioSelecionado.get_ID());
+		if (departamentoSelecionado != null && departamentoSelecionado.get_ID() != null)
+			avaliacaoListFiltered.removeIf(aux -> aux.getDepartamento().get_ID() != departamentoSelecionado.get_ID());
+
 		if (dataInicio != null)
 			avaliacaoListFiltered.removeIf(aux -> aux.getDataConclusao().getDate().before(dataInicio));
 		if (dataFim != null)
@@ -223,6 +225,11 @@ public class SadBean extends AbstractBean {
 				bairros.add(val.getLocal().getBairro());
 			}
 		});
+
+		if (bairroSelecionado != null)
+			perfilDemandasListFiltered.removeIf(aux -> aux.getLocal().getBairro() != bairroSelecionado);
+		if (categoriaSelecionada != null && categoriaSelecionada.get_ID() != null)
+			perfilDemandasListFiltered.removeIf(aux -> aux.getCategoria().get_ID() != categoriaSelecionada.get_ID());
 
 		if (dataInicio != null)
 			perfilDemandasListFiltered.removeIf(aux -> aux.getDataAbertura().getDate().before(dataInicio));
@@ -671,18 +678,15 @@ public class SadBean extends AbstractBean {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy/MM", new Locale("pt", "BR"));
 
 		perfilDemandasListFiltered.forEach(val -> {
-			if ((bairroSelecionado == null || val.getLocal().getBairro() != bairroSelecionado)
-					&& (categoriaSelecionada == null || val.getCategoria().get_ID() != categoriaSelecionada.get_ID())) {
-				String key = df.format(val.getDataAbertura().getDate());
-				int quantidade;
-				if (hashMap.containsKey(key)) {
-					quantidade = hashMap.get(key);
-					quantidade++;
-				} else {
-					quantidade = 1;
-				}
-				hashMap.put(key, quantidade);
+			String key = df.format(val.getDataAbertura().getDate());
+			int quantidade;
+			if (hashMap.containsKey(key)) {
+				quantidade = hashMap.get(key);
+				quantidade++;
+			} else {
+				quantidade = 1;
 			}
+			hashMap.put(key, quantidade);
 		});
 
 		hashMap.forEach((key, val) -> {
